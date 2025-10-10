@@ -232,7 +232,9 @@ function LandingPage() {
           </div>
         </div>
       </section>
-
+    </div>
+  );
+}
 
 /** ---------- Small tile component (rectangular, Disney-like) ---------- */
 function ServiceTile({ title, image, onClick, compact = false }) {
