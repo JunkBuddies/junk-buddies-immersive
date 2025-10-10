@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
-export default function LandingPage() {
+function LandingPage() {
   const navigate = useNavigate();
   const junkRef = useRef(null);
   const buddiesRef = useRef(null);
@@ -151,7 +151,7 @@ export default function LandingPage() {
           ))}
         </div>
       </section>
-   </div>
+  
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
