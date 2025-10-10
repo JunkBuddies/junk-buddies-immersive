@@ -27,21 +27,21 @@ function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO SECTION (slightly lowered from navbar) === */}
+      {/* === HERO SECTION === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6">
-        <div className="relative flex items-center justify-center w-full max-w-7xl">
+        <div className="relative flex items-center justify-center w-full max-w-[1800px] px-2">
 
-          {/* === Gold Arrows Outside the Image === */}
+          {/* === Gold Arrows === */}
           <button
             onClick={goPrev}
-            className="absolute left-0 md:-left-12 lg:-left-16 text-gold z-40 
+            className="absolute left-0 md:-left-10 lg:-left-14 text-gold z-40 
                        text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
           >
             ‹
           </button>
 
-          {/* === SLIDE CONTAINER (isolated rectangle) === */}
-          <div className="relative w-[90%] sm:w-[80%] md:w-[70%] lg:w-[65%] aspect-[16/7] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
+          {/* === HERO RECTANGLE (wider) === */}
+          <div className="relative w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] aspect-[16/7] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
             {slides.map((slide, idx) => (
               <motion.div
                 key={slide.id}
@@ -81,10 +81,10 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* === Gold Arrow on Right === */}
+          {/* === Right Arrow === */}
           <button
             onClick={goNext}
-            className="absolute right-0 md:-right-12 lg:-right-16 text-gold z-40 
+            className="absolute right-0 md:-right-10 lg:-right-14 text-gold z-40 
                        text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
           >
             ›
@@ -102,7 +102,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === MAIN SERVICES SECTION === */}
+      {/* === MAIN SERVICES === */}
       <section className="relative z-30 mt-4 px-4 md:px-8">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
           Main Services
