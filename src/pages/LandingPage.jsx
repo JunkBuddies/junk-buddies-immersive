@@ -9,7 +9,6 @@ function LandingPage() {
   ];
 
   const [centerIndex, setCenterIndex] = useState(0);
-
   const leftIndex = (centerIndex - 1 + slides.length) % slides.length;
   const rightIndex = (centerIndex + 1) % slides.length;
 
@@ -31,9 +30,9 @@ function LandingPage() {
 
           {/* === LEFT PLACEHOLDER === */}
           <div
-            className="absolute
-                       left-[calc(50%-75vw-2px)]
-                       w-[60vw] sm:w-[55vw] md:w-[50vw] lg:w-[48vw]
+            className="absolute 
+                       left-[calc(50%-75vw-2px)] 
+                       w-[65vw] sm:w-[60vw] md:w-[58vw] lg:w-[56vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
           >
@@ -47,7 +46,8 @@ function LandingPage() {
 
           {/* === CENTER PLACEHOLDER === */}
           <div
-            className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
+            className="relative z-20 
+                       w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
           >
@@ -67,9 +67,9 @@ function LandingPage() {
 
           {/* === RIGHT PLACEHOLDER === */}
           <div
-            className="absolute
+            className="absolute 
                        right-[calc(50%-75vw-2px)]
-                       w-[60vw] sm:w-[55vw] md:w-[50vw] lg:w-[48vw]
+                       w-[65vw] sm:w-[60vw] md:w-[58vw] lg:w-[56vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
           >
@@ -81,10 +81,10 @@ function LandingPage() {
             />
           </div>
 
-          {/* === ARROWS === */}
+          {/* === ARROWS (inside edge of side photos) === */}
           <button
             onClick={goPrev}
-            className="absolute left-[8%] sm:left-[10%] md:left-[12%] top-1/2 -translate-y-1/2 
+            className="absolute left-[10%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -93,7 +93,7 @@ function LandingPage() {
           </button>
           <button
             onClick={goNext}
-            className="absolute right-[8%] sm:right-[10%] md:right-[12%] top-1/2 -translate-y-1/2 
+            className="absolute right-[10%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -124,6 +124,8 @@ function LandingPage() {
           </div>
         </div>
       </section>
+ 
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
