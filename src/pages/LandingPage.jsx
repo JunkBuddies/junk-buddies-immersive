@@ -26,13 +26,15 @@ function LandingPage() {
   const goPrev = () => setCenterIndex((prev) => (prev - 1 + slides.length) % slides.length);
 
   // === SERVICES ===
-  const services = [
-    { title: "Main", image: "/images/genres/main.jpg", link: "/selection", size: "small" },
+  const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
     { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
     { title: "Washer & Dryer Removal", image: "/images/genres/washer.jpg", link: "/washer-dryer-removal" },
     { title: "Desk Removal", image: "/images/genres/desk.jpg", link: "/desk-removal" },
+  ];
+
+  const otherServices = [
     { title: "Bed Removal", image: "/images/genres/bed.jpg", link: "/bed-removal" },
     { title: "Trampoline Removal", image: "/images/genres/trampoline.jpg", link: "/trampoline-removal" },
     { title: "Recliner Removal", image: "/images/genres/recliner.jpg", link: "/recliner-removal" },
@@ -45,9 +47,9 @@ function LandingPage() {
       {/* === HERO CAROUSEL === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
+          {/* LEFT (cropped) */}
           <div className="absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw] 
+                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                           overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
             <img
@@ -76,9 +78,9 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT CROPPED */}
+          {/* RIGHT (cropped) */}
           <div className="absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw] 
+                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                           overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
             <img
@@ -95,7 +97,8 @@ function LandingPage() {
             className="absolute left-[11%] sm:left-[12%] md:left-[13%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
-                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2">
+                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
+          >
             ‹
           </button>
           <button
@@ -103,44 +106,91 @@ function LandingPage() {
             className="absolute right-[11%] sm:right-[12%] md:right-[13%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
-                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2">
+                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
+          >
             ›
           </button>
+
+          {/* DOTS */}
+          <div className="absolute bottom-3 right-8 flex gap-2 z-50">
+            {slides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  idx === centerIndex ? "bg-gold scale-110" : "bg-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* CITIES BUTTON */}
+          <div className="absolute top-0 right-6 z-50">
+            <Link
+              to="/service-areas"
+              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+            >
+              Cities We Serve
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* === CINEMATIC SERVICE ROW === */}
-      <section className="relative w-full overflow-hidden">
-        <div className="flex overflow-x-auto gap-4 md:gap-6 px-6 pb-10 scrollbar-hide relative">
+      {/* === MAIN SERVICES === */}
+      <section className="relative z-30 px-4 md:px-8 pb-10">
+        <div className="flex justify-center">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+            {mainServices.map((service) => (
+              <div
+                key={service.title}
+                onClick={() => navigate(service.link)}
+                className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           flex flex-col items-center justify-center text-center shadow-md snap-center
+                           hover:scale-105 transition-transform"
+              >
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2"
+                />
+                <h3 className="text-gold font-semibold text-xs md:text-sm">{service.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {services.map((service, i) => (
+      {/* === OTHER SERVICES (larger & extends right) === */}
+      <section className="relative z-30 px-4 md:px-8 pb-16">
+        <div className="relative flex justify-start overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide">
+          {otherServices.map((service) => (
             <div
-              key={i}
+              key={service.title}
               onClick={() => navigate(service.link)}
-              className={`cursor-pointer flex-shrink-0 snap-center 
-                         ${service.size === "small" ? "w-[180px] md:w-[240px]" : "w-[220px] md:w-[300px]"} 
-                         h-[130px] md:h-[170px]
+              className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
                          bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                         flex flex-col items-center justify-center text-center shadow-lg 
-                         hover:scale-105 transition-transform`}
+                         flex flex-col items-center justify-center text-center shadow-lg snap-center
+                         hover:scale-105 transition-transform"
             >
               <img
                 src={service.image}
                 alt={service.title}
-                className={`${service.size === "small" ? "w-14 h-14 md:w-16 md:h-16" : "w-16 h-16 md:w-20 md:h-20"} object-contain mb-2`}
+                className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2"
               />
               <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
             </div>
           ))}
 
-          {/* === FADE & ARROW === */}
-          <div className="absolute right-0 top-0 h-full w-[160px] bg-gradient-to-l from-black via-black/40 to-transparent pointer-events-none flex items-center justify-end pr-2">
-            <div className="text-gold text-[64px] md:text-[88px] font-bold opacity-80 select-none">
-              ›
+          {/* RIGHT EDGE FADE + ARROW */}
+          <div className="absolute right-0 top-0 bottom-0 w-[150px] pointer-events-none
+                          bg-gradient-to-l from-black via-black/60 to-transparent flex items-center justify-end pr-4">
+            <div className="text-gold text-[60px] sm:text-[80px] md:text-[100px] font-bold opacity-70 select-none">
+              &gt;
             </div>
           </div>
         </div>
       </section>
+   
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
