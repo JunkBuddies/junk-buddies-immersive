@@ -15,7 +15,9 @@
     "react-icons": "^4.10.1",
     "firebase": "^10.x.x",
     "axios": "^0.21.1",
-    "openai": "^4.0.0"
+    "openai": "^4.0.0",
+    "framer-motion": "^11.0.0"
+
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
