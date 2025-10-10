@@ -1,182 +1,264 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 function LandingPage() {
   const navigate = useNavigate();
 
-  // === HERO SLIDES ===
-  const slides = [
-    { id: 0, image: "/images/donation-drop.png", alt: "Donation Drop" },
-    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
-    { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
+  /** ---------- HERO CAROUSEL (Disney-style) ---------- */
+  // Base slides (order matters: skyline should be the "start")
+  const baseSlides = [
+    { id: "donation", image: "/images/donation-drop.png", alt: "Donation & Recycling" },
+    { id: "skyline", image: "/images/houston-skyline.png", alt: "Houston Skyline" }, // start on this
+    { id: "fleet", image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  // Duplicate slides before/after for smooth infinite loop illusion
-  const heroSlides = [...slides, ...slides, ...slides];
-  const centerOffset = slides.length; // middle set start index
-  const [current, setCurrent] = useState(centerOffset);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const sliderRef = useRef(null);
+  // Build loop-friendly array with clones [last, ...base, first]
+  const loopSlides = [
+    baseSlides[baseSlides.length - 1],
+    ...baseSlides,
+    baseSlides[0],
+  ];
 
-  // === Auto-scroll every 6 s ===
+  const containerRef = useRef(null);
+  const trackRef = useRef(null);
+  const cardRefs = useRef([]);
+  const addCardRef = (el) => {
+    if (el && !cardRefs.current.includes(el)) cardRefs.current.push(el);
+  };
+
+  // position indexes the loopSlides; start at 1 (the real "skyline" is index 2 in loopSlides, but we want it centered on mount)
+  const [position, setPosition] = useState(2); // 0: lastClone, 1:firstReal(donation), 2:skyline (start), 3:fleet, 4:firstClone
+  const [translate, setTranslate] = useState(0);
+  const [anim, setAnim] = useState(true);
+  const [paused, setPaused] = useState(false);
+
+  // Fixed gap we also use in Tailwind via arbitrary value
+  const GAP_PX = 24;
+
+  const computeTranslate = (pos) => {
+    const container = containerRef.current;
+    const card = cardRefs.current[0];
+    if (!container || !card) return 0;
+
+    const containerW = container.clientWidth;
+    const cardW = card.clientWidth;
+    const totalStep = cardW + GAP_PX;
+
+    // center the pos-th card: shift left by pos*step, then add (container - card)/2 to center
+    return -(pos * totalStep) + (containerW - cardW) / 2;
+  };
+
+  // Recompute translate on mount, resize, or position change
   useEffect(() => {
-    const interval = setInterval(() => goNext(), 6000);
-    return () => clearInterval(interval);
-  });
+    const recalc = () => setTranslate(computeTranslate(position));
+    recalc();
+    window.addEventListener("resize", recalc);
+    return () => window.removeEventListener("resize", recalc);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [position]);
 
-  // === Handlers ===
+  // Autoplay every 6s
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => goNext(), 6000);
+    return () => clearInterval(t);
+  }, [paused]);
+
   const goNext = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrent((prev) => prev + 1);
+    setAnim(true);
+    setPosition((p) => p + 1);
   };
+
   const goPrev = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrent((prev) => prev - 1);
+    setAnim(true);
+    setPosition((p) => p - 1);
   };
 
-  // === Snap-reset when crossing clone boundaries ===
+  // Seamless loop: when we hit a clone, jump to the real one without animation
+  const handleTransitionEnd = () => {
+    if (position === loopSlides.length - 1) {
+      // at last clone -> snap to first real
+      setAnim(false);
+      setPosition(1);
+    } else if (position === 0) {
+      // at first clone -> snap to last real
+      setAnim(false);
+      setPosition(loopSlides.length - 2);
+    }
+  };
+
   useEffect(() => {
-    const transitionEnd = () => {
-      setIsTransitioning(false);
-      if (current >= heroSlides.length - slides.length) {
-        // jumped past end
-        setCurrent(centerOffset);
-      } else if (current < slides.length) {
-        // jumped before start
-        setCurrent(centerOffset + (current % slides.length));
-      }
-    };
-    const slider = sliderRef.current;
-    slider?.addEventListener("transitionend", transitionEnd);
-    return () => slider?.removeEventListener("transitionend", transitionEnd);
-  }, [current, heroSlides.length, slides.length]);
+    if (!anim) {
+      // after we snap without animation, restore animation on next tick
+      const id = requestAnimationFrame(() => setAnim(true));
+      return () => cancelAnimationFrame(id);
+    }
+  }, [anim]);
 
-  // === Position math ===
-  const slideWidth = 75; // vw width for each card
-  const gap = 2; // vw gap between cards
-  const translateX = -(current * (slideWidth + gap) - (100 - slideWidth) / 2);
+  // Active dot index (0..baseSlides.length-1)
+  const currentRealIndex = (() => {
+    // position: 0 clone-last, 1 real0(donation), 2 real1(skyline), 3 real2(fleet), 4 clone-first
+    if (position === 0) return baseSlides.length - 1;
+    if (position === loopSlides.length - 1) return 0;
+    return position - 1;
+  })();
 
-  // === MAIN SERVICES (unchanged) ===
-  const mainServices = [
-    { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-    { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-    { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-    { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
-    { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
+  /** ---------- MAIN SERVICES (top 5, rectangular) ---------- */
+  const primaryServices = [
+    { title: "Mattresses", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
+    { title: "Couches", image: "/images/genres/couch.jpg", link: "/couch-removal" },
+    { title: "Fridges", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
+    { title: "Washers & Dryers", image: "/images/genres/washer.jpg", link: "/itemized" },
+    { title: "Desks", image: "/images/genres/desk.jpg", link: "/itemized" },
+  ];
+
+  /** ---------- SECOND ROW (scrollable) ---------- */
+  const moreServices = [
+    { title: "Tables", image: "/images/genres/table.jpg", link: "/itemized" },
+    { title: "Recliners", image: "/images/genres/recliner.jpg", link: "/itemized" },
+    { title: "Trampolines", image: "/images/genres/trampoline.jpg", link: "/itemized" },
+    { title: "Beds", image: "/images/genres/bed.jpg", link: "/itemized" },
+    { title: "Electronics", image: "/images/genres/electronics.jpg", link: "/itemized" },
+    { title: "Yard Waste", image: "/images/genres/yard.jpg", link: "/itemized" },
   ];
 
   return (
-    <div className="w-full bg-black text-white overflow-hidden relative">
+    <div className="w-full overflow-hidden relative bg-black text-white">
+      {/* small gap from TopNav */}
+      <div className="pt-6 md:pt-8" />
 
-      {/* === HERO CAROUSEL === */}
-      <section className="relative w-full flex justify-center py-10 overflow-hidden">
-        <div className="relative w-full max-w-7xl overflow-hidden">
-          {/* Prev / Next */}
-          <button
-            onClick={goPrev}
-            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-40 
-                       bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
-          >
-            ‹
-          </button>
-          <button
-            onClick={goNext}
-            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-40 
-                       bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
-          >
-            ›
-          </button>
+      {/* ---------- HERO CAROUSEL ---------- */}
+      <section
+        className="relative flex justify-center items-center pb-6 md:pb-8 select-none"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {/* Left/Right arrows */}
+        <button
+          onClick={goPrev}
+          className="absolute left-3 md:left-6 z-40 bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
+          aria-label="Previous"
+        >
+          ‹
+        </button>
+        <button
+          onClick={goNext}
+          className="absolute right-3 md:right-6 z-40 bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
+          aria-label="Next"
+        >
+          ›
+        </button>
 
-          {/* Track */}
-          <div
-            ref={sliderRef}
-            className={`flex items-center transition-transform ${
-              isTransitioning ? "duration-700 ease-in-out" : "duration-0"
-            }`}
+        {/* Cities button (kept) */}
+        <div className="absolute -top-2 right-6 z-40">
+          <Link
+            to="/service-areas"
+            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+          >
+            Cities We Serve
+          </Link>
+        </div>
+
+        {/* Viewport & Track */}
+        <div ref={containerRef} className="relative w-[95vw] max-w-7xl overflow-hidden">
+          <motion.div
+            ref={trackRef}
+            onTransitionEnd={handleTransitionEnd}
+            className="flex gap-[24px]" // gap must match GAP_PX
             style={{
-              width: `${heroSlides.length * (slideWidth + gap)}vw`,
-              transform: `translateX(${translateX}vw)`,
-              gap: `${gap}vw`,
+              transform: `translateX(${translate}px)`,
+              transition: anim ? "transform 700ms ease-in-out" : "none",
             }}
           >
-            {heroSlides.map((slide, idx) => (
-              <motion.div
-                key={`${slide.id}-${idx}`}
-                className={`relative flex-shrink-0 w-[75vw] sm:w-[70vw] md:w-[65vw] lg:w-[60vw]
-                            h-[260px] sm:h-[340px] md:h-[400px] rounded-2xl overflow-hidden 
-                            border border-gold/40 shadow-xl ${
-                              idx === current ? "scale-100 opacity-100 z-30" : "scale-95 opacity-70 z-10"
-                            }`}
-              >
-                <img src={slide.image} alt={slide.alt} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                <div className="absolute bottom-5 left-6">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                    {slide.alt}
-                  </h3>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Dots (bottom-right) */}
-          <div className="absolute bottom-4 right-6 flex gap-2 z-50">
-            {slides.map((_, idx) => (
+            {loopSlides.map((s, idx) => (
               <div
-                key={idx}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  idx === ((current - slides.length) % slides.length + slides.length) % slides.length
-                    ? "bg-gold scale-110"
-                    : "bg-gray-500"
-                }`}
+                key={`${s.id}-${idx}`}
+                ref={addCardRef}
+                className={`relative flex-shrink-0 w-[70vw] md:w-[62vw] lg:w-[58vw] 
+                            h-[240px] sm:h-[320px] md:h-[380px] rounded-2xl overflow-hidden
+                            border border-gold/40 shadow-xl
+                            ${idx === position ? "z-30 opacity-100" : "z-10 opacity-80"}`}
+              >
+                <img src={s.image} alt={s.alt} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+                <h3 className="absolute bottom-4 left-6 text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                  {s.alt}
+                </h3>
+
+                {/* Active dots (only on centered slide) */}
+                {idx === position && (
+                  <div className="absolute bottom-4 right-6 flex gap-2 z-50">
+                    {baseSlides.map((_, di) => (
+                      <div
+                        key={di}
+                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                          di === currentRealIndex ? "bg-gold scale-110" : "bg-gray-500"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ---------- MAIN SERVICES (Top 5) ---------- */}
+      <section className="relative z-30 flex justify-center px-4 md:px-8">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+          {primaryServices.map((svc) => (
+            <ServiceTile key={svc.title} {...svc} onClick={() => navigate(svc.link)} />
+          ))}
+        </div>
+      </section>
+
+      {/* ---------- MORE SERVICES (Horizontal scroll) ---------- */}
+      <section className="mt-6 md:mt-8 px-4 md:px-8">
+        <h3 className="text-gold font-semibold mb-3 md:mb-4 text-sm md:text-base">
+          More services we handle
+        </h3>
+        <div className="overflow-x-auto no-scrollbar">
+          <div className="flex gap-4 md:gap-6 w-max">
+            {moreServices.map((svc) => (
+              <ServiceTile
+                key={svc.title}
+                {...svc}
+                compact
+                onClick={() => navigate(svc.link)}
               />
             ))}
           </div>
-
-          {/* Cities button */}
-          <div className="absolute top-0 right-6 z-50">
-            <Link
-              to="/service-areas"
-              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
-            >
-              Cities We Serve
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* === MAIN SERVICES ROW (same as before) === */}
-      <section className="relative z-30 mt-4 px-4 md:px-8">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
-          Main Services
-        </h2>
-        <div className="flex justify-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {mainServices.map((service) => (
-              <motion.div
-                key={service.title}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 180 }}
-                onClick={() => navigate(service.link)}
-                className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-lg snap-center"
-              >
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
-                />
-                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
-              </motion.div>
-            ))}
-          </div>
+
+/** ---------- Small tile component (rectangular, Disney-like) ---------- */
+function ServiceTile({ title, image, onClick, compact = false }) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.04 }}
+      transition={{ type: "spring", stiffness: 220, damping: 18 }}
+      onClick={onClick}
+      className={`group cursor-pointer bg-zinc-900/70 border border-gold/30 hover:border-gold 
+                  rounded-xl overflow-hidden text-left shadow-lg
+                  ${compact ? "w-[180px] h-[110px]" : "w-[220px] h-[130px] md:w-[260px] md:h-[150px]"}`}
+    >
+      <div className="w-full h-full relative">
+        <img src={image} alt={title} className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
+        <div className="absolute bottom-2 left-3 right-3 flex items-center justify-between">
+          <span className="text-gold font-semibold text-sm md:text-base drop-shadow">
+            {title}
+          </span>
+          <span className="text-gold/80 text-xs md:text-sm opacity-0 group-hover:opacity-100 transition">
+            View →
+          </span>
         </div>
-      </section>
-    
+      </div>
+    </motion.button>
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
