@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 function LandingPage() {
   const navigate = useNavigate();
 
-  // === SLIDES ===
   const slides = [
     { id: 0, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
     { id: 1, image: "/images/donation-drop.png", alt: "Donation Drop" },
@@ -14,7 +13,6 @@ function LandingPage() {
   const [current, setCurrent] = useState(0);
   const timeoutRef = useRef(null);
 
-  // === Auto-scroll ===
   useEffect(() => {
     const interval = setInterval(() => goNext(), 6000);
     return () => clearInterval(interval);
@@ -23,28 +21,17 @@ function LandingPage() {
   const goNext = () => setCurrent((prev) => (prev + 1) % slides.length);
   const goPrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
-  // === Slider math ===
-  // Width of one slide and gap between slides
   const slideWidth = 80; // vw
   const gap = 3; // vw
   const totalWidth = slideWidth + gap;
-  // Center offset ensures the active slide is centered
   const translateX = -(current * totalWidth - (100 - slideWidth) / 2);
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO SECTION === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-hidden">
-        {/* Left Arrow */}
-        <button
-          onClick={goPrev}
-          className="absolute left-3 md:left-6 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 transition-transform"
-        >
-          ‹
-        </button>
-
-        {/* SLIDER CONTAINER */}
         <div className="relative w-full max-w-[1600px] overflow-hidden">
+          {/* === SLIDER TRACK === */}
           <div
             className="flex items-center transition-transform duration-700 ease-in-out"
             style={{
@@ -57,8 +44,8 @@ function LandingPage() {
               <div
                 key={slide.id}
                 className={`relative flex-shrink-0 w-[80vw] sm:w-[80vw] md:w-[78vw] lg:w-[75vw]
-                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
-                           border border-gold/40 shadow-2xl bg-black/40 transition-all duration-500`}
+                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
+                            border border-gold/40 shadow-2xl bg-black/40 transition-all duration-500`}
                 style={{
                   opacity: index === current ? 1 : 0.75,
                   transform: index === current ? "scale(1)" : "scale(0.95)",
@@ -78,36 +65,48 @@ function LandingPage() {
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Right Arrow */}
-        <button
-          onClick={goNext}
-          className="absolute right-3 md:right-6 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 transition-transform"
-        >
-          ›
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-3 right-5 flex gap-2 z-50">
-          {slides.map((_, idx) => (
-            <div
-              key={idx}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                idx === current ? "bg-gold scale-110" : "bg-gray-500"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Cities Button */}
-        <div className="absolute top-0 right-6 z-50">
-          <Link
-            to="/service-areas"
-            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+          {/* === Arrows INSIDE Slider Edges === */}
+          <button
+            onClick={goPrev}
+            className="absolute left-[8%] sm:left-[7%] md:left-[6%] top-1/2 -translate-y-1/2 
+                       z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 
+                       transition-transform duration-200 bg-black/40 hover:bg-black/60 
+                       rounded-full px-3 py-2"
           >
-            Cities We Serve
-          </Link>
+            ‹
+          </button>
+          <button
+            onClick={goNext}
+            className="absolute right-[8%] sm:right-[7%] md:right-[6%] top-1/2 -translate-y-1/2 
+                       z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 
+                       transition-transform duration-200 bg-black/40 hover:bg-black/60 
+                       rounded-full px-3 py-2"
+          >
+            ›
+          </button>
+
+          {/* === Dots === */}
+          <div className="absolute bottom-3 right-5 flex gap-2 z-50">
+            {slides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  idx === current ? "bg-gold scale-110" : "bg-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* === Cities Button === */}
+          <div className="absolute top-0 right-6 z-50">
+            <Link
+              to="/service-areas"
+              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+            >
+              Cities We Serve
+            </Link>
+          </div>
         </div>
       </section>
 
