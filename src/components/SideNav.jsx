@@ -1,51 +1,82 @@
 // SideNav.jsx
 import { motion } from "framer-motion";
-import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Home, Calculator, MapPin, BookOpen, HelpCircle, ClipboardList, Menu } from "lucide-react";
+import {
+  Home,
+  Calculator,
+  ClipboardList,
+  MapPin,
+  BookOpen,
+  HelpCircle,
+  Menu,
+} from "lucide-react";
 
-export default function SideNav() {
-  const [open, setOpen] = useState(true);
+export default function SideNav({ open, setOpen }) {
+  const navItems = [
+    { icon: <Home />, label: "Home", to: "/" },
+    {
+      icon: <Calculator />,
+      label: "Instant Pricing (Chat)",
+      to: "#",
+      action: () => {
+        const widget = document.querySelector("#jb-chat-widget");
+        if (widget) widget.click(); // simulate open widget
+      },
+    },
+    { icon: <ClipboardList />, label: "Manual Selection", to: "/itemized" },
+    { icon: <MapPin />, label: "Cities", to: "/service-areas" },
+    { icon: <BookOpen />, label: "Blog", to: "/blog" },
+    { icon: <HelpCircle />, label: "FAQ", to: "/faq" },
+  ];
 
   return (
     <motion.aside
       animate={{ width: open ? 240 : 80 }}
       transition={{ duration: 0.3 }}
-      className="hidden lg:flex flex-col items-center justify-center h-screen bg-black border-r border-gold/30 fixed top-0 left-0 z-40"
+      className="hidden lg:flex flex-col items-center h-screen bg-black border-r border-gold fixed top-0 left-0 z-40"
     >
-      <button
-        onClick={() => setOpen(!open)}
-        className="absolute top-4 right-3 text-gold hover:text-white transition"
-      >
-        <Menu size={24} />
-      </button>
+      {/* Menu toggle */}
+      <div className="w-full flex justify-end px-3 py-4 border-b border-gold/40">
+        <button
+          onClick={() => setOpen(!open)}
+          className="text-gold hover:text-white transition"
+          aria-label="Toggle Sidebar"
+        >
+          <Menu size={24} />
+        </button>
+      </div>
 
-      <nav className="flex flex-col items-start justify-center gap-4 w-full px-4">
-        <NavItem to="/" icon={<Home />} label="Home" open={open} />
-        <NavItem to="/itemized" icon={<Calculator />} label="Instant Pricing" open={open} />
-        <NavItem to="/load-size" icon={<ClipboardList />} label="Load Sizes" open={open} />
-        <NavItem to="/service-areas" icon={<MapPin />} label="Cities" open={open} />
-        <NavItem to="/blog" icon={<BookOpen />} label="Blog" open={open} />
-        <NavItem to="/faq" icon={<HelpCircle />} label="FAQ" open={open} />
+      {/* Navigation */}
+      <nav className="flex flex-col items-start gap-3 mt-6 w-full px-3">
+        {navItems.map((item, idx) =>
+          item.to === "#" ? (
+            <button
+              key={idx}
+              onClick={item.action}
+              className="flex items-center gap-3 text-gray-200 hover:text-gold px-3 py-2 w-full transition"
+            >
+              {item.icon}
+              {open && <span className="text-sm">{item.label}</span>}
+            </button>
+          ) : (
+            <Link
+              key={idx}
+              to={item.to}
+              className="flex items-center gap-3 text-gray-200 hover:text-gold px-3 py-2 w-full transition"
+            >
+              {item.icon}
+              {open && <span className="text-sm">{item.label}</span>}
+            </Link>
+          )
+        )}
       </nav>
 
+      {/* Footer */}
       {open && (
-        <div className="absolute bottom-5 text-xs text-gold/60 text-center w-full">
+        <div className="mt-auto mb-4 text-xs text-gold/60 text-center">
           © {new Date().getFullYear()} Junk Buddies
         </div>
       )}
     </motion.aside>
-  );
-}
-
-function NavItem({ to, icon, label, open }) {
-  return (
-    <Link
-      to={to}
-      className="flex items-center gap-3 text-gray-200 hover:text-gold w-full px-3 py-2 transition"
-    >
-      {icon}
-      {open && <span className="text-sm">{label}</span>}
-    </Link>
   );
 }
