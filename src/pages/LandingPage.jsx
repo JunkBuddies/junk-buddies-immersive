@@ -40,15 +40,15 @@ function LandingPage() {
           <div
             className="flex transition-transform duration-700 ease-in-out"
             style={{
-              transform: `translateX(-${current * 92}vw)`,
-              gap: "2vw",
-              width: `${slides.length * 92}vw`,
+              transform: `translateX(-${current * 87}vw)`,
+              gap: "3vw",
+              width: `${slides.length * 87}vw`,
             }}
           >
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="flex-shrink-0 w-[90vw] sm:w-[90vw] md:w-[88vw] lg:w-[85vw]
+                className="flex-shrink-0 w-[85vw] sm:w-[85vw] md:w-[82vw] lg:w-[80vw]
                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
                            border border-gold/40 shadow-2xl bg-black/40 relative"
               >
@@ -133,7 +133,8 @@ function LandingPage() {
           </div>
         </div>
       </section>
-    
+
+
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
         <p className="text-xl mb-4">
