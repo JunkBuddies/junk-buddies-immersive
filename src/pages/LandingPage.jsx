@@ -25,7 +25,7 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === SERVICE DATA ===
+  // === DATA ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
@@ -54,18 +54,18 @@ function LandingPage() {
     { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
     { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", link: "/blog/save-money" },
     { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
-    { title: "Top 5 Mistakes to Avoid When Hiring Junk Removal", image: "/images/blogs/mistakes.jpg", link: "/blog/hiring-mistakes" },
-    { title: "Before & After: Real Junk Buddies Transformations", image: "/images/blogs/before-after.jpg", link: "/blog/before-after" },
-    { title: "How to Prepare for a Junk Pickup Day", image: "/images/blogs/prepare.jpg", link: "/blog/prepare-for-pickup" },
+    { title: "Top 5 Ways to Prepare for Junk Pickup", image: "/images/blogs/prep.jpg", link: "/blog/junk-pickup-prep" },
+    { title: "Donation vs Disposal: Which is Best?", image: "/images/blogs/donation.jpg", link: "/blog/donation-vs-disposal" },
+    { title: "Houston’s Hidden Recycling Spots", image: "/images/blogs/recycling.jpg", link: "/blog/recycling-spots" },
   ];
 
   const faqs = [
     { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
     { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
     { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
-    { q: "Can I add items on pickup day?", a: "Absolutely. Just let your crew know — pricing adjusts instantly, no problem." },
-    { q: "Do you handle heavy furniture or appliances?", a: "Yes. Our team safely removes all large, heavy, or bulky items with proper equipment." },
-    { q: "How fast can I get a pickup?", a: "Same-day or next-day service is often available. Just schedule online or call to confirm." },
+    { q: "How far in advance should I book?", a: "Same-day service is often available, but booking 24 hours ahead guarantees a spot." },
+    { q: "Do you handle large commercial jobs?", a: "Absolutely — we clear offices, warehouses, and construction debris with our 16ft trucks." },
+    { q: "Are there any items you can’t take?", a: "We can’t handle hazardous waste, but we’ll guide you to proper disposal options." },
   ];
 
   // === SCROLL REFS ===
@@ -77,7 +77,10 @@ function LandingPage() {
   };
 
   const scrollAmount = 300;
-  const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+
+  const scrollRight = (ref) => {
+    ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
 
   const [arrowPositions, setArrowPositions] = useState({
     other: 0,
@@ -86,7 +89,7 @@ function LandingPage() {
     faq: 0,
   });
 
-  // Dynamically position arrows
+  // Calculate where to visually anchor the arrow (aligned with last visible card)
   useEffect(() => {
     const updatePositions = () => {
       Object.keys(rowRefs).forEach((key) => {
@@ -95,7 +98,7 @@ function LandingPage() {
         const rect = el.getBoundingClientRect();
         setArrowPositions((prev) => ({
           ...prev,
-          [key]: rect.right - rect.left - 90,
+          [key]: rect.right - rect.left - 90, // stays on top of last visible card
         }));
       });
     };
@@ -165,7 +168,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === REUSABLE SCROLL ROWS === */}
+      {/* === ROW SECTIONS === */}
       {[
         { key: "other", label: "Other Services", data: otherServices },
         { key: "cities", label: "Cities", data: cities },
@@ -198,7 +201,7 @@ function LandingPage() {
               ))}
             </div>
 
-            {/* Anchored Scroll Arrow */}
+            {/* Dynamic Arrow — anchored to last visible card */}
             <button
               onClick={() => scrollRight(rowRefs[section.key])}
               style={{ left: `${arrowPositions[section.key]}px` }}
@@ -211,7 +214,6 @@ function LandingPage() {
           </div>
         </section>
       ))}
- 
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
