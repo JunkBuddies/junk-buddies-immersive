@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
@@ -17,15 +17,15 @@ function LandingPage() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCenterIndex((prev) => (prev + 1) % slides.length);
+      setCenterIndex((p) => (p + 1) % slides.length);
     }, 6000);
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  const goNext = () => setCenterIndex((prev) => (prev + 1) % slides.length);
-  const goPrev = () => setCenterIndex((prev) => (prev - 1 + slides.length) % slides.length);
+  const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
+  const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === SERVICES ===
+  // === SERVICE DATA ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
@@ -42,96 +42,72 @@ function LandingPage() {
     { title: "Table Removal", image: "/images/genres/table.jpg", link: "/table-removal" },
   ];
 
+  const cities = [
+    { title: "Houston", image: "/images/cities/houston.jpg", link: "/houston" },
+    { title: "Katy", image: "/images/cities/katy.jpg", link: "/katy" },
+    { title: "Sugar Land", image: "/images/cities/sugar-land.jpg", link: "/sugar-land" },
+    { title: "Pearland", image: "/images/cities/pearland.jpg", link: "/pearland" },
+    { title: "The Woodlands", image: "/images/cities/woodlands.jpg", link: "/the-woodlands" },
+  ];
+
+  const blogs = [
+    { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
+    { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", link: "/blog/save-money" },
+    { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
+  ];
+
+  const faqs = [
+    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
+    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
+    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
+  ];
+
+  // === Scroll ref for Other Services ===
+  const otherRef = useRef(null);
+  const scrollAmount = 300;
+  const scrollRight = () => otherRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  const scrollLeft = () => otherRef.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO CAROUSEL === */}
+      {/* === HERO === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT (cropped) */}
+          {/* LEFT CROPPED */}
           <div className="absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                           overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
-            <img
-              key={slides[leftIndex].id}
-              src={slides[leftIndex].image}
-              alt={slides[leftIndex].alt}
-              className="w-[130vw] h-full object-cover object-right transition-all duration-[1500ms] opacity-70"
-            />
+            <img src={slides[leftIndex].image} alt={slides[leftIndex].alt}
+              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
           </div>
-
           {/* CENTER */}
           <div className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                           overflow-hidden border border-gold/40 shadow-2xl rounded-2xl">
-            <img
-              key={slides[centerIndex].id}
-              src={slides[centerIndex].image}
-              alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-100"
-            />
+            <img src={slides[centerIndex].image} alt={slides[centerIndex].alt}
+              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                {slides[centerIndex].alt}
-              </h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
             </div>
           </div>
-
-          {/* RIGHT (cropped) */}
+          {/* RIGHT CROPPED */}
           <div className="absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                           overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
-            <img
-              key={slides[rightIndex].id}
-              src={slides[rightIndex].image}
-              alt={slides[rightIndex].alt}
-              className="w-[130vw] h-full object-cover object-left transition-all duration-[1500ms] opacity-70"
-            />
+            <img src={slides[rightIndex].image} alt={slides[rightIndex].alt}
+              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]" />
           </div>
 
           {/* ARROWS */}
-          <button
-            onClick={goPrev}
-            className="absolute left-[11%] sm:left-[12%] md:left-[13%] top-1/2 -translate-y-1/2 
-                       z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 transition-transform duration-200
-                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
-          >
-            ‹
-          </button>
-          <button
-            onClick={goNext}
-            className="absolute right-[11%] sm:right-[12%] md:right-[13%] top-1/2 -translate-y-1/2 
-                       z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 transition-transform duration-200
-                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
-          >
-            ›
-          </button>
-
-          {/* DOTS */}
-          <div className="absolute bottom-3 right-8 flex gap-2 z-50">
-            {slides.map((_, idx) => (
-              <div
-                key={idx}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  idx === centerIndex ? "bg-gold scale-110" : "bg-gray-500"
-                }`}
-              />
-            ))}
-          </div>
-
-          {/* CITIES BUTTON */}
-          <div className="absolute top-0 right-6 z-50">
-            <Link
-              to="/service-areas"
-              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
-            >
-              Cities We Serve
-            </Link>
-          </div>
+          <button onClick={goPrev}
+            className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">‹</button>
+          <button onClick={goNext}
+            className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">›</button>
         </div>
       </section>
 
@@ -139,59 +115,92 @@ function LandingPage() {
       <section className="relative z-30 px-4 md:px-8 pb-10">
         <div className="flex justify-center">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {mainServices.map((service) => (
-              <div
-                key={service.title}
-                onClick={() => navigate(service.link)}
+            {mainServices.map((s) => (
+              <div key={s.title} onClick={() => navigate(s.link)}
                 className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
                            bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-md snap-center
-                           hover:scale-105 transition-transform"
-              >
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2"
-                />
-                <h3 className="text-gold font-semibold text-xs md:text-sm">{service.title}</h3>
+                           flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
+                <img src={s.image} alt={s.title} className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2" />
+                <h3 className="text-gold font-semibold text-xs md:text-sm">{s.title}</h3>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* === OTHER SERVICES (larger & extends right) === */}
+      {/* === OTHER SERVICES (scrollable with arrows) === */}
       <section className="relative z-30 px-4 md:px-8 pb-16">
-        <div className="relative flex justify-start overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide">
-          {otherServices.map((service) => (
-            <div
-              key={service.title}
-              onClick={() => navigate(service.link)}
-              className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                         flex flex-col items-center justify-center text-center shadow-lg snap-center
-                         hover:scale-105 transition-transform"
-            >
-              <img
-                src={service.image}
-                alt={service.title}
-                className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2"
-              />
-              <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
-            </div>
-          ))}
+        <div className="relative flex items-center">
+          {/* Left Scroll Button */}
+          <button onClick={scrollLeft}
+            className="z-40 absolute left-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+                       font-bold rounded-r-2xl px-2 py-1 select-none">‹</button>
 
-          {/* RIGHT EDGE FADE + ARROW */}
-          <div className="absolute right-0 top-0 bottom-0 w-[150px] pointer-events-none
-                          bg-gradient-to-l from-black via-black/60 to-transparent flex items-center justify-end pr-4">
-            <div className="text-gold text-[60px] sm:text-[80px] md:text-[100px] font-bold opacity-70 select-none">
-              &gt;
-            </div>
+          {/* Scrollable Row */}
+          <div ref={otherRef}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]">
+            {otherServices.map((s) => (
+              <div key={s.title} onClick={() => navigate(s.link)}
+                className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform">
+                <img src={s.image} alt={s.title} className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2" />
+                <h3 className="text-gold font-semibold text-sm md:text-base">{s.title}</h3>
+              </div>
+            ))}
           </div>
+
+          {/* Right Scroll Button */}
+          <button onClick={scrollRight}
+            className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+                       font-bold rounded-l-2xl px-2 py-1 select-none">&gt;</button>
         </div>
       </section>
-   
 
+      {/* === CITIES ROW === */}
+      <section className="relative z-30 px-4 md:px-8 pb-12">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide">
+          {cities.map((c) => (
+            <div key={c.title} onClick={() => navigate(c.link)}
+              className="cursor-pointer flex-shrink-0 w-[220px] md:w-[280px] h-[130px] md:h-[170px]
+                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                         flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
+              <img src={c.image} alt={c.title} className="w-16 h-16 md:w-20 md:h-20 object-cover mb-2 rounded-md" />
+              <h3 className="text-gold font-semibold text-sm md:text-base">{c.title}</h3>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* === BLOGS & ARTICLES === */}
+      <section className="relative z-30 px-4 md:px-8 pb-12">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide">
+          {blogs.map((b) => (
+            <div key={b.title} onClick={() => navigate(b.link)}
+              className="cursor-pointer flex-shrink-0 w-[260px] md:w-[340px] h-[150px] md:h-[190px]
+                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                         flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform">
+              <img src={b.image} alt={b.title} className="w-full h-[100px] object-cover rounded-t-lg" />
+              <h3 className="text-gold font-semibold text-sm md:text-base px-2 pt-2">{b.title}</h3>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* === FAQ ROW === */}
+      <section className="relative z-30 px-4 md:px-8 pb-20">
+        <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4 md:gap-6">
+          {faqs.map((f, i) => (
+            <div key={i}
+              className="w-full md:w-[30%] bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                         p-4 shadow-md transition-transform hover:scale-[1.02]">
+              <h4 className="text-gold font-semibold text-base mb-2">{f.q}</h4>
+              <p className="text-gray-300 text-sm leading-snug">{f.a}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
