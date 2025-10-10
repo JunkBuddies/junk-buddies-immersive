@@ -40,8 +40,8 @@ function LandingPage() {
             ‹
           </button>
 
-          {/* === HERO RECTANGLE (wide + tall) === */}
-          <div className="relative w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
+          {/* === HERO RECTANGLE (wide + half height) === */}
+          <div className="relative w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
             {slides.map((slide, idx) => (
               <motion.div
                 key={slide.id}
@@ -60,8 +60,8 @@ function LandingPage() {
                   className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <div className="absolute bottom-6 left-8">
-                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gold drop-shadow-lg">
+                <div className="absolute bottom-4 left-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
                     {slide.alt}
                   </h2>
                 </div>
@@ -69,11 +69,11 @@ function LandingPage() {
             ))}
 
             {/* Dots */}
-            <div className="absolute bottom-3 right-5 flex gap-2 z-50">
+            <div className="absolute bottom-2 right-4 flex gap-2 z-50">
               {slides.map((_, idx) => (
                 <div
                   key={idx}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
                     idx === current ? "bg-gold scale-110" : "bg-gray-500"
                   }`}
                 />
@@ -136,7 +136,6 @@ function LandingPage() {
           </div>
         </div>
       </section>
- 
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
