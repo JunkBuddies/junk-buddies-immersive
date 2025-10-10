@@ -1,114 +1,93 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 function LandingPage() {
   const navigate = useNavigate();
 
-  const mainGenres = [
-    { title: "Mattresses", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-    { title: "Couches", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-    { title: "Fridges", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-    { title: "Tables", image: "/images/genres/table.jpg", link: "/itemized" },
-    { title: "Recliners", image: "/images/genres/recliner.jpg", link: "/itemized" },
+  const heroSlides = [
+    { image: "/images/houston-skyline.png", alt: "Houston Skyline" },
+    { image: "/images/truck-fleet.png", alt: "Junk Buddies Trucks" },
+    { image: "/images/donation-drop.png", alt: "Donation Drop" },
   ];
 
-  const otherServices = [
-    { title: "Washers & Dryers", image: "/images/genres/washer.jpg", link: "/itemized" },
-    { title: "Desks", image: "/images/genres/desk.jpg", link: "/itemized" },
-    { title: "Trampolines", image: "/images/genres/trampoline.jpg", link: "/itemized" },
-    { title: "Beds", image: "/images/genres/bed.jpg", link: "/itemized" },
-    { title: "Exercise Equipment", image: "/images/genres/equipment.jpg", link: "/itemized" },
-    { title: "Hot Tubs", image: "/images/genres/hottub.jpg", link: "/itemized" },
+  const mainServices = [
+    { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
+    { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
+    { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
+    { title: "Table & Furniture", image: "/images/genres/table.jpg", link: "/itemized" },
+    { title: "Recliner & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
   ];
 
   return (
-    <div className="w-full overflow-hidden relative bg-black text-white">
-      {/* === HERO CINEMATIC (Houston Skyline) === */}
-    <motion.section
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 1 }}
-  className="relative w-full h-[438px] sm:h-[480px] md:h-[520px] lg:h-[560px] flex justify-center items-center text-center overflow-hidden"
->
-  <img
-    src="/images/houston-skyline.png"
-    alt="Houston Skyline"
-    className="absolute inset-0 w-full h-full object-cover brightness-90"
-  />
-  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+    <div className="w-full bg-black text-white overflow-hidden">
 
-  {/* Cities Button */}
-  <div className="absolute top-6 right-6 z-50">
-    <Link
-      to="/service-areas"
-      className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
-    >
-      Cities We Serve
-    </Link>
-  </div>
-</motion.section>
+      {/* === HERO CAROUSEL === */}
+      <section className="relative w-full overflow-hidden">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide">
+          {heroSlides.map((slide, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.4 }}
+              className="relative min-w-full snap-center flex-shrink-0"
+            >
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                className="w-full h-[420px] md:h-[480px] lg:h-[520px] object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+              {/* Optional overlay text */}
+              <div className="absolute bottom-6 left-10">
+                <h2 className="text-3xl md:text-5xl font-bold text-gold drop-shadow-md">
+                  {slide.alt}
+                </h2>
+              </div>
+            </motion.div>
+          ))}
+        </div>
 
-
-      {/* === MAIN SERVICES (Disney+ style) === */}
-      <section className="relative z-30 -mt-20 px-4 md:px-8">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
-          Main Services
-        </h2>
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-4 md:gap-6 px-2 md:px-4 pb-6">
-            {mainGenres.map((genre) => (
-              <motion.div
-                key={genre.title}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 180 }}
-                onClick={() => navigate(genre.link)}
-                className="flex-shrink-0 cursor-pointer bg-zinc-900/80 border border-gold/40 hover:border-gold rounded-xl w-36 h-36 md:w-48 md:h-48 flex flex-col items-center justify-center text-center shadow-lg"
-              >
-                <img
-                  src={genre.image}
-                  alt={genre.title}
-                  className="w-14 h-14 md:w-20 md:h-20 object-contain mb-2"
-                />
-                <h3 className="text-gold font-semibold text-sm md:text-base">
-                  {genre.title}
-                </h3>
-              </motion.div>
-            ))}
-          </div>
+        {/* Cities Button */}
+        <div className="absolute top-6 right-6 z-50">
+          <Link
+            to="/service-areas"
+            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+          >
+            Cities We Serve
+          </Link>
         </div>
       </section>
 
-      {/* === OTHER SERVICES WE ALSO OFFER (scrollable row) === */}
-      <section className="relative z-30 px-4 md:px-8 mt-4 md:mt-8 mb-12">
+      {/* === MAIN SERVICES ROW (Disney+ Style) === */}
+      <section className="relative z-30 mt-8 px-4 md:px-8">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
-          Other Services We Also Offer
+          Main Services
         </h2>
-        <div className="overflow-x-auto scrollbar-hide">
-          <div className="flex gap-4 md:gap-6 px-2 md:px-4 pb-6">
-            {otherServices.map((service) => (
+        <div className="flex justify-center">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+            {mainServices.map((service) => (
               <motion.div
                 key={service.title}
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 180 }}
                 onClick={() => navigate(service.link)}
-                className="flex-shrink-0 cursor-pointer bg-zinc-900/80 border border-gold/40 hover:border-gold rounded-xl w-36 h-36 md:w-48 md:h-48 flex flex-col items-center justify-center text-center shadow-lg"
+                className="cursor-pointer flex-shrink-0 w-[200px] md:w-[280px] h-[120px] md:h-[160px] 
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           flex flex-col items-center justify-center text-center shadow-lg snap-center"
               >
                 <img
                   src={service.image}
                   alt={service.title}
-                  className="w-14 h-14 md:w-20 md:h-20 object-contain mb-2"
+                  className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
                 />
-                <h3 className="text-gold font-semibold text-sm md:text-base">
-                  {service.title}
-                </h3>
+                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-  
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
