@@ -68,7 +68,6 @@ function LandingPage() {
   const blogsRef = useRef(null);
   const faqRef = useRef(null);
   const scrollAmount = 300;
-
   const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
 
   return (
@@ -114,20 +113,18 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === MAIN SERVICES === */}
-      <section className="relative z-30 px-4 md:px-8 pb-10">
-        <div className="flex justify-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {mainServices.map((s) => (
-              <div key={s.title} onClick={() => navigate(s.link)}
-                className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
-                <img src={s.image} alt={s.title} className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2" />
-                <h3 className="text-gold font-semibold text-xs md:text-sm">{s.title}</h3>
-              </div>
-            ))}
-          </div>
+      {/* === MAIN SERVICES (balanced vertical spacing) === */}
+      <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+          {mainServices.map((s) => (
+            <div key={s.title} onClick={() => navigate(s.link)}
+              className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
+                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                         flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
+              <img src={s.image} alt={s.title} className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2" />
+              <h3 className="text-gold font-semibold text-xs md:text-sm">{s.title}</h3>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -168,10 +165,10 @@ function LandingPage() {
               ))}
             </div>
 
-            {/* Right Scroll Button */}
+            {/* Right Scroll Button (moved inward and visible) */}
             <button
               onClick={() => scrollRight(section.ref)}
-              className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+              className="z-40 absolute right-4 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
                          font-bold rounded-l-2xl px-2 py-1 select-none"
             >
               &gt;
@@ -179,7 +176,6 @@ function LandingPage() {
           </div>
         </section>
       ))}
-
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
