@@ -1,0 +1,43 @@
+User-agent: *
+Disallow:
+
+# Primary Sitemap Location
+Sitemap: https://www.junkbuddies.info/sitemap.xml
+
+# Explicit Allowances (for clarity and priority routes)
+Allow: /
+Allow: /selection
+Allow: /load-size
+Allow: /itemized
+Allow: /schedule
+Allow: /confirmation
+Allow: /blog
+Allow: /blog/*
+Allow: /faq
+Allow: /service-areas
+Allow: /service-areas/*
+Allow: /images/
+Allow: /static/
+
+# Optional Crawl Rate Control
+# Crawl-delay: 2
+
+# Googlebot – Full Access
+User-agent: Googlebot
+Disallow:
+Allow: /
+
+# Bingbot – Full Access
+User-agent: Bingbot
+Disallow:
+Allow: /
+
+# Disallowed Bots
+User-agent: ia_archiver
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Core Pages -->
+  <url>
+    <loc>https://www.junkbuddies.info/</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://www.junkbuddies.info/selection</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.junkbuddies.info/schedule</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+
+  <url>
+    <loc>https://www.junkbuddies.info/confirmation</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <url>
+    <loc>https://www.junkbuddies.info/blog</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <url>
+    <loc>https://www.junkbuddies.info/faq</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://www.junkbuddies.info/cities</loc>
+    <lastmod>2025-07-11</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Enhanced City Pages (Steroid layout) -->
+ <url><loc>https://www.junkbuddies.info/service-areas/houston</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/alvin</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/baytown</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/channelview</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/cypress</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/deer-park</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/friendswood</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/humble</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/katy</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/la-porte</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/league-city</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/missouri-city</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/pasadena</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/pearland</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/richmond</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/rosenberg</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/spring</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/sugar-land</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/the-woodlands</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+<url><loc>https://www.junkbuddies.info/service-areas/tomball</loc><lastmod>2025-07-11</lastmod><changefreq>weekly</changefreq><priority>0.95</priority></url>
+</urlset>
