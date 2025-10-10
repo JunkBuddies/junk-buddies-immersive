@@ -113,7 +113,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === MAIN SERVICES (balanced vertical spacing) === */}
+      {/* === MAIN SERVICES === */}
       <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
           {mainServices.map((s) => (
@@ -128,7 +128,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === UNIVERSAL ROW COMPONENT STYLE === */}
+      {/* === UNIFIED ROW TEMPLATE === */}
       {[
         { label: "Other Services", ref: otherRef, data: otherServices },
         { label: "Cities", ref: citiesRef, data: cities },
@@ -165,11 +165,12 @@ function LandingPage() {
               ))}
             </div>
 
-            {/* Right Scroll Button (moved inward and visible) */}
+            {/* Right Scroll Button — moved inward and visible */}
             <button
               onClick={() => scrollRight(section.ref)}
-              className="z-40 absolute right-4 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                         font-bold rounded-l-2xl px-2 py-1 select-none"
+              className="absolute right-[3%] top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80 
+                         text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none 
+                         shadow-[0_0_20px_rgba(212,175,55,0.5)]"
             >
               &gt;
             </button>
