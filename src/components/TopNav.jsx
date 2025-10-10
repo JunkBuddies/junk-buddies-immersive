@@ -1,26 +1,34 @@
 // TopNav.jsx
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, Menu } from "lucide-react";
 
-export default function TopNav() {
+export default function TopNav({ sidebarOpen, setSidebarOpen }) {
   return (
     <motion.header
       initial={{ y: -25, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="fixed top-0 left-0 right-0 z-50 h-16 bg-black border-b border-gold flex items-center justify-between px-6"
+      className="fixed top-0 left-0 right-0 z-50 h-16 bg-black flex items-center justify-between border-b border-gold"
     >
-      {/* Left: logo / name */}
-      <div className="flex items-center gap-3">
+      {/* Left: menu + logo */}
+      <div className="flex items-center gap-3 pl-4">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="text-gold hover:text-white transition mr-2"
+          title="Toggle sidebar"
+        >
+          <Menu size={24} />
+        </button>
+
         <img
-          src="/logo192.png"
+          src="/images/logo-icon.png"
           alt="Junk Buddies Logo"
-          className="w-8 h-8 object-contain"
+          className="w-9 h-9 object-contain"
         />
-        <h1 className="text-gold font-bold text-lg">Junk Buddies</h1>
+        <h1 className="text-gold font-bold text-lg hidden sm:block">Junk Buddies</h1>
       </div>
 
-      {/* Center: search bar */}
+      {/* Center: search */}
       <div className="flex-1 flex justify-center">
         <div className="relative w-full max-w-md">
           <input
@@ -35,7 +43,7 @@ export default function TopNav() {
         </div>
       </div>
 
-      {/* Right side space left open for symmetry */}
+      {/* Spacer right side */}
       <div className="w-8" />
     </motion.header>
   );
