@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
 
 function LandingPage() {
   const slides = [
@@ -9,97 +8,83 @@ function LandingPage() {
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  const [center, setCenter] = useState(0);
+  const [centerIndex, setCenterIndex] = useState(0);
 
-  // Calculate left and right indices
-  const left = (center - 1 + slides.length) % slides.length;
-  const right = (center + 1) % slides.length;
+  const leftIndex = (centerIndex - 1 + slides.length) % slides.length;
+  const rightIndex = (centerIndex + 1) % slides.length;
 
-  // Auto-rotate every 6 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCenter((prev) => (prev + 1) % slides.length);
+    const timer = setInterval(() => {
+      setCenterIndex((prev) => (prev + 1) % slides.length);
     }, 6000);
-    return () => clearInterval(interval);
+    return () => clearInterval(timer);
   }, [slides.length]);
 
-  const goNext = () => setCenter((prev) => (prev + 1) % slides.length);
-  const goPrev = () => setCenter((prev) => (prev - 1 + slides.length) % slides.length);
+  const goNext = () => setCenterIndex((prev) => (prev + 1) % slides.length);
+  const goPrev = () => setCenterIndex((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === FIXED PLACEHOLDER HERO === */}
+      {/* === FIXED 3-SLOT HERO === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* Left Slide */}
-          <motion.div
-            key={slides[left].id}
-            initial={{ opacity: 0, scale: 0.9, x: "-20vw" }}
-            animate={{ opacity: 0.7, scale: 0.9, x: 0 }}
-            exit={{ opacity: 0, scale: 0.9, x: "-20vw" }}
-            transition={{ duration: 0.8 }}
-            className="absolute left-0 sm:left-[2vw] md:left-[4vw] w-[65vw] sm:w-[60vw] md:w-[58vw]
+          {/* LEFT PLACEHOLDER */}
+          <div
+            className="absolute left-[-25vw] md:left-[-20vw] lg:left-[-15vw]
+                       w-[65vw] sm:w-[60vw] md:w-[55vw] lg:w-[52vw]
+                       h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
+                       rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
+          >
+            <img
+              key={slides[leftIndex].id}
+              src={slides[leftIndex].image}
+              alt={slides[leftIndex].alt}
+              className="w-full h-full object-cover transition-opacity duration-1500 opacity-70"
+            />
+          </div>
+
+          {/* CENTER PLACEHOLDER */}
+          <div
+            className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
           >
             <img
-              src={slides[left].image}
-              alt={slides[left].alt}
-              className="w-full h-full object-cover opacity-80"
+              key={slides[centerIndex].id}
+              src={slides[centerIndex].image}
+              alt={slides[centerIndex].alt}
+              className="w-full h-full object-cover transition-all duration-1500 opacity-100 scale-100"
             />
-          </motion.div>
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            <div className="absolute bottom-4 left-6">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                {slides[centerIndex].alt}
+              </h2>
+            </div>
+          </div>
 
-          {/* Center Slide */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={slides[center].id}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.8 }}
-              className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                         h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                         rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
-            >
-              <img
-                src={slides[center].image}
-                alt={slides[center].alt}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-              <div className="absolute bottom-4 left-6">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                  {slides[center].alt}
-                </h2>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Right Slide */}
-          <motion.div
-            key={slides[right].id}
-            initial={{ opacity: 0, scale: 0.9, x: "20vw" }}
-            animate={{ opacity: 0.7, scale: 0.9, x: 0 }}
-            exit={{ opacity: 0, scale: 0.9, x: "20vw" }}
-            transition={{ duration: 0.8 }}
-            className="absolute right-0 sm:right-[2vw] md:right-[4vw] w-[65vw] sm:w-[60vw] md:w-[58vw]
+          {/* RIGHT PLACEHOLDER */}
+          <div
+            className="absolute right-[-25vw] md:right-[-20vw] lg:right-[-15vw]
+                       w-[65vw] sm:w-[60vw] md:w-[55vw] lg:w-[52vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                       rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
+                       rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
           >
             <img
-              src={slides[right].image}
-              alt={slides[right].alt}
-              className="w-full h-full object-cover opacity-80"
+              key={slides[rightIndex].id}
+              src={slides[rightIndex].image}
+              alt={slides[rightIndex].alt}
+              className="w-full h-full object-cover transition-opacity duration-1500 opacity-70"
             />
-          </motion.div>
+          </div>
 
-          {/* Arrows (inside next/prev edges) */}
+          {/* ARROWS inside image edge */}
           <button
             onClick={goPrev}
             className="absolute left-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
-                       bg-black/50 hover:bg-black/70 rounded-full px-3 py-2"
+                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
           >
             ‹
           </button>
@@ -108,24 +93,24 @@ function LandingPage() {
             className="absolute right-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
-                       bg-black/50 hover:bg-black/70 rounded-full px-3 py-2"
+                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
           >
             ›
           </button>
 
-          {/* Dots */}
+          {/* DOTS */}
           <div className="absolute bottom-3 right-8 flex gap-2 z-50">
             {slides.map((_, idx) => (
               <div
                 key={idx}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  idx === center ? "bg-gold scale-110" : "bg-gray-500"
+                  idx === centerIndex ? "bg-gold scale-110" : "bg-gray-500"
                 }`}
               />
             ))}
           </div>
 
-          {/* Cities Button */}
+          {/* CITIES BUTTON */}
           <div className="absolute top-0 right-6 z-50">
             <Link
               to="/service-areas"
@@ -136,7 +121,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
-   
+  
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
