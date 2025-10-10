@@ -1,66 +1,131 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 function LandingPage() {
   const navigate = useNavigate();
 
+  // === HERO SLIDES ===
   const heroSlides = [
-    { image: "/images/houston-skyline.png", alt: "Houston Skyline" },
-    { image: "/images/truck-fleet.png", alt: "Junk Buddies Trucks" },
-    { image: "/images/donation-drop.png", alt: "Donation Drop" },
+    {
+      id: 0,
+      image: "/images/donation-drop.png",
+      alt: "Donation Drop",
+    },
+    {
+      id: 1,
+      image: "/images/houston-skyline.png",
+      alt: "Houston Skyline",
+    },
+    {
+      id: 2,
+      image: "/images/truck-fleet.png",
+      alt: "Junk Buddies Fleet",
+    },
   ];
 
+  const [current, setCurrent] = useState(1); // Start on skyline
+
+  // === AUTO SLIDE LOGIC ===
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % heroSlides.length);
+    }, 3000); // 3 sec
+    return () => clearInterval(interval);
+  }, [heroSlides.length]);
+
+  const goNext = () => setCurrent((prev) => (prev + 1) % heroSlides.length);
+  const goPrev = () =>
+    setCurrent((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+
+  // === MAIN SERVICES ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
     { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-    { title: "Table & Furniture", image: "/images/genres/table.jpg", link: "/itemized" },
-    { title: "Recliner & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
+    { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
+    { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
   ];
 
   return (
-    <div className="w-full bg-black text-white overflow-hidden">
+    <div className="w-full bg-black text-white overflow-hidden relative">
 
-      {/* === HERO CAROUSEL === */}
-      <section className="relative w-full overflow-hidden">
-        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide">
-          {heroSlides.map((slide, i) => (
-            <motion.div
-              key={i}
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.4 }}
-              className="relative min-w-full snap-center flex-shrink-0"
-            >
-              <img
-                src={slide.image}
-                alt={slide.alt}
-                className="w-full h-[420px] md:h-[480px] lg:h-[520px] object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-              {/* Optional overlay text */}
-              <div className="absolute bottom-6 left-10">
-                <h2 className="text-3xl md:text-5xl font-bold text-gold drop-shadow-md">
-                  {slide.alt}
-                </h2>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Cities Button */}
-        <div className="absolute top-6 right-6 z-50">
-          <Link
-            to="/service-areas"
-            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+      {/* === HERO CAROUSEL (Disney+ style) === */}
+      <section className="relative w-full flex justify-center py-10 overflow-hidden">
+        <div className="relative flex items-center justify-center w-full max-w-7xl">
+          {/* Prev Button */}
+          <button
+            onClick={goPrev}
+            className="absolute left-0 z-40 bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
           >
-            Cities We Serve
-          </Link>
+            ‹
+          </button>
+
+          {/* Slider Window */}
+          <div className="flex items-center justify-center w-full overflow-visible">
+            <div className="relative flex justify-center items-center gap-4 md:gap-6 transition-transform duration-700 ease-in-out"
+              style={{
+                transform: `translateX(calc(-${current * 100}% - ${current * 1.5}rem))`,
+              }}
+            >
+              {heroSlides.map((slide, index) => (
+                <motion.div
+                  key={slide.id}
+                  className={`relative flex-shrink-0 w-[80vw] sm:w-[70vw] md:w-[60vw] lg:w-[55vw] h-[260px] sm:h-[320px] md:h-[360px] rounded-2xl overflow-hidden border border-gold/40 shadow-xl ${
+                    index === current ? "z-30 scale-100" : "z-10 scale-95 opacity-60"
+                  }`}
+                  transition={{ duration: 0.6 }}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.alt}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-6">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                      {slide.alt}
+                    </h3>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Next Button */}
+          <button
+            onClick={goNext}
+            className="absolute right-0 z-40 bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
+          >
+            ›
+          </button>
+
+          {/* Dots */}
+          <div className="absolute -bottom-3 flex justify-center w-full gap-2">
+            {heroSlides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-2.5 h-2.5 rounded-full ${
+                  idx === current ? "bg-gold" : "bg-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Cities Button */}
+          <div className="absolute top-0 right-6 z-50">
+            <Link
+              to="/service-areas"
+              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+            >
+              Cities We Serve
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* === MAIN SERVICES ROW (Disney+ Style) === */}
-      <section className="relative z-30 mt-8 px-4 md:px-8">
+      {/* === MAIN SERVICES ROW (Rectangular) === */}
+      <section className="relative z-30 mt-4 px-4 md:px-8">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
           Main Services
         </h2>
