@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
+  const navigate = useNavigate();
+
   const slides = [
     { id: 0, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
     { id: 1, image: "/images/donation-drop.png", alt: "Donation Drop" },
@@ -22,13 +24,30 @@ function LandingPage() {
   const goNext = () => setCenterIndex((prev) => (prev + 1) % slides.length);
   const goPrev = () => setCenterIndex((prev) => (prev - 1 + slides.length) % slides.length);
 
+  // === SERVICE BOXES ===
+  const primaryServices = [
+    { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
+    { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
+    { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
+    { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
+    { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
+  ];
+
+  const secondaryServices = [
+    { title: "Washer & Dryer Removal", image: "/images/genres/washer.jpg", link: "/itemized" },
+    { title: "Desk & Office Junk", image: "/images/genres/desk.jpg", link: "/itemized" },
+    { title: "Trampoline Removal", image: "/images/genres/trampoline.jpg", link: "/itemized" },
+    { title: "Bed Frame & Headboard", image: "/images/genres/bed.jpg", link: "/itemized" },
+    { title: "TVs & Electronics", image: "/images/genres/tv.jpg", link: "/itemized" },
+  ];
+
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO CAROUSEL === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
 
-          {/* === LEFT IMAGE (cropped in half) === */}
+          {/* === LEFT IMAGE (cropped half) === */}
           <div
             className="absolute 
                        left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
@@ -65,7 +84,7 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* === RIGHT IMAGE (cropped in half) === */}
+          {/* === RIGHT IMAGE (cropped half) === */}
           <div
             className="absolute 
                        right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
@@ -81,7 +100,7 @@ function LandingPage() {
             />
           </div>
 
-          {/* === ARROWS (inside edges of visible halves) === */}
+          {/* === ARROWS (inside edges) === */}
           <button
             onClick={goPrev}
             className="absolute left-[11%] sm:left-[12%] md:left-[13%] top-1/2 -translate-y-1/2 
@@ -124,8 +143,54 @@ function LandingPage() {
           </div>
         </div>
       </section>
-  
 
+      {/* === SERVICE BOXES SECTION === */}
+      <section className="relative z-30 px-4 md:px-8 pb-12">
+        {/* Primary Row */}
+        <div className="flex justify-center">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+            {primaryServices.map((service) => (
+              <div
+                key={service.title}
+                onClick={() => navigate(service.link)}
+                className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           flex flex-col items-center justify-center text-center shadow-lg snap-center transition-transform hover:scale-105"
+              >
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
+                />
+                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Secondary Row */}
+        <div className="flex justify-center">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+            {secondaryServices.map((service) => (
+              <div
+                key={service.title}
+                onClick={() => navigate(service.link)}
+                className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           flex flex-col items-center justify-center text-center shadow-lg snap-center transition-transform hover:scale-105"
+              >
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
+                />
+                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+   
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
