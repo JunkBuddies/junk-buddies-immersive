@@ -4,51 +4,98 @@ import { useNavigate, Link } from "react-router-dom";
 function LandingPage() {
   const navigate = useNavigate();
 
-  const slides = [
+  // === SLIDES ===
+  const baseSlides = [
     { id: 0, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
     { id: 1, image: "/images/donation-drop.png", alt: "Donation Drop" },
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  const [current, setCurrent] = useState(0);
-  const timeoutRef = useRef(null);
+  // Clone first and last to create seamless loop and visible side peeks
+  const slides = [
+    baseSlides[baseSlides.length - 1],
+    ...baseSlides,
+    baseSlides[0],
+  ];
 
+  const [current, setCurrent] = useState(1); // Start at 1 because of the prepended clone
+  const sliderRef = useRef(null);
+  const transitioningRef = useRef(false);
+
+  // Auto-scroll
   useEffect(() => {
     const interval = setInterval(() => goNext(), 6000);
     return () => clearInterval(interval);
   });
 
-  const goNext = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const goPrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  const goNext = () => {
+    if (transitioningRef.current) return;
+    transitioningRef.current = true;
+    setCurrent((prev) => prev + 1);
+  };
 
+  const goPrev = () => {
+    if (transitioningRef.current) return;
+    transitioningRef.current = true;
+    setCurrent((prev) => prev - 1);
+  };
+
+  // Reset transition loop
+  useEffect(() => {
+    const slider = sliderRef.current;
+    const handleTransitionEnd = () => {
+      transitioningRef.current = false;
+      if (current === slides.length - 1) {
+        setCurrent(1);
+        slider.style.transition = "none";
+        slider.style.transform = `translateX(-${1 * 83}vw)`;
+        requestAnimationFrame(() => {
+          slider.style.transition = "transform 0.7s ease-in-out";
+        });
+      } else if (current === 0) {
+        setCurrent(slides.length - 2);
+        slider.style.transition = "none";
+        slider.style.transform = `translateX(-${(slides.length - 2) * 83}vw)`;
+        requestAnimationFrame(() => {
+          slider.style.transition = "transform 0.7s ease-in-out";
+        });
+      }
+    };
+    slider?.addEventListener("transitionend", handleTransitionEnd);
+    return () => slider?.removeEventListener("transitionend", handleTransitionEnd);
+  }, [current, slides.length]);
+
+  // Dimensions
   const slideWidth = 80; // vw
   const gap = 3; // vw
-  const totalWidth = slideWidth + gap;
-  const translateX = -(current * totalWidth - (100 - slideWidth) / 2);
+  const total = slideWidth + gap;
+  const translateX = -(current * total - (100 - slideWidth) / 2);
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO SECTION === */}
+      {/* === HERO === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-hidden">
         <div className="relative w-full max-w-[1600px] overflow-hidden">
-          {/* === SLIDER TRACK === */}
+          {/* Track */}
           <div
+            ref={sliderRef}
             className="flex items-center transition-transform duration-700 ease-in-out"
             style={{
               transform: `translateX(${translateX}vw)`,
               gap: `${gap}vw`,
-              width: `${slides.length * totalWidth}vw`,
+              width: `${slides.length * total}vw`,
             }}
           >
-            {slides.map((slide, index) => (
+            {slides.map((slide, idx) => (
               <div
-                key={slide.id}
-                className={`relative flex-shrink-0 w-[80vw] sm:w-[80vw] md:w-[78vw] lg:w-[75vw]
-                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
-                            border border-gold/40 shadow-2xl bg-black/40 transition-all duration-500`}
+                key={`${slide.id}-${idx}`}
+                className={`relative flex-shrink-0 w-[80vw] md:w-[78vw] lg:w-[75vw]
+                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
+                            rounded-2xl overflow-hidden border border-gold/40 shadow-2xl bg-black/40
+                            transition-all duration-500`}
                 style={{
-                  opacity: index === current ? 1 : 0.75,
-                  transform: index === current ? "scale(1)" : "scale(0.95)",
+                  opacity: idx === current ? 1 : 0.75,
+                  transform: idx === current ? "scale(1)" : "scale(0.95)",
                 }}
               >
                 <img
@@ -66,39 +113,41 @@ function LandingPage() {
             ))}
           </div>
 
-          {/* === Arrows INSIDE Slider Edges === */}
+          {/* Arrows (inside side slides) */}
           <button
             onClick={goPrev}
-            className="absolute left-[8%] sm:left-[7%] md:left-[6%] top-1/2 -translate-y-1/2 
-                       z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 
-                       transition-transform duration-200 bg-black/40 hover:bg-black/60 
-                       rounded-full px-3 py-2"
+            className="absolute left-[10%] top-1/2 -translate-y-1/2 
+                       z-40 text-gold text-4xl md:text-5xl font-bold
+                       hover:scale-110 transition-transform duration-200
+                       bg-black/50 hover:bg-black/70 rounded-full px-3 py-2"
           >
             ‹
           </button>
           <button
             onClick={goNext}
-            className="absolute right-[8%] sm:right-[7%] md:right-[6%] top-1/2 -translate-y-1/2 
-                       z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 
-                       transition-transform duration-200 bg-black/40 hover:bg-black/60 
-                       rounded-full px-3 py-2"
+            className="absolute right-[10%] top-1/2 -translate-y-1/2 
+                       z-40 text-gold text-4xl md:text-5xl font-bold
+                       hover:scale-110 transition-transform duration-200
+                       bg-black/50 hover:bg-black/70 rounded-full px-3 py-2"
           >
             ›
           </button>
 
-          {/* === Dots === */}
+          {/* Dots */}
           <div className="absolute bottom-3 right-5 flex gap-2 z-50">
-            {slides.map((_, idx) => (
+            {baseSlides.map((_, idx) => (
               <div
                 key={idx}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  idx === current ? "bg-gold scale-110" : "bg-gray-500"
+                  idx === ((current - 1 + baseSlides.length) % baseSlides.length)
+                    ? "bg-gold scale-110"
+                    : "bg-gray-500"
                 }`}
               />
             ))}
           </div>
 
-          {/* === Cities Button === */}
+          {/* Cities Button */}
           <div className="absolute top-0 right-6 z-50">
             <Link
               to="/service-areas"
@@ -109,40 +158,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
-
-      {/* === MAIN SERVICES === */}
-      <section className="relative z-30 mt-4 px-4 md:px-8">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
-          Main Services
-        </h2>
-        <div className="flex justify-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {[
-              { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-              { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-              { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-              { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
-              { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
-            ].map((service) => (
-              <div
-                key={service.title}
-                onClick={() => navigate(service.link)}
-                className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-lg snap-center"
-              >
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
-                />
-                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
+    
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
