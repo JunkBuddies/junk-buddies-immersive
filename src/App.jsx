@@ -14,6 +14,7 @@ import FaqPage from './pages/FaqPage';
 import ServiceAreasPage from './pages/ServiceAreasPage';
 import MattressRemovalPage from "./pages/MattressRemovalPage";
 import FurnitureRemovalPage from "./pages/FurnitureRemovalPage";
+import LayoutShell from "./components/LayoutShell";
 
 
 
@@ -48,49 +49,51 @@ function App() {
   return (
     <CartProvider>
       <Router>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/selection" element={<SelectionPage />} />
-          <Route path="/load-size" element={<LoadSizePage />} />
-          <Route path="/itemized" element={<ItemizedPage />} />
-          <Route path="/schedule" element={<SchedulePage />} />
-          <Route path="/confirmation" element={<ConfirmationPage />} />
+       <Routes>
+  <Route element={<LayoutShell />}>
+    <Route path="/" element={<LandingPage />} />
+    <Route path="/selection" element={<SelectionPage />} />
+    <Route path="/load-size" element={<LoadSizePage />} />
+    <Route path="/itemized" element={<ItemizedPage />} />
+    <Route path="/schedule" element={<SchedulePage />} />
+    <Route path="/confirmation" element={<ConfirmationPage />} />
 
-          {/* Blog Routes */}
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/blog/how-much-does-junk-removal-cost" element={<HowMuchDoesJunkRemovalCost />} />
-          <Route path="/blog/save-money-on-junk-removal" element={<SaveMoneyOnJunkRemoval />} />
+    {/* Blog Routes */}
+    <Route path="/blog" element={<BlogPage />} />
+    <Route path="/blog/how-much-does-junk-removal-cost" element={<HowMuchDoesJunkRemovalCost />} />
+    <Route path="/blog/save-money-on-junk-removal" element={<SaveMoneyOnJunkRemoval />} />
 
-          {/* Static Pages */}
-          <Route path="/faq" element={<FaqPage />} />
-          <Route path="/service-areas" element={<ServiceAreasPage />} />
+    {/* Static Pages */}
+    <Route path="/faq" element={<FaqPage />} />
+    <Route path="/service-areas" element={<ServiceAreasPage />} />
 
-          {/* Dynamic City Pages */}
-          <Route path="/service-areas/houston" element={<Houston />} />
-          <Route path="/service-areas/katy" element={<Katy />} />
-          <Route path="/service-areas/sugar-land" element={<SugarLand />} />
-          <Route path="/service-areas/pearland" element={<Pearland />} />
-          <Route path="/service-areas/cypress" element={<Cypress />} />
-          <Route path="/service-areas/spring" element={<Spring />} />
-          <Route path="/service-areas/humble" element={<Humble />} />
-          <Route path="/service-areas/missouri-city" element={<MissouriCity />} />
-          <Route path="/service-areas/pasadena" element={<Pasadena />} />
-          <Route path="/service-areas/the-woodlands" element={<TheWoodlands />} />
-          <Route path="/service-areas/league-city" element={<LeagueCity />} />
-          <Route path="/service-areas/baytown" element={<Baytown />} />
-          <Route path="/service-areas/friendswood" element={<Friendswood />} />
-          <Route path="/service-areas/channelview" element={<Channelview />} />
-          <Route path="/service-areas/richmond" element={<Richmond />} />
-          <Route path="/service-areas/rosenberg" element={<Rosenberg />} />
-          <Route path="/service-areas/tomball" element={<Tomball />} />
-          <Route path="/service-areas/alvin" element={<Alvin />} />
-          <Route path="/service-areas/deer-park" element={<DeerPark />} />
-          <Route path="/service-areas/la-porte" element={<LaPorte />} />
-          <Route path="/mattress-removal" element={<MattressRemovalPage />} />
-          <Route path="/furniture-removal" element={<FurnitureRemovalPage />} />
+    {/* Dynamic City Pages */}
+    <Route path="/service-areas/houston" element={<Houston />} />
+    <Route path="/service-areas/katy" element={<Katy />} />
+    <Route path="/service-areas/sugar-land" element={<SugarLand />} />
+    <Route path="/service-areas/pearland" element={<Pearland />} />
+    <Route path="/service-areas/cypress" element={<Cypress />} />
+    <Route path="/service-areas/spring" element={<Spring />} />
+    <Route path="/service-areas/humble" element={<Humble />} />
+    <Route path="/service-areas/missouri-city" element={<MissouriCity />} />
+    <Route path="/service-areas/pasadena" element={<Pasadena />} />
+    <Route path="/service-areas/the-woodlands" element={<TheWoodlands />} />
+    <Route path="/service-areas/league-city" element={<LeagueCity />} />
+    <Route path="/service-areas/baytown" element={<Baytown />} />
+    <Route path="/service-areas/friendswood" element={<Friendswood />} />
+    <Route path="/service-areas/channelview" element={<Channelview />} />
+    <Route path="/service-areas/richmond" element={<Richmond />} />
+    <Route path="/service-areas/rosenberg" element={<Rosenberg />} />
+    <Route path="/service-areas/tomball" element={<Tomball />} />
+    <Route path="/service-areas/alvin" element={<Alvin />} />
+    <Route path="/service-areas/deer-park" element={<DeerPark />} />
+    <Route path="/service-areas/la-porte" element={<LaPorte />} />
 
-
-        </Routes>
+    {/* Specialty Pages */}
+    <Route path="/mattress-removal" element={<MattressRemovalPage />} />
+    <Route path="/furniture-removal" element={<FurnitureRemovalPage />} />
+  </Route>
+</Routes>
 
         {/* ⬇️ NEW: mounted once so it overlays all routes */}
         <ChatWidget />
