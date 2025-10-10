@@ -1,226 +1,158 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
-function LandingPage() {
+export default function LandingPage() {
   const navigate = useNavigate();
   const junkRef = useRef(null);
   const buddiesRef = useRef(null);
-  const aboutRef = useRef(null);
-  const aboutTitleRef = useRef(null);
-  const aboutParagraphRef = useRef(null);
-  const cardRefs = useRef([]);
-  cardRefs.current = [];
-  
   const [aboutInView, setAboutInView] = useState(false);
 
-  const setCardRef = (el) => {
-    if (el && !cardRefs.current.includes(el)) {
-      cardRefs.current.push(el);
-    }
-  };
+  const genres = [
+    { title: "Mattresses", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
+    { title: "Couches", image: "/images/genres/couch.jpg", link: "/couch-removal" },
+    { title: "Fridges", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
+    { title: "Tables", image: "/images/genres/table.jpg", link: "/itemized" },
+    { title: "Recliners", image: "/images/genres/recliner.jpg", link: "/itemized" },
+    { title: "Washers & Dryers", image: "/images/genres/washer.jpg", link: "/itemized" },
+    { title: "Desks", image: "/images/genres/desk.jpg", link: "/itemized" },
+    { title: "Trampolines", image: "/images/genres/trampoline.jpg", link: "/itemized" },
+    { title: "Beds", image: "/images/genres/bed.jpg", link: "/itemized" },
+  ];
 
   useEffect(() => {
     const junk = junkRef.current;
     const buddies = buddiesRef.current;
     if (junk && buddies) {
-      junk.classList.remove('shine-junk');
-      buddies.classList.remove('shine-buddies');
+      junk.classList.remove("shine-junk");
+      buddies.classList.remove("shine-buddies");
       void junk.offsetWidth;
       void buddies.offsetWidth;
-      buddies.classList.add('shine-buddies');
-      setTimeout(() => junk.classList.add('shine-junk'), 2500);
+      buddies.classList.add("shine-buddies");
+      setTimeout(() => junk.classList.add("shine-junk"), 2500);
     }
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setAboutInView(true);
-      },
-      { threshold: 0.4 }
-    );
-
-    if (aboutRef.current) {
-      observer.observe(aboutRef.current);
-    }
-
-    return () => {
-      if (aboutRef.current) observer.unobserve(aboutRef.current);
-    };
   }, []);
 
   return (
-  <div className="w-full overflow-hidden">
-    <div className="hero-earth-bg w-full min-h-screen flex flex-col items-center justify-center text-white text-center relative px-4 sm:px-8">
-{/* Cities Button */}
-<div className="absolute top-6 right-6 z-50">
-  <Link
-    to="/service-areas"
-    className="
-      text-gold font-semibold hover:underline bg-black/70 
-      px-2 py-1 text-xs rounded-md shadow-md   /* 📱 Smaller on mobile */
-      sm:px-4 sm:py-2 sm:text-base sm:rounded-lg /* 💻 Normal size on sm+ */
-    "
-  >
-    Cities We Serve
-  </Link>
-</div>
-
-
-{/* PROMO TEXT – stays independent of logo/tagline */}
-<div
-  className="
-    absolute z-20 text-white px-2 max-w-md
-    top-6 left-2                /* 📱 Mobile: closer to left */
-    sm:top-1/3 sm:left-[12%] sm:translate-x-0
-    lg:top-1/3 lg:left-[12%] lg:translate-x-0
-    text-left
-  "
->
-  {/* Line 1 stays pinned */}
-  <p className="text-sm md:text-lg font-medium mb-1">
-    Tired of waiting?
-  </p>
-
- {/* Need Junk Removal */}
-<h2 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-snug">
-  Need{" "}
-  <span
-    className="text-transparent bg-clip-text font-extrabold 
-      bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400 drop-shadow-md"
-  >
-    Junk Removal
-  </span>
-</h2>
-
-{/* Houston Line */}
-<h2 className="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-bold leading-snug mt-2">
-  in{" "}
-<span
-  className="text-transparent bg-clip-text font-extrabold 
-    bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600 drop-shadow-md"
->
-
-    Houston, TX
-  </span>
-</h2>
-
-{/* Smaller, separate line for surrounding cities */}
-<p className="text-xs sm:text-base md:text-lg mt-1">
-  + surrounding cities?
-</p>
-
-{/* Check Prices further down */}
-<p className="mt-32 sm:mt-6 text-xs sm:text-base md:text-lg">
-  Check prices in seconds — we haul it all.
-</p>
-</div>
-
-
-
-{/* HERO CONTENT */}
-<div
-  className="
-    relative z-20 flex flex-col items-center
-    mt-24
-    md:absolute md:top-10 md:w-full md:mt-0
-  "
->
-  {/* Logo Title */}
-  <div className="shine-wrapper flex justify-center items-center gap-3 whitespace-nowrap">
-    <span
-      ref={junkRef}
-      className="text-[2.75rem] sm:text-6xl md:text-7xl lg:text-8xl metallic-text-3d shine-junk"
-    >
-      Junk
-    </span>
-    <img
-      src="/images/logo-icon.png"
-      alt="Logo"
-      className="h-[3.5rem] sm:h-[4.75rem] md:h-[5.5rem] w-auto object-contain"
-    />
-    <span
-      ref={buddiesRef}
-      className="text-[2.75rem] sm:text-6xl md:text-7xl lg:text-8xl metallic-text-3d shine-buddies"
-    >
-      Buddies
-    </span>
-  </div>
-
-  {/* Tagline */}
-  <p className="text-xl sm:text-2xl font-semibold tracking-wide mt-2">
-    Making Space For What Matters
-  </p>
-
-  {/* CTA BUTTONS – only show inline here on md+ */}
-  <div
-    className="
-      hidden md:flex md:flex-col md:items-center md:space-y-4 md:mt-6
-    "
-  >
-    <div className="flex flex-wrap justify-center gap-4">
-      <button
-        onClick={() => navigate('/selection')}
-        className="cta-metallic-button"
+    <div className="w-full overflow-hidden relative bg-black text-white">
+      {/* === HERO CINEMATIC === */}
+      <motion.section
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="relative w-full min-h-screen flex flex-col justify-center items-center text-center"
       >
-        Get Started
-      </button>
-      <button
-        onClick={() => navigate('/itemized')}
-        className="silver-button"
-      >
-        Instant Pricing
-      </button>
-    </div>
+        {/* 🔥 Background */}
+        <img
+          src="/images/hero-placeholder.jpg"
+          alt="Junk Buddies Hero"
+          className="absolute inset-0 w-full h-full object-cover brightness-90"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
-    <a href="tel:3465936080" className="cta-metallic-button inline-block">
-      Same-Day Pickup
-    </a>
+        {/* 🔗 Cities Button */}
+        <div className="absolute top-6 right-6 z-50">
+          <Link
+            to="/service-areas"
+            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+          >
+            Cities We Serve
+          </Link>
+        </div>
 
-    <button
-      className="ai-price-button"
-      onClick={() => document.getElementById('jb-open-button')?.click()}
-    >
-      View Price In Seconds
-    </button>
-  </div>
-</div>
+        {/* 🧭 Promo Text */}
+        <div className="absolute top-16 left-6 sm:left-[12%] text-left z-20">
+          <p className="text-sm md:text-lg font-medium mb-1">Tired of waiting?</p>
+          <h2 className="text-2xl md:text-5xl font-bold leading-snug">
+            Need{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400">
+              Junk Removal
+            </span>
+          </h2>
+          <h2 className="text-2xl md:text-5xl font-bold mt-2">
+            in{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600">
+              Houston, TX
+            </span>
+          </h2>
+          <p className="text-xs sm:text-base mt-1">+ surrounding cities?</p>
+          <p className="mt-6 text-xs sm:text-base">Check prices in seconds — we haul it all.</p>
+        </div>
 
-{/* CTA BUTTONS – stays for mobile only */}
-<div
-  className="
-    relative z-10 flex flex-col items-center space-y-4
-    mt-8
-    md:hidden  /* hide on md+ */
-  "
->
-  <div className="flex flex-wrap justify-center gap-4">
-    <button
-      onClick={() => navigate('/selection')}
-      className="cta-metallic-button"
-    >
-      Get Started
-    </button>
-    <button
-      onClick={() => navigate('/itemized')}
-      className="silver-button"
-    >
-      Instant Pricing
-    </button>
-  </div>
+        {/* 🪙 Logo & Tagline */}
+        <div className="relative z-20 flex flex-col items-center mt-24 md:mt-32">
+          <div className="flex items-center justify-center gap-3">
+            <span
+              ref={junkRef}
+              className="text-6xl md:text-7xl lg:text-8xl metallic-text-3d shine-junk"
+            >
+              Junk
+            </span>
+            <img
+              src="/images/logo-icon.png"
+              alt="Logo"
+              className="h-[4rem] md:h-[5.5rem] object-contain"
+            />
+            <span
+              ref={buddiesRef}
+              className="text-6xl md:text-7xl lg:text-8xl metallic-text-3d shine-buddies"
+            >
+              Buddies
+            </span>
+          </div>
+          <p className="text-xl sm:text-2xl font-semibold tracking-wide mt-3 text-gray-200">
+            Making Space For What Matters
+          </p>
 
-  <a href="tel:3465936080" className="cta-metallic-button inline-block">
-    Same-Day Pickup
-  </a>
+          {/* 🎬 CTA Buttons */}
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <button
+              onClick={() => navigate("/selection")}
+              className="transition transform hover:scale-105 px-6 py-3 rounded-full bg-gradient-to-r from-gold to-yellow-400 text-black font-bold shadow-lg hover:shadow-gold/40"
+            >
+              Get Started
+            </button>
+            <button
+              onClick={() => navigate("/itemized")}
+              className="transition transform hover:scale-105 px-6 py-3 rounded-full bg-gradient-to-r from-gray-300 to-gray-500 text-black font-bold shadow-lg hover:shadow-white/30"
+            >
+              Instant Pricing
+            </button>
+            <button
+              onClick={() => document.getElementById("jb-open-button")?.click()}
+              className="transition transform hover:scale-105 px-6 py-3 rounded-full bg-gradient-to-r from-sky-400 to-sky-600 text-black font-bold shadow-lg hover:shadow-sky-400/30"
+            >
+              Chat with Your Junk Buddy
+            </button>
+          </div>
+        </div>
+      </motion.section>
 
-  <button
-    className="ai-price-button"
-    onClick={() => document.getElementById('jb-open-button')?.click()}
-  >
-    View Price In Seconds
-  </button>
-</div>
-</div>
+      {/* === SERVICE GENRES (Disney+ Style) === */}
+      <section className="relative z-30 -mt-12 md:-mt-20 flex justify-center px-4 md:px-8">
+        <div className="flex flex-wrap justify-center gap-4 md:gap-8 bg-black/70 backdrop-blur-md py-6 px-4 rounded-2xl border border-gold/30 shadow-inner">
+          {genres.map((genre) => (
+            <motion.div
+              key={genre.title}
+              whileHover={{ scale: 1.08 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              onClick={() => navigate(genre.link)}
+              className="cursor-pointer bg-zinc-900/70 border border-gold/30 hover:border-gold rounded-xl w-32 h-32 md:w-44 md:h-44 flex flex-col items-center justify-center text-center shadow-lg"
+            >
+              <img
+                src={genre.image}
+                alt={genre.title}
+                className="w-12 h-12 md:w-16 md:h-16 object-contain mb-2"
+              />
+              <h3 className="text-gold font-semibold text-sm md:text-base">
+                {genre.title}
+              </h3>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+  
+
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
         <p className="text-xl mb-4">
