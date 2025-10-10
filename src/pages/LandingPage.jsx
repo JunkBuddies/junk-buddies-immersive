@@ -31,7 +31,8 @@ function LandingPage() {
 
           {/* === LEFT PLACEHOLDER === */}
           <div
-            className="absolute left-[-30vw] md:left-[-25vw] lg:left-[-22vw]
+            className="absolute
+                       left-[calc(50%-75vw-2px)]
                        w-[60vw] sm:w-[55vw] md:w-[50vw] lg:w-[48vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
@@ -66,7 +67,8 @@ function LandingPage() {
 
           {/* === RIGHT PLACEHOLDER === */}
           <div
-            className="absolute right-[-30vw] md:right-[-25vw] lg:right-[-22vw]
+            className="absolute
+                       right-[calc(50%-75vw-2px)]
                        w-[60vw] sm:w-[55vw] md:w-[50vw] lg:w-[48vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
@@ -122,7 +124,6 @@ function LandingPage() {
           </div>
         </div>
       </section>
-  
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
