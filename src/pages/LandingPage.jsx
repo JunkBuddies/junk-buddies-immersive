@@ -40,8 +40,8 @@ function LandingPage() {
             ‹
           </button>
 
-          {/* === HERO RECTANGLE (wider) === */}
-          <div className="relative w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] aspect-[16/7] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
+          {/* === HERO RECTANGLE (wide + tall) === */}
+          <div className="relative w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
             {slides.map((slide, idx) => (
               <motion.div
                 key={slide.id}
@@ -136,6 +136,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
+ 
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
