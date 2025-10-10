@@ -25,7 +25,7 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === SERVICE DATA ===
+  // === DATA ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
@@ -62,11 +62,22 @@ function LandingPage() {
     { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
   ];
 
-  // === Scroll ref for Other Services ===
+  // === Refs for scrolling ===
   const otherRef = useRef(null);
+  const cityRef = useRef(null);
+  const blogRef = useRef(null);
+  const faqRef = useRef(null);
   const scrollAmount = 300;
-  const scrollRight = () => otherRef.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
-  const scrollLeft = () => otherRef.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" });
+
+  const makeScrollFns = (ref) => ({
+    scrollLeft: () => ref.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" }),
+    scrollRight: () => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" }),
+  });
+
+  const otherScroll = makeScrollFns(otherRef);
+  const cityScroll = makeScrollFns(cityRef);
+  const blogScroll = makeScrollFns(blogRef);
+  const faqScroll = makeScrollFns(faqRef);
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
@@ -128,79 +139,60 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === OTHER SERVICES (scrollable with arrows) === */}
-      <section className="relative z-30 px-4 md:px-8 pb-16">
-        <div className="relative flex items-center">
-          {/* Left Scroll Button */}
-          <button onClick={scrollLeft}
-            className="z-40 absolute left-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                       font-bold rounded-r-2xl px-2 py-1 select-none">‹</button>
+      {/* === UNIFIED ROW FUNCTION === */}
+      {[
+        { label: "Other Services", data: otherServices, ref: otherRef, scroll: otherScroll },
+        { label: "Cities", data: cities, ref: cityRef, scroll: cityScroll },
+        { label: "Blogs & Articles", data: blogs, ref: blogRef, scroll: blogScroll },
+        { label: "FAQ", data: faqs, ref: faqRef, scroll: faqScroll, isFaq: true },
+      ].map(({ label, data, ref, scroll, isFaq }, idx) => (
+        <section key={idx} className="relative z-30 px-4 md:px-8 pb-16">
+          <p className="text-gold text-xs uppercase tracking-wide mb-2 pl-2">{label}</p>
 
-          {/* Scrollable Row */}
-          <div ref={otherRef}
-            className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]">
-            {otherServices.map((s) => (
-              <div key={s.title} onClick={() => navigate(s.link)}
-                className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform">
-                <img src={s.image} alt={s.title} className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2" />
-                <h3 className="text-gold font-semibold text-sm md:text-base">{s.title}</h3>
-              </div>
-            ))}
+          <div className="relative flex items-center">
+            {/* Left Arrow */}
+            <button onClick={scroll.scrollLeft}
+              className="z-40 absolute left-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+                         font-bold rounded-r-2xl px-2 py-1 select-none">‹</button>
+
+            {/* Scrollable Row */}
+            <div ref={ref}
+              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]">
+              {data.map((item, i) => (
+                <div
+                  key={i}
+                  onClick={() => !isFaq && navigate(item.link)}
+                  className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
+                             bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                             flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform px-2"
+                >
+                  {isFaq ? (
+                    <>
+                      <h4 className="text-gold font-semibold text-sm md:text-base mb-2 text-center">{item.q}</h4>
+                      <p className="text-gray-300 text-xs md:text-sm leading-snug">{item.a}</p>
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2 rounded-md"
+                      />
+                      <h3 className="text-gold font-semibold text-sm md:text-base">{item.title}</h3>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Right Arrow */}
+            <button onClick={scroll.scrollRight}
+              className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+                         font-bold rounded-l-2xl px-2 py-1 select-none">&gt;</button>
           </div>
+        </section>
 
-          {/* Right Scroll Button */}
-          <button onClick={scrollRight}
-            className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                       font-bold rounded-l-2xl px-2 py-1 select-none">&gt;</button>
-        </div>
-      </section>
 
-      {/* === CITIES ROW === */}
-      <section className="relative z-30 px-4 md:px-8 pb-12">
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide">
-          {cities.map((c) => (
-            <div key={c.title} onClick={() => navigate(c.link)}
-              className="cursor-pointer flex-shrink-0 w-[220px] md:w-[280px] h-[130px] md:h-[170px]
-                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                         flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
-              <img src={c.image} alt={c.title} className="w-16 h-16 md:w-20 md:h-20 object-cover mb-2 rounded-md" />
-              <h3 className="text-gold font-semibold text-sm md:text-base">{c.title}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* === BLOGS & ARTICLES === */}
-      <section className="relative z-30 px-4 md:px-8 pb-12">
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide">
-          {blogs.map((b) => (
-            <div key={b.title} onClick={() => navigate(b.link)}
-              className="cursor-pointer flex-shrink-0 w-[260px] md:w-[340px] h-[150px] md:h-[190px]
-                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                         flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform">
-              <img src={b.image} alt={b.title} className="w-full h-[100px] object-cover rounded-t-lg" />
-              <h3 className="text-gold font-semibold text-sm md:text-base px-2 pt-2">{b.title}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* === FAQ ROW === */}
-      <section className="relative z-30 px-4 md:px-8 pb-20">
-        <div className="flex flex-col md:flex-row flex-wrap justify-center gap-4 md:gap-6">
-          {faqs.map((f, i) => (
-            <div key={i}
-              className="w-full md:w-[30%] bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                         p-4 shadow-md transition-transform hover:scale-[1.02]">
-              <h4 className="text-gold font-semibold text-base mb-2">{f.q}</h4>
-              <p className="text-gray-300 text-sm leading-snug">{f.a}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
