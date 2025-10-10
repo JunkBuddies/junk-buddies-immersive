@@ -14,7 +14,7 @@ function LandingPage() {
   const [current, setCurrent] = useState(0);
   const timeoutRef = useRef(null);
 
-  // === Auto-scroll every 6s ===
+  // === Auto-scroll ===
   useEffect(() => {
     const interval = setInterval(() => goNext(), 6000);
     return () => clearInterval(interval);
@@ -40,15 +40,15 @@ function LandingPage() {
           <div
             className="flex transition-transform duration-700 ease-in-out"
             style={{
-              transform: `translateX(-${current * 87}vw)`,
+              transform: `translateX(-${current * 82}vw)`,
               gap: "3vw",
-              width: `${slides.length * 87}vw`,
+              width: `${slides.length * 82}vw`,
             }}
           >
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="flex-shrink-0 w-[85vw] sm:w-[85vw] md:w-[82vw] lg:w-[80vw]
+                className="flex-shrink-0 w-[80vw] sm:w-[80vw] md:w-[78vw] lg:w-[75vw]
                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
                            border border-gold/40 shadow-2xl bg-black/40 relative"
               >
@@ -133,7 +133,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
-
+ 
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
