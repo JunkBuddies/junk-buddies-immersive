@@ -40,33 +40,60 @@ function LandingPage() {
             ‹
           </button>
 
-          {/* === HERO RECTANGLE (wide + half height) === */}
-          <div className="relative w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
-            {slides.map((slide, idx) => (
-              <motion.div
-                key={slide.id}
-                className="absolute top-0 left-0 w-full h-full"
-                initial={{ opacity: 0, x: 100 }}
-                animate={{
-                  opacity: idx === current ? 1 : 0,
-                  x: idx === current ? 0 : idx < current ? -50 : 50,
-                  zIndex: idx === current ? 30 : 0,
-                }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.alt}
-                  className="w-full h-full object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <div className="absolute bottom-4 left-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                    {slide.alt}
-                  </h2>
-                </div>
-              </motion.div>
-            ))}
+          {/* === HERO TRACK (peek view) === */}
+          <div className="relative flex items-center justify-center gap-4 w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] overflow-visible">
+            {slides.map((slide, idx) => {
+              // distance from current index (−1 = left neighbor, +1 = right neighbor)
+              const offset = (idx - current + slides.length) % slides.length;
+              let translateX = 0;
+              let scale = 1;
+              let opacity = 1;
+              let zIndex = 1;
+
+              if (offset === 1) {
+                translateX = 130; // right side
+                scale = 0.9;
+                opacity = 0.6;
+                zIndex = 10;
+              } else if (offset === slides.length - 1) {
+                translateX = -130; // left side
+                scale = 0.9;
+                opacity = 0.6;
+                zIndex = 10;
+              } else if (offset !== 0) {
+                opacity = 0;
+                scale = 0.8;
+                zIndex = 0;
+              } else {
+                zIndex = 20;
+              }
+
+              return (
+                <motion.div
+                  key={slide.id}
+                  className="absolute w-full h-full rounded-2xl border border-gold/40 shadow-2xl bg-black/40 overflow-hidden"
+                  animate={{
+                    opacity,
+                    scale,
+                    x: translateX,
+                    zIndex,
+                  }}
+                  transition={{ duration: 0.8, ease: "easeInOut" }}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.alt}
+                    className="w-full h-full object-cover object-center"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                  <div className="absolute bottom-4 left-6">
+                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                      {slide.alt}
+                    </h2>
+                  </div>
+                </motion.div>
+              );
+            })}
 
             {/* Dots */}
             <div className="absolute bottom-2 right-4 flex gap-2 z-50">
@@ -136,6 +163,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
+   
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
