@@ -7,141 +7,94 @@ function LandingPage() {
 
   // === HERO SLIDES ===
   const slides = [
-    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" }, // skyline first
+    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" }, // start with skyline
     { id: 0, image: "/images/donation-drop.png", alt: "Donation Drop" },
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  // Duplicate for infinite loop
-  const heroSlides = [...slides, ...slides, ...slides];
-  const centerOffset = slides.length;
-  const [current, setCurrent] = useState(centerOffset);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const sliderRef = useRef(null);
+  const [current, setCurrent] = useState(0);
+  const timeoutRef = useRef(null);
 
   // === Auto-scroll ===
   useEffect(() => {
-    const interval = setInterval(() => goNext(), 6000);
-    return () => clearInterval(interval);
-  });
+    const next = () => setCurrent((prev) => (prev + 1) % slides.length);
+    timeoutRef.current = setInterval(next, 6000);
+    return () => clearInterval(timeoutRef.current);
+  }, [slides.length]);
 
-  const goNext = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrent((prev) => prev + 1);
-  };
-  const goPrev = () => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
-    setCurrent((prev) => prev - 1);
-  };
-
-  // === Snap-reset when crossing clone boundaries ===
-  useEffect(() => {
-    const transitionEnd = () => {
-      setIsTransitioning(false);
-      if (current >= heroSlides.length - slides.length) {
-        setCurrent(centerOffset);
-      } else if (current < slides.length) {
-        setCurrent(centerOffset + (current % slides.length));
-      }
-    };
-    const slider = sliderRef.current;
-    slider?.addEventListener("transitionend", transitionEnd);
-    return () => slider?.removeEventListener("transitionend", transitionEnd);
-  }, [current, heroSlides.length, slides.length]);
-
-  // === Position math (off-screen to right but still visible on left) ===
-  const slideWidth = 80; // slightly wider for right overflow
-  const gap = 2;
-  const translateX = -(current * (slideWidth + gap) - (100 - slideWidth) / 2 + 10);
-
-  // === MAIN SERVICES ===
-  const mainServices = [
-    { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-    { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-    { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-    { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
-    { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
-  ];
+  const goNext = () => setCurrent((prev) => (prev + 1) % slides.length);
+  const goPrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-
-      {/* === HERO CAROUSEL === */}
-      <section className="relative w-full flex justify-center py-10 overflow-hidden">
-        <div className="relative w-full max-w-7xl overflow-hidden">
-          {/* Arrows */}
-          <button
-            onClick={goPrev}
-            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-40 
-                     bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
-          >
-            ‹
-          </button>
-          <button
-            onClick={goNext}
-            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-40 
-                     bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
-          >
-            ›
-          </button>
-
-          {/* Track */}
-          <div
-            ref={sliderRef}
-            className={`flex items-center transition-transform ${
-              isTransitioning ? "duration-700 ease-in-out" : "duration-0"
-            }`}
-            style={{
-              width: `${heroSlides.length * (slideWidth + gap)}vw`,
-              transform: `translateX(${translateX}vw)`,
-              gap: `${gap}vw`,
-            }}
-          >
-            {heroSlides.map((slide, idx) => (
-              <motion.div
-                key={`${slide.id}-${idx}`}
-                className={`relative flex-shrink-0 w-[80vw] sm:w-[75vw] md:w-[70vw] lg:w-[65vw]
-                            h-[260px] sm:h-[340px] md:h-[420px] rounded-2xl overflow-hidden 
-                            border border-gold/40 shadow-xl ${
-                              idx === current ? "scale-100 opacity-100 z-30" : "scale-95 opacity-70 z-10"
-                            }`}
-              >
-                <img src={slide.image} alt={slide.alt} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                <div className="absolute bottom-5 left-6">
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                    {slide.alt}
-                  </h3>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Dots */}
-          <div className="absolute bottom-4 right-6 flex gap-2 z-50">
-            {slides.map((_, idx) => (
-              <div
-                key={idx}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  idx === ((current - slides.length) % slides.length + slides.length) % slides.length
-                    ? "bg-gold scale-110"
-                    : "bg-gray-500"
-                }`}
-              />
-            ))}
-          </div>
-
-          {/* Cities button */}
-          <div className="absolute top-0 right-6 z-50">
-            <Link
-              to="/service-areas"
-              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+      {/* === HERO SECTION === */}
+      <section className="relative w-full h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] overflow-hidden">
+        {/* Slides */}
+        <div className="relative w-full h-full">
+          {slides.map((slide, idx) => (
+            <motion.div
+              key={slide.id}
+              className="absolute top-0 left-0 w-full h-full"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{
+                opacity: idx === current ? 1 : 0,
+                x: idx === current ? 0 : idx < current ? -100 : 100,
+              }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
             >
-              Cities We Serve
-            </Link>
-          </div>
+              <img
+                src={slide.image}
+                alt={slide.alt}
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+
+              {/* Caption (bottom-left corner) */}
+              <div className="absolute bottom-6 left-8">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gold drop-shadow-lg">
+                  {slide.alt}
+                </h2>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Navigation arrows */}
+        <button
+          onClick={goPrev}
+          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 
+                     bg-black/60 hover:bg-black/80 text-gold px-3 py-2 rounded-full text-3xl"
+        >
+          ‹
+        </button>
+        <button
+          onClick={goNext}
+          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 
+                     bg-black/60 hover:bg-black/80 text-gold px-3 py-2 rounded-full text-3xl"
+        >
+          ›
+        </button>
+
+        {/* Dots indicator */}
+        <div className="absolute bottom-4 right-6 flex gap-2 z-50">
+          {slides.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                idx === current ? "bg-gold scale-110" : "bg-gray-500"
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Cities button */}
+        <div className="absolute top-0 right-6 z-50">
+          <Link
+            to="/service-areas"
+            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+          >
+            Cities We Serve
+          </Link>
         </div>
       </section>
 
@@ -152,7 +105,13 @@ function LandingPage() {
         </h2>
         <div className="flex justify-center">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {mainServices.map((service) => (
+            {[
+              { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
+              { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
+              { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
+              { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
+              { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
+            ].map((service) => (
               <motion.div
                 key={service.title}
                 whileHover={{ scale: 1.05 }}
@@ -173,8 +132,6 @@ function LandingPage() {
           </div>
         </div>
       </section>
-
-
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
