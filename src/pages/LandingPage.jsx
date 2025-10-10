@@ -62,69 +62,109 @@ function LandingPage() {
     { title: "Do you recycle?", image: "/images/icons/recycle.png", link: "/faq#do-you-recycle" },
   ];
 
-  // === Refs for Scroll Rows ===
-  const otherRef = useRef(null);
-  const citiesRef = useRef(null);
-  const blogsRef = useRef(null);
-  const faqRef = useRef(null);
-
-  const scrollAmount = 300;
-  const makeScroll = (ref, dir) => {
-    ref.current?.scrollBy({ left: dir * scrollAmount, behavior: "smooth" });
+  // === REFS FOR SCROLLABLE ROWS ===
+  const scrollRefs = {
+    otherRef: useRef(null),
+    citiesRef: useRef(null),
+    blogsRef: useRef(null),
+    faqRef: useRef(null),
   };
 
+  const scrollAmount = 300;
+
+  // Track scroll states
+  const [scrollState, setScrollState] = useState({
+    otherRef: false,
+    citiesRef: false,
+    blogsRef: false,
+    faqRef: false,
+  });
+
+  const updateScrollState = (key, ref) => {
+    if (!ref.current) return;
+    const { scrollLeft } = ref.current;
+    setScrollState((prev) => ({
+      ...prev,
+      [key]: scrollLeft > 5, // Show left arrow once you scroll a little
+    }));
+  };
+
+  const makeScroll = (ref, key, dir) => {
+    if (!ref.current) return;
+    ref.current.scrollBy({ left: dir * scrollAmount, behavior: "smooth" });
+    setTimeout(() => updateScrollState(key, ref), 500);
+  };
+
+  // === HERO CAROUSEL ===
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO CAROUSEL === */}
-      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
-        <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
-          <div className="absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                          overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
-            <img src={slides[leftIndex].image} alt={slides[leftIndex].alt}
-              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
+      {/* HERO SECTION */}
+      <section className="relative flex justify-center items-center mt-10 mb-8 overflow-visible">
+        <div className="relative flex justify-center items-center w-full max-w-[1500px] mx-auto">
+
+          {/* LEFT IMAGE (cropped) */}
+          <div className="absolute left-[-20vw] w-[28vw] h-[280px] overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
+            <img
+              src={slides[leftIndex].image}
+              alt={slides[leftIndex].alt}
+              className="w-[120vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+            />
           </div>
-          {/* CENTER */}
-          <div className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                          h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                          overflow-hidden border border-gold/40 shadow-2xl rounded-2xl">
-            <img src={slides[centerIndex].image} alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]" />
+
+          {/* CENTER IMAGE */}
+          <div className="relative z-20 w-[65vw] h-[280px] overflow-hidden border border-gold/40 shadow-2xl rounded-2xl">
+            <img
+              src={slides[centerIndex].image}
+              alt={slides[centerIndex].alt}
+              className="w-full h-full object-cover transition-all duration-[1500ms]"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                {slides[centerIndex].alt}
+              </h2>
             </div>
           </div>
-          {/* RIGHT CROPPED */}
-          <div className="absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                          overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
-            <img src={slides[rightIndex].image} alt={slides[rightIndex].alt}
-              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]" />
+
+          {/* RIGHT IMAGE (cropped) */}
+          <div className="absolute right-[-20vw] w-[28vw] h-[280px] overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
+            <img
+              src={slides[rightIndex].image}
+              alt={slides[rightIndex].alt}
+              className="w-[120vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+            />
           </div>
 
           {/* ARROWS */}
-          <button onClick={goPrev}
-            className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">‹</button>
-          <button onClick={goNext}
-            className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">›</button>
+          <button
+            onClick={goPrev}
+            className="absolute left-[13%] top-1/2 -translate-y-1/2 z-40 text-gold text-5xl font-bold
+                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 hover:scale-110 transition-transform"
+          >
+            ‹
+          </button>
+          <button
+            onClick={goNext}
+            className="absolute right-[13%] top-1/2 -translate-y-1/2 z-40 text-gold text-5xl font-bold
+                       bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 hover:scale-110 transition-transform"
+          >
+            ›
+          </button>
         </div>
       </section>
 
-      {/* === MAIN SERVICES === */}
+      {/* MAIN SERVICES */}
       <section className="relative z-30 px-4 md:px-8 pb-10">
         <div className="flex justify-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+          <div className="flex overflow-x-auto gap-5 md:gap-7 pb-6 scrollbar-hide">
             {mainServices.map((s) => (
-              <div key={s.title} onClick={() => navigate(s.link)}
+              <div
+                key={s.title}
+                onClick={() => navigate(s.link)}
                 className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
                            bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
+                           flex flex-col items-center justify-center text-center shadow-md hover:scale-105 transition-transform"
+              >
                 <img src={s.image} alt={s.title} className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2" />
                 <h3 className="text-gold font-semibold text-xs md:text-sm">{s.title}</h3>
               </div>
@@ -133,59 +173,69 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === SCROLL ROW TEMPLATE === */}
+      {/* LARGE SCROLL ROWS */}
       {[
-        { label: "Other Services", data: otherServices, ref: otherRef },
-        { label: "Cities", data: cities, ref: citiesRef },
-        { label: "Blogs & Articles", data: blogs, ref: blogsRef },
-        { label: "FAQ", data: faqs, ref: faqRef },
-      ].map((section) => (
-        <section key={section.label} className="relative z-30 px-4 md:px-8 pb-16">
-          <p className="text-gold text-xs uppercase tracking-wider mb-2 ml-4">{section.label}</p>
-          <div className="relative flex items-center">
-            {/* Left Arrow */}
-            <button
-              onClick={() => makeScroll(section.ref, -1)}
-              className="z-40 absolute left-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                         font-bold rounded-r-2xl px-2 py-1 select-none"
-            >
-              ‹
-            </button>
-
-            {/* Scrollable Row */}
+        { label: "Other Services", data: otherServices, ref: "otherRef" },
+        { label: "Cities", data: cities, ref: "citiesRef" },
+        { label: "Blogs & Articles", data: blogs, ref: "blogsRef" },
+        { label: "FAQ", data: faqs, ref: "faqRef" },
+      ].map((section) => {
+        const refObj = scrollRefs[section.ref];
+        return (
+          <section key={section.label} className="relative z-30 px-4 md:px-8 pb-16">
+            <p className="text-gold text-xs uppercase tracking-wider mb-2 ml-4">{section.label}</p>
             <div
-              ref={section.ref}
-              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]"
+              className="relative flex items-center"
+              onScroll={() => updateScrollState(section.ref, refObj)}
             >
-              {section.data.map((item) => (
-                <div
-                  key={item.title}
-                  onClick={() => navigate(item.link)}
-                  className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                             bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                             flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform"
+              {/* Left Arrow (only appears after scroll) */}
+              {scrollState[section.ref] && (
+                <button
+                  onClick={() => makeScroll(refObj, section.ref, -1)}
+                  className="z-40 absolute left-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+                             font-bold rounded-r-2xl px-2 py-1 select-none"
                 >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2"
-                  />
-                  <h3 className="text-gold font-semibold text-sm md:text-base">{item.title}</h3>
-                </div>
-              ))}
-            </div>
+                  ‹
+                </button>
+              )}
 
-            {/* Right Arrow */}
-            <button
-              onClick={() => makeScroll(section.ref, 1)}
-              className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                         font-bold rounded-l-2xl px-2 py-1 select-none"
-            >
-              ›
-            </button>
-          </div>
-        </section>
-   ))}
+              {/* Scroll Row */}
+              <div
+                ref={refObj}
+                className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]"
+                onScroll={() => updateScrollState(section.ref, refObj)}
+              >
+                {section.data.map((item) => (
+                  <div
+                    key={item.title}
+                    onClick={() => navigate(item.link)}
+                    className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
+                               bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                               flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2"
+                    />
+                    <h3 className="text-gold font-semibold text-sm md:text-base">{item.title}</h3>
+                  </div>
+                ))}
+              </div>
+
+              {/* Right Arrow (always visible unless fully scrolled right) */}
+              <button
+                onClick={() => makeScroll(refObj, section.ref, 1)}
+                className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
+                           font-bold rounded-l-2xl px-2 py-1 select-none"
+              >
+                ›
+              </button>
+            </div>
+          </section>
+        );
+      })}
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
