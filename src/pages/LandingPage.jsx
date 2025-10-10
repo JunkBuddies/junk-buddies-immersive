@@ -12,112 +12,126 @@ function LandingPage() {
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  const [current, setCurrent] = useState(0);
-  const timeoutRef = useRef(null);
+  // Duplicate slides for smooth infinite loop
+  const heroSlides = [...slides, ...slides, ...slides];
+  const centerOffset = slides.length;
+  const [current, setCurrent] = useState(centerOffset);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const sliderRef = useRef(null);
 
   // === Auto-scroll ===
   useEffect(() => {
-    const next = () => setCurrent((prev) => (prev + 1) % slides.length);
-    timeoutRef.current = setInterval(next, 6000);
-    return () => clearInterval(timeoutRef.current);
-  }, [slides.length]);
+    const interval = setInterval(() => goNext(), 6000);
+    return () => clearInterval(interval);
+  });
 
-  const goNext = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const goPrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  // === Navigation ===
+  const goNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrent((prev) => prev + 1);
+  };
+  const goPrev = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrent((prev) => prev - 1);
+  };
+
+  // === Loop Reset ===
+  useEffect(() => {
+    const transitionEnd = () => {
+      setIsTransitioning(false);
+      if (current >= heroSlides.length - slides.length) {
+        setCurrent(centerOffset);
+      } else if (current < slides.length) {
+        setCurrent(centerOffset + (current % slides.length));
+      }
+    };
+    const slider = sliderRef.current;
+    slider?.addEventListener("transitionend", transitionEnd);
+    return () => slider?.removeEventListener("transitionend", transitionEnd);
+  }, [current, heroSlides.length, slides.length]);
+
+  // === Slide layout math ===
+  const slideWidth = 80; // vw for visible portion
+  const gap = 2; // vw gap between slides
+  const translateX = -(current * (slideWidth + gap) - (100 - slideWidth) / 2);
+
+  // === MAIN SERVICES ===
+  const mainServices = [
+    { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
+    { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
+    { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
+    { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
+    { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
+  ];
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO SECTION === */}
-      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6">
-        <div className="relative flex items-center justify-center w-full max-w-[1800px] px-2">
-
-          {/* === Gold Arrows === */}
+      {/* === HERO CAROUSEL === */}
+      <section className="relative w-full flex justify-center py-10 overflow-hidden mt-8 sm:mt-12 mb-6">
+        <div className="relative w-full max-w-7xl overflow-hidden">
+          {/* Arrows */}
           <button
             onClick={goPrev}
-            className="absolute left-0 md:-left-10 lg:-left-14 text-gold z-40 
-                       text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
+            className="absolute left-2 md:-left-6 top-1/2 -translate-y-1/2 z-40 
+                       bg-transparent text-gold px-3 py-3 text-4xl font-bold hover:scale-110 transition-transform duration-200"
           >
             ‹
           </button>
-
-          {/* === HERO TRACK (peek view) === */}
-          <div className="relative flex items-center justify-center gap-4 w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] overflow-visible">
-            {slides.map((slide, idx) => {
-              // distance from current index (−1 = left neighbor, +1 = right neighbor)
-              const offset = (idx - current + slides.length) % slides.length;
-              let translateX = 0;
-              let scale = 1;
-              let opacity = 1;
-              let zIndex = 1;
-
-              if (offset === 1) {
-                translateX = 130; // right side
-                scale = 0.9;
-                opacity = 0.6;
-                zIndex = 10;
-              } else if (offset === slides.length - 1) {
-                translateX = -130; // left side
-                scale = 0.9;
-                opacity = 0.6;
-                zIndex = 10;
-              } else if (offset !== 0) {
-                opacity = 0;
-                scale = 0.8;
-                zIndex = 0;
-              } else {
-                zIndex = 20;
-              }
-
-              return (
-                <motion.div
-                  key={slide.id}
-                  className="absolute w-full h-full rounded-2xl border border-gold/40 shadow-2xl bg-black/40 overflow-hidden"
-                  animate={{
-                    opacity,
-                    scale,
-                    x: translateX,
-                    zIndex,
-                  }}
-                  transition={{ duration: 0.8, ease: "easeInOut" }}
-                >
-                  <img
-                    src={slide.image}
-                    alt={slide.alt}
-                    className="w-full h-full object-cover object-center"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                  <div className="absolute bottom-4 left-6">
-                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                      {slide.alt}
-                    </h2>
-                  </div>
-                </motion.div>
-              );
-            })}
-
-            {/* Dots */}
-            <div className="absolute bottom-2 right-4 flex gap-2 z-50">
-              {slides.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    idx === current ? "bg-gold scale-110" : "bg-gray-500"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* === Right Arrow === */}
           <button
             onClick={goNext}
-            className="absolute right-0 md:-right-10 lg:-right-14 text-gold z-40 
-                       text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
+            className="absolute right-2 md:-right-6 top-1/2 -translate-y-1/2 z-40 
+                       bg-transparent text-gold px-3 py-3 text-4xl font-bold hover:scale-110 transition-transform duration-200"
           >
             ›
           </button>
 
-          {/* === Cities Button === */}
+          {/* Track */}
+          <div
+            ref={sliderRef}
+            className={`flex items-center transition-transform ${
+              isTransitioning ? "duration-700 ease-in-out" : "duration-0"
+            }`}
+            style={{
+              width: `${heroSlides.length * (slideWidth + gap)}vw`,
+              transform: `translateX(${translateX}vw)`,
+              gap: `${gap}vw`,
+            }}
+          >
+            {heroSlides.map((slide, idx) => (
+              <motion.div
+                key={`${slide.id}-${idx}`}
+                className={`relative flex-shrink-0 w-[80vw] sm:w-[75vw] md:w-[70vw] lg:w-[65vw]
+                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
+                            border border-gold/40 shadow-xl`}
+              >
+                <img src={slide.image} alt={slide.alt} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-5 left-6">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                    {slide.alt}
+                  </h3>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Dots */}
+          <div className="absolute bottom-4 right-6 flex gap-2 z-50">
+            {slides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  idx === ((current - slides.length) % slides.length + slides.length) % slides.length
+                    ? "bg-gold scale-110"
+                    : "bg-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Cities button */}
           <div className="absolute top-0 right-6 z-50">
             <Link
               to="/service-areas"
@@ -129,20 +143,14 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === MAIN SERVICES === */}
+      {/* === MAIN SERVICES ROW === */}
       <section className="relative z-30 mt-4 px-4 md:px-8">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
           Main Services
         </h2>
         <div className="flex justify-center">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {[
-              { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-              { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-              { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-              { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
-              { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
-            ].map((service) => (
+            {mainServices.map((service) => (
               <motion.div
                 key={service.title}
                 whileHover={{ scale: 1.05 }}
@@ -163,7 +171,6 @@ function LandingPage() {
           </div>
         </div>
       </section>
-   
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
