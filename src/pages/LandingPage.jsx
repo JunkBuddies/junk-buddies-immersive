@@ -7,7 +7,7 @@ function LandingPage() {
 
   // === HERO SLIDES ===
   const slides = [
-    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" }, // start with skyline
+    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
     { id: 0, image: "/images/donation-drop.png", alt: "Donation Drop" },
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
@@ -27,78 +27,82 @@ function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO SECTION === */}
-      <section className="relative w-full h-[400px] sm:h-[500px] md:h-[550px] lg:h-[600px] overflow-hidden">
-        {/* Slides */}
-        <div className="relative w-full h-full">
-          {slides.map((slide, idx) => (
-            <motion.div
-              key={slide.id}
-              className="absolute top-0 left-0 w-full h-full"
-              initial={{ opacity: 0, x: 100 }}
-              animate={{
-                opacity: idx === current ? 1 : 0,
-                x: idx === current ? 0 : idx < current ? -100 : 100,
-              }}
-              transition={{ duration: 0.8, ease: "easeInOut" }}
-            >
-              <img
-                src={slide.image}
-                alt={slide.alt}
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+      {/* === HERO SECTION (slightly lowered from navbar) === */}
+      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6">
+        <div className="relative flex items-center justify-center w-full max-w-7xl">
 
-              {/* Caption (bottom-left corner) */}
-              <div className="absolute bottom-6 left-8">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gold drop-shadow-lg">
-                  {slide.alt}
-                </h2>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Navigation arrows */}
-        <button
-          onClick={goPrev}
-          className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-50 
-                     bg-black/60 hover:bg-black/80 text-gold px-3 py-2 rounded-full text-3xl"
-        >
-          ‹
-        </button>
-        <button
-          onClick={goNext}
-          className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-50 
-                     bg-black/60 hover:bg-black/80 text-gold px-3 py-2 rounded-full text-3xl"
-        >
-          ›
-        </button>
-
-        {/* Dots indicator */}
-        <div className="absolute bottom-4 right-6 flex gap-2 z-50">
-          {slides.map((_, idx) => (
-            <div
-              key={idx}
-              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                idx === current ? "bg-gold scale-110" : "bg-gray-500"
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Cities button */}
-        <div className="absolute top-0 right-6 z-50">
-          <Link
-            to="/service-areas"
-            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+          {/* === Gold Arrows Outside the Image === */}
+          <button
+            onClick={goPrev}
+            className="absolute left-0 md:-left-12 lg:-left-16 text-gold z-40 
+                       text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
           >
-            Cities We Serve
-          </Link>
+            ‹
+          </button>
+
+          {/* === SLIDE CONTAINER (isolated rectangle) === */}
+          <div className="relative w-[90%] sm:w-[80%] md:w-[70%] lg:w-[65%] aspect-[16/7] overflow-hidden rounded-2xl border border-gold/40 shadow-2xl bg-black/40">
+            {slides.map((slide, idx) => (
+              <motion.div
+                key={slide.id}
+                className="absolute top-0 left-0 w-full h-full"
+                initial={{ opacity: 0, x: 100 }}
+                animate={{
+                  opacity: idx === current ? 1 : 0,
+                  x: idx === current ? 0 : idx < current ? -50 : 50,
+                  zIndex: idx === current ? 30 : 0,
+                }}
+                transition={{ duration: 0.8, ease: "easeInOut" }}
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.alt}
+                  className="w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-6 left-8">
+                  <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gold drop-shadow-lg">
+                    {slide.alt}
+                  </h2>
+                </div>
+              </motion.div>
+            ))}
+
+            {/* Dots */}
+            <div className="absolute bottom-3 right-5 flex gap-2 z-50">
+              {slides.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                    idx === current ? "bg-gold scale-110" : "bg-gray-500"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* === Gold Arrow on Right === */}
+          <button
+            onClick={goNext}
+            className="absolute right-0 md:-right-12 lg:-right-16 text-gold z-40 
+                       text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
+          >
+            ›
+          </button>
+
+          {/* === Cities Button === */}
+          <div className="absolute top-0 right-6 z-50">
+            <Link
+              to="/service-areas"
+              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+            >
+              Cities We Serve
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* === MAIN SERVICES === */}
+      {/* === MAIN SERVICES SECTION === */}
       <section className="relative z-30 mt-4 px-4 md:px-8">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
           Main Services
@@ -132,6 +136,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
