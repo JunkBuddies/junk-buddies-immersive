@@ -1,83 +1,102 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 
 function LandingPage() {
-  const navigate = useNavigate();
-
-  const baseSlides = [
+  const slides = [
     { id: 0, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
     { id: 1, image: "/images/donation-drop.png", alt: "Donation Drop" },
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  const [current, setCurrent] = useState(0);
-  const sliderRef = useRef(null);
-  const timeoutRef = useRef(null);
+  const [center, setCenter] = useState(0);
 
-  // Auto-scroll every 6s
+  // Calculate left and right indices
+  const left = (center - 1 + slides.length) % slides.length;
+  const right = (center + 1) % slides.length;
+
+  // Auto-rotate every 6 seconds
   useEffect(() => {
-    const interval = setInterval(() => goNext(), 6000);
+    const interval = setInterval(() => {
+      setCenter((prev) => (prev + 1) % slides.length);
+    }, 6000);
     return () => clearInterval(interval);
-  });
+  }, [slides.length]);
 
-  const goNext = () => setCurrent((prev) => (prev + 1) % baseSlides.length);
-  const goPrev = () => setCurrent((prev) => (prev - 1 + baseSlides.length) % baseSlides.length);
-
-  // Dimensions
-  const slideWidth = 75; // each slide narrower for peek space
-  const gap = 3;
-  const totalWidth = slideWidth + gap;
-  const translateX = -(current * totalWidth - (100 - slideWidth) / 2);
+  const goNext = () => setCenter((prev) => (prev + 1) % slides.length);
+  const goPrev = () => setCenter((prev) => (prev - 1 + slides.length) % slides.length);
 
   return (
-    <div className="w-full bg-black text-white relative overflow-x-hidden">
-      {/* === HERO CAROUSEL === */}
-      <section
-        className="relative w-screen flex justify-center items-center mt-8 sm:mt-12 mb-6 
-                   overflow-visible -mx-[5vw]" // pushes beyond nav width for illusion
-      >
-        <div className="relative w-full flex justify-center overflow-visible">
-          {/* Track */}
-          <div
-            ref={sliderRef}
-            className="flex items-center transition-transform duration-700 ease-in-out"
-            style={{
-              transform: `translateX(${translateX}vw)`,
-              gap: `${gap}vw`,
-              width: `${baseSlides.length * totalWidth}vw`,
-            }}
+    <div className="w-full bg-black text-white overflow-hidden relative">
+      {/* === FIXED PLACEHOLDER HERO === */}
+      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+        <div className="relative flex justify-center items-center w-full max-w-[1600px]">
+          {/* Left Slide */}
+          <motion.div
+            key={slides[left].id}
+            initial={{ opacity: 0, scale: 0.9, x: "-20vw" }}
+            animate={{ opacity: 0.7, scale: 0.9, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: "-20vw" }}
+            transition={{ duration: 0.8 }}
+            className="absolute left-0 sm:left-[2vw] md:left-[4vw] w-[65vw] sm:w-[60vw] md:w-[58vw]
+                       h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
+                       rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
           >
-            {baseSlides.map((slide, idx) => (
-              <div
-                key={slide.id}
-                className={`relative flex-shrink-0 w-[75vw] sm:w-[72vw] md:w-[70vw] lg:w-[68vw]
-                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                            rounded-2xl overflow-hidden border border-gold/40 shadow-2xl 
-                            bg-black/40 transition-all duration-500`}
-                style={{
-                  opacity: idx === current ? 1 : 0.75,
-                  transform: idx === current ? "scale(1)" : "scale(0.95)",
-                }}
-              >
-                <img
-                  src={slide.image}
-                  alt={slide.alt}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                <div className="absolute bottom-4 left-6">
-                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                    {slide.alt}
-                  </h2>
-                </div>
-              </div>
-            ))}
-          </div>
+            <img
+              src={slides[left].image}
+              alt={slides[left].alt}
+              className="w-full h-full object-cover opacity-80"
+            />
+          </motion.div>
 
-          {/* Arrows positioned inside side image edges */}
+          {/* Center Slide */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={slides[center].id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.8 }}
+              className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
+                         h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
+                         rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
+            >
+              <img
+                src={slides[center].image}
+                alt={slides[center].alt}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+              <div className="absolute bottom-4 left-6">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                  {slides[center].alt}
+                </h2>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Right Slide */}
+          <motion.div
+            key={slides[right].id}
+            initial={{ opacity: 0, scale: 0.9, x: "20vw" }}
+            animate={{ opacity: 0.7, scale: 0.9, x: 0 }}
+            exit={{ opacity: 0, scale: 0.9, x: "20vw" }}
+            transition={{ duration: 0.8 }}
+            className="absolute right-0 sm:right-[2vw] md:right-[4vw] w-[65vw] sm:w-[60vw] md:w-[58vw]
+                       h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
+                       rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
+          >
+            <img
+              src={slides[right].image}
+              alt={slides[right].alt}
+              className="w-full h-full object-cover opacity-80"
+            />
+          </motion.div>
+
+          {/* Arrows (inside next/prev edges) */}
           <button
             onClick={goPrev}
-            className="absolute left-[10vw] top-1/2 -translate-y-1/2 
+            className="absolute left-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/50 hover:bg-black/70 rounded-full px-3 py-2"
@@ -86,7 +105,7 @@ function LandingPage() {
           </button>
           <button
             onClick={goNext}
-            className="absolute right-[10vw] top-1/2 -translate-y-1/2 
+            className="absolute right-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/50 hover:bg-black/70 rounded-full px-3 py-2"
@@ -96,11 +115,11 @@ function LandingPage() {
 
           {/* Dots */}
           <div className="absolute bottom-3 right-8 flex gap-2 z-50">
-            {baseSlides.map((_, idx) => (
+            {slides.map((_, idx) => (
               <div
                 key={idx}
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                  idx === current ? "bg-gold scale-110" : "bg-gray-500"
+                  idx === center ? "bg-gold scale-110" : "bg-gray-500"
                 }`}
               />
             ))}
@@ -114,39 +133,6 @@ function LandingPage() {
             >
               Cities We Serve
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* === MAIN SERVICES === */}
-      <section className="relative z-30 mt-4 px-4 md:px-8">
-        <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
-          Main Services
-        </h2>
-        <div className="flex justify-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {[
-              { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-              { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-              { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-              { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
-              { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
-            ].map((service) => (
-              <div
-                key={service.title}
-                onClick={() => navigate(service.link)}
-                className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           flex flex-col items-center justify-center text-center shadow-lg snap-center"
-              >
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
-                />
-                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
-              </div>
-            ))}
           </div>
         </div>
       </section>
