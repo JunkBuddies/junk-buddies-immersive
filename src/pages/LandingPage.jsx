@@ -24,14 +24,15 @@ function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === FIXED 3-SLOT HERO === */}
+      {/* === HERO CAROUSEL (static placeholders) === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+        {/* Main container */}
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
 
-          {/* === LEFT PLACEHOLDER === */}
+          {/* === LEFT IMAGE === */}
           <div
             className="absolute 
-                       left-[calc(50%-75vw-2px)] 
+                       left-[-35vw] sm:left-[-30vw] md:left-[-28vw] lg:left-[-25vw]
                        w-[65vw] sm:w-[60vw] md:w-[58vw] lg:w-[56vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
@@ -44,7 +45,7 @@ function LandingPage() {
             />
           </div>
 
-          {/* === CENTER PLACEHOLDER === */}
+          {/* === CENTER IMAGE === */}
           <div
             className="relative z-20 
                        w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
@@ -65,10 +66,10 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* === RIGHT PLACEHOLDER === */}
+          {/* === RIGHT IMAGE === */}
           <div
             className="absolute 
-                       right-[calc(50%-75vw-2px)]
+                       right-[-35vw] sm:right-[-30vw] md:right-[-28vw] lg:right-[-25vw]
                        w-[65vw] sm:w-[60vw] md:w-[58vw] lg:w-[56vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
@@ -81,10 +82,10 @@ function LandingPage() {
             />
           </div>
 
-          {/* === ARROWS (inside edge of side photos) === */}
+          {/* === ARROWS (inside side-image edges) === */}
           <button
             onClick={goPrev}
-            className="absolute left-[10%] top-1/2 -translate-y-1/2 
+            className="absolute left-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -93,7 +94,7 @@ function LandingPage() {
           </button>
           <button
             onClick={goNext}
-            className="absolute right-[10%] top-1/2 -translate-y-1/2 
+            className="absolute right-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -124,8 +125,7 @@ function LandingPage() {
           </div>
         </div>
       </section>
- 
-
+   
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
