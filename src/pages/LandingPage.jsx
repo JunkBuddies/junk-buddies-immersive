@@ -1,133 +1,103 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
 
 function LandingPage() {
   const navigate = useNavigate();
 
+  // === SLIDES ===
   const slides = [
-    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
-    { id: 0, image: "/images/donation-drop.png", alt: "Donation Drop" },
+    { id: 0, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
+    { id: 1, image: "/images/donation-drop.png", alt: "Donation Drop" },
     { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
   const [current, setCurrent] = useState(0);
-  const intervalRef = useRef(null);
+  const timeoutRef = useRef(null);
 
+  // === Auto-scroll every 6s ===
   useEffect(() => {
-    intervalRef.current = setInterval(() => goNext(), 6000);
-    return () => clearInterval(intervalRef.current);
-  }, []);
+    const interval = setInterval(() => goNext(), 6000);
+    return () => clearInterval(interval);
+  });
 
   const goNext = () => setCurrent((prev) => (prev + 1) % slides.length);
   const goPrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
-  // Calculate visible slides (previous, current, next)
-  const visibleSlides = slides.map((slide, idx) => {
-    const offset = (idx - current + slides.length) % slides.length;
-    return { ...slide, offset };
-  });
-
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO SECTION === */}
-      <section className="relative flex justify-center items-center mt-8 sm:mt-12 mb-6">
-        <div className="relative flex items-center justify-center w-full max-w-[1800px] px-2">
+      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-hidden">
+        {/* Left Arrow */}
+        <button
+          onClick={goPrev}
+          className="absolute left-3 md:left-6 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 transition-transform"
+        >
+          ‹
+        </button>
 
-          {/* Gold Arrows */}
-          <button
-            onClick={goPrev}
-            className="absolute left-0 md:-left-10 lg:-left-14 text-gold z-40 
-                       text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
+        {/* SLIDER CONTAINER */}
+        <div className="relative w-full max-w-[1600px] overflow-hidden">
+          <div
+            className="flex transition-transform duration-700 ease-in-out"
+            style={{
+              transform: `translateX(-${current * 92}vw)`,
+              gap: "2vw",
+              width: `${slides.length * 92}vw`,
+            }}
           >
-            ‹
-          </button>
-
-          {/* === SLIDER WRAPPER === */}
-          <div className="relative flex items-center justify-center overflow-visible w-[95%] sm:w-[90%] md:w-[88%] lg:w-[85%] h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]">
-            {visibleSlides.map(({ id, image, alt, offset }) => {
-              let translateX = 0;
-              let scale = 1;
-              let opacity = 1;
-              let zIndex = 10;
-
-              if (offset === 1) {
-                // next slide (right)
-                translateX = "70%";
-                scale = 0.9;
-                opacity = 0.7;
-                zIndex = 5;
-              } else if (offset === slides.length - 1) {
-                // previous slide (left)
-                translateX = "-70%";
-                scale = 0.9;
-                opacity = 0.7;
-                zIndex = 5;
-              } else if (offset !== 0) {
-                // hidden slides
-                opacity = 0;
-                scale = 0.8;
-                zIndex = 0;
-              }
-
-              return (
-                <motion.div
-                  key={id}
-                  className="absolute w-[80%] sm:w-[75%] md:w-[70%] lg:w-[65%] h-full rounded-2xl overflow-hidden border border-gold/40 shadow-2xl bg-black/40"
-                  animate={{
-                    x: translateX,
-                    scale,
-                    opacity,
-                    zIndex,
-                  }}
-                  transition={{ duration: 0.7, ease: "easeInOut" }}
-                >
-                  <img
-                    src={image}
-                    alt={alt}
-                    className="w-full h-full object-cover object-center"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-                  <div className="absolute bottom-4 left-6">
-                    <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                      {alt}
-                    </h2>
-                  </div>
-                </motion.div>
-              );
-            })}
-
-            {/* Dots */}
-            <div className="absolute bottom-2 right-4 flex gap-2 z-50">
-              {slides.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    idx === current ? "bg-gold scale-110" : "bg-gray-500"
-                  }`}
+            {slides.map((slide, index) => (
+              <div
+                key={slide.id}
+                className="flex-shrink-0 w-[90vw] sm:w-[90vw] md:w-[88vw] lg:w-[85vw]
+                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
+                           border border-gold/40 shadow-2xl bg-black/40 relative"
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.alt}
+                  className="w-full h-full object-cover"
                 />
-              ))}
-            </div>
-          </div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                <div className="absolute bottom-4 left-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                    {slide.alt}
+                  </h2>
+                </div>
 
-          {/* Right Arrow */}
-          <button
-            onClick={goNext}
-            className="absolute right-0 md:-right-10 lg:-right-14 text-gold z-40 
-                       text-4xl md:text-5xl font-bold hover:scale-110 transition-transform duration-200"
+                {/* Dots for current */}
+                {index === current && (
+                  <div className="absolute bottom-3 right-5 flex gap-2 z-50">
+                    {slides.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                          idx === current ? "bg-gold scale-110" : "bg-gray-500"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Right Arrow */}
+        <button
+          onClick={goNext}
+          className="absolute right-3 md:right-6 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 transition-transform"
+        >
+          ›
+        </button>
+
+        {/* Cities Button */}
+        <div className="absolute top-0 right-6 z-50">
+          <Link
+            to="/service-areas"
+            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
           >
-            ›
-          </button>
-
-          {/* Cities Button */}
-          <div className="absolute top-0 right-6 z-50">
-            <Link
-              to="/service-areas"
-              className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
-            >
-              Cities We Serve
-            </Link>
-          </div>
+            Cities We Serve
+          </Link>
         </div>
       </section>
 
@@ -145,10 +115,8 @@ function LandingPage() {
               { title: "Furniture & Tables", image: "/images/genres/table.jpg", link: "/itemized" },
               { title: "Recliners & Chairs", image: "/images/genres/recliner.jpg", link: "/itemized" },
             ].map((service) => (
-              <motion.div
+              <div
                 key={service.title}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 180 }}
                 onClick={() => navigate(service.link)}
                 className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
                            bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
@@ -160,14 +128,12 @@ function LandingPage() {
                   className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
                 />
                 <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
       </section>
-
-
-
+    
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
         <p className="text-xl mb-4">
