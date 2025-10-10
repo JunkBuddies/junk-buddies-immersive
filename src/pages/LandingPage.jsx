@@ -24,24 +24,23 @@ function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO CAROUSEL (static placeholders) === */}
+      {/* === HERO CAROUSEL === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
-        {/* Main container */}
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
 
-          {/* === LEFT IMAGE === */}
+          {/* === LEFT IMAGE (cropped in half) === */}
           <div
             className="absolute 
-                       left-[-35vw] sm:left-[-30vw] md:left-[-28vw] lg:left-[-25vw]
-                       w-[65vw] sm:w-[60vw] md:w-[58vw] lg:w-[56vw]
+                       left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
+                       w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw] 
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                       rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
+                       overflow-hidden border border-gold/30 shadow-2xl rounded-2xl"
           >
             <img
               key={slides[leftIndex].id}
               src={slides[leftIndex].image}
               alt={slides[leftIndex].alt}
-              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-70 scale-95"
+              className="w-[130vw] h-full object-cover object-right transition-all duration-[1500ms] opacity-70"
             />
           </div>
 
@@ -50,13 +49,13 @@ function LandingPage() {
             className="relative z-20 
                        w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                       rounded-2xl overflow-hidden border border-gold/40 shadow-2xl"
+                       overflow-hidden border border-gold/40 shadow-2xl rounded-2xl"
           >
             <img
               key={slides[centerIndex].id}
               src={slides[centerIndex].image}
               alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-100 scale-100"
+              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-100"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6">
@@ -66,26 +65,26 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* === RIGHT IMAGE === */}
+          {/* === RIGHT IMAGE (cropped in half) === */}
           <div
             className="absolute 
-                       right-[-35vw] sm:right-[-30vw] md:right-[-28vw] lg:right-[-25vw]
-                       w-[65vw] sm:w-[60vw] md:w-[58vw] lg:w-[56vw]
+                       right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
+                       w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw] 
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
-                       rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
+                       overflow-hidden border border-gold/30 shadow-2xl rounded-2xl"
           >
             <img
               key={slides[rightIndex].id}
               src={slides[rightIndex].image}
               alt={slides[rightIndex].alt}
-              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-70 scale-95"
+              className="w-[130vw] h-full object-cover object-left transition-all duration-[1500ms] opacity-70"
             />
           </div>
 
-          {/* === ARROWS (inside side-image edges) === */}
+          {/* === ARROWS (inside edges of visible halves) === */}
           <button
             onClick={goPrev}
-            className="absolute left-[12%] top-1/2 -translate-y-1/2 
+            className="absolute left-[11%] sm:left-[12%] md:left-[13%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -94,7 +93,7 @@ function LandingPage() {
           </button>
           <button
             onClick={goNext}
-            className="absolute right-[12%] top-1/2 -translate-y-1/2 
+            className="absolute right-[11%] sm:right-[12%] md:right-[13%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -125,7 +124,8 @@ function LandingPage() {
           </div>
         </div>
       </section>
-   
+  
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
