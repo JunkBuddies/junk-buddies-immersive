@@ -23,6 +23,14 @@ function LandingPage() {
   const goNext = () => setCurrent((prev) => (prev + 1) % slides.length);
   const goPrev = () => setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
+  // === Slider math ===
+  // Width of one slide and gap between slides
+  const slideWidth = 80; // vw
+  const gap = 3; // vw
+  const totalWidth = slideWidth + gap;
+  // Center offset ensures the active slide is centered
+  const translateX = -(current * totalWidth - (100 - slideWidth) / 2);
+
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO SECTION === */}
@@ -38,19 +46,23 @@ function LandingPage() {
         {/* SLIDER CONTAINER */}
         <div className="relative w-full max-w-[1600px] overflow-hidden">
           <div
-            className="flex transition-transform duration-700 ease-in-out"
+            className="flex items-center transition-transform duration-700 ease-in-out"
             style={{
-              transform: `translateX(-${current * 82}vw)`,
-              gap: "3vw",
-              width: `${slides.length * 82}vw`,
+              transform: `translateX(${translateX}vw)`,
+              gap: `${gap}vw`,
+              width: `${slides.length * totalWidth}vw`,
             }}
           >
             {slides.map((slide, index) => (
               <div
                 key={slide.id}
-                className="flex-shrink-0 w-[80vw] sm:w-[80vw] md:w-[78vw] lg:w-[75vw]
+                className={`relative flex-shrink-0 w-[80vw] sm:w-[80vw] md:w-[78vw] lg:w-[75vw]
                            h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px] rounded-2xl overflow-hidden 
-                           border border-gold/40 shadow-2xl bg-black/40 relative"
+                           border border-gold/40 shadow-2xl bg-black/40 transition-all duration-500`}
+                style={{
+                  opacity: index === current ? 1 : 0.75,
+                  transform: index === current ? "scale(1)" : "scale(0.95)",
+                }}
               >
                 <img
                   src={slide.image}
@@ -63,20 +75,6 @@ function LandingPage() {
                     {slide.alt}
                   </h2>
                 </div>
-
-                {/* Dots for current */}
-                {index === current && (
-                  <div className="absolute bottom-3 right-5 flex gap-2 z-50">
-                    {slides.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                          idx === current ? "bg-gold scale-110" : "bg-gray-500"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -89,6 +87,18 @@ function LandingPage() {
         >
           ›
         </button>
+
+        {/* Dots */}
+        <div className="absolute bottom-3 right-5 flex gap-2 z-50">
+          {slides.map((_, idx) => (
+            <div
+              key={idx}
+              className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                idx === current ? "bg-gold scale-110" : "bg-gray-500"
+              }`}
+            />
+          ))}
+        </div>
 
         {/* Cities Button */}
         <div className="absolute top-0 right-6 z-50">
@@ -133,7 +143,8 @@ function LandingPage() {
           </div>
         </div>
       </section>
- 
+
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
