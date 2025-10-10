@@ -28,10 +28,11 @@ function LandingPage() {
       {/* === FIXED 3-SLOT HERO === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT PLACEHOLDER */}
+
+          {/* === LEFT PLACEHOLDER === */}
           <div
-            className="absolute left-[-25vw] md:left-[-20vw] lg:left-[-15vw]
-                       w-[65vw] sm:w-[60vw] md:w-[55vw] lg:w-[52vw]
+            className="absolute left-[-30vw] md:left-[-25vw] lg:left-[-22vw]
+                       w-[60vw] sm:w-[55vw] md:w-[50vw] lg:w-[48vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
           >
@@ -39,11 +40,11 @@ function LandingPage() {
               key={slides[leftIndex].id}
               src={slides[leftIndex].image}
               alt={slides[leftIndex].alt}
-              className="w-full h-full object-cover transition-opacity duration-1500 opacity-70"
+              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-70 scale-95"
             />
           </div>
 
-          {/* CENTER PLACEHOLDER */}
+          {/* === CENTER PLACEHOLDER === */}
           <div
             className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
@@ -53,7 +54,7 @@ function LandingPage() {
               key={slides[centerIndex].id}
               src={slides[centerIndex].image}
               alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover transition-all duration-1500 opacity-100 scale-100"
+              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-100 scale-100"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6">
@@ -63,10 +64,10 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT PLACEHOLDER */}
+          {/* === RIGHT PLACEHOLDER === */}
           <div
-            className="absolute right-[-25vw] md:right-[-20vw] lg:right-[-15vw]
-                       w-[65vw] sm:w-[60vw] md:w-[55vw] lg:w-[52vw]
+            className="absolute right-[-30vw] md:right-[-25vw] lg:right-[-22vw]
+                       w-[60vw] sm:w-[55vw] md:w-[50vw] lg:w-[48vw]
                        h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                        rounded-2xl overflow-hidden border border-gold/30 shadow-2xl"
           >
@@ -74,14 +75,14 @@ function LandingPage() {
               key={slides[rightIndex].id}
               src={slides[rightIndex].image}
               alt={slides[rightIndex].alt}
-              className="w-full h-full object-cover transition-opacity duration-1500 opacity-70"
+              className="w-full h-full object-cover transition-all duration-[1500ms] opacity-70 scale-95"
             />
           </div>
 
-          {/* ARROWS inside image edge */}
+          {/* === ARROWS === */}
           <button
             onClick={goPrev}
-            className="absolute left-[12%] top-1/2 -translate-y-1/2 
+            className="absolute left-[8%] sm:left-[10%] md:left-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -90,7 +91,7 @@ function LandingPage() {
           </button>
           <button
             onClick={goNext}
-            className="absolute right-[12%] top-1/2 -translate-y-1/2 
+            className="absolute right-[8%] sm:right-[10%] md:right-[12%] top-1/2 -translate-y-1/2 
                        z-40 text-gold text-4xl md:text-5xl font-bold
                        hover:scale-110 transition-transform duration-200
                        bg-black/40 hover:bg-black/70 rounded-full px-3 py-2"
@@ -98,7 +99,7 @@ function LandingPage() {
             ›
           </button>
 
-          {/* DOTS */}
+          {/* === DOTS === */}
           <div className="absolute bottom-3 right-8 flex gap-2 z-50">
             {slides.map((_, idx) => (
               <div
@@ -110,7 +111,7 @@ function LandingPage() {
             ))}
           </div>
 
-          {/* CITIES BUTTON */}
+          {/* === CITIES BUTTON === */}
           <div className="absolute top-0 right-6 z-50">
             <Link
               to="/service-areas"
