@@ -25,7 +25,7 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === SERVICE DATA ===
+  // === DATA ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
@@ -63,12 +63,44 @@ function LandingPage() {
   ];
 
   // === SCROLL REFS ===
-  const otherRef = useRef(null);
-  const citiesRef = useRef(null);
-  const blogsRef = useRef(null);
-  const faqRef = useRef(null);
+  const rowRefs = {
+    other: useRef(null),
+    cities: useRef(null),
+    blogs: useRef(null),
+    faq: useRef(null),
+  };
+
   const scrollAmount = 300;
-  const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+
+  const scrollRight = (ref) => {
+    ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  const [arrowPositions, setArrowPositions] = useState({
+    other: 0,
+    cities: 0,
+    blogs: 0,
+    faq: 0,
+  });
+
+  // Calculate where to visually anchor the arrow (aligned with last visible card)
+  useEffect(() => {
+    const updatePositions = () => {
+      Object.keys(rowRefs).forEach((key) => {
+        const el = rowRefs[key].current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        setArrowPositions((prev) => ({
+          ...prev,
+          [key]: rect.right - rect.left - 90, // anchor near right edge of visible container
+        }));
+      });
+    };
+
+    updatePositions();
+    window.addEventListener("resize", updatePositions);
+    return () => window.removeEventListener("resize", updatePositions);
+  }, []);
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
@@ -83,6 +115,7 @@ function LandingPage() {
             <img src={slides[leftIndex].image} alt={slides[leftIndex].alt}
               className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
           </div>
+
           {/* CENTER */}
           <div className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
@@ -94,6 +127,7 @@ function LandingPage() {
               <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
             </div>
           </div>
+
           {/* RIGHT CROPPED */}
           <div className="absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
@@ -128,21 +162,19 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === UNIFIED ROW TEMPLATE === */}
+      {/* === REUSABLE SCROLL ROW === */}
       {[
-        { label: "Other Services", ref: otherRef, data: otherServices },
-        { label: "Cities", ref: citiesRef, data: cities },
-        { label: "Blogs & Articles", ref: blogsRef, data: blogs },
-        { label: "FAQ", ref: faqRef, data: faqs.map((f) => ({ ...f, image: "/images/icons/faq.png" })) },
-      ].map((section, idx) => (
-        <section key={idx} className="relative z-30 px-4 md:px-8 pb-16">
-          {/* Label */}
+        { key: "other", label: "Other Services", data: otherServices },
+        { key: "cities", label: "Cities", data: cities },
+        { key: "blogs", label: "Blogs & Articles", data: blogs },
+        { key: "faq", label: "FAQ", data: faqs.map((f) => ({ ...f, image: "/images/icons/faq.png" })) },
+      ].map((section) => (
+        <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
           <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
 
-          {/* Scroll Row */}
           <div className="relative flex items-center">
             <div
-              ref={section.ref}
+              ref={rowRefs[section.key]}
               className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
             >
               {section.data.map((item, i) => (
@@ -157,26 +189,26 @@ function LandingPage() {
                   {"image" in item ? (
                     <img src={item.image} alt={item.title || item.q} className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2" />
                   ) : null}
-                  <h3 className="text-gold font-semibold text-sm md:text-base px-2">
-                    {item.title || item.q}
-                  </h3>
+                  <h3 className="text-gold font-semibold text-sm md:text-base px-2">{item.title || item.q}</h3>
                   {item.a && <p className="text-gray-400 text-xs mt-1 px-2">{item.a}</p>}
                 </div>
               ))}
             </div>
 
-            {/* Right Scroll Button — moved inward and visible */}
+            {/* Arrow dynamically anchored to last visible card */}
             <button
-              onClick={() => scrollRight(section.ref)}
-              className="absolute right-[3%] top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80 
-                         text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none 
-                         shadow-[0_0_20px_rgba(212,175,55,0.5)]"
+              onClick={() => scrollRight(rowRefs[section.key])}
+              style={{ left: `${arrowPositions[section.key]}px` }}
+              className="absolute top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80
+                         text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none
+                         shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300"
             >
               &gt;
             </button>
           </div>
         </section>
       ))}
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
