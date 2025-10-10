@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 function LandingPage() {
   const navigate = useNavigate();
 
-  // === HERO SLIDES ===
+  // === HERO SLIDES (unchanged — do not touch this) ===
   const slides = [
     { id: 0, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
     { id: 1, image: "/images/donation-drop.png", alt: "Donation Drop" },
@@ -25,7 +25,7 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === DATA ===
+  // === SERVICE DATA (unchanged) ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
@@ -50,25 +50,27 @@ function LandingPage() {
     { title: "The Woodlands", image: "/images/cities/woodlands.jpg", link: "/the-woodlands" },
   ];
 
+  // === BLOGS (added 3 more) ===
   const blogs = [
     { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
     { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", link: "/blog/save-money" },
     { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
-    { title: "Top 5 Ways to Prepare for Junk Pickup", image: "/images/blogs/prep.jpg", link: "/blog/junk-pickup-prep" },
-    { title: "Donation vs Disposal: Which is Best?", image: "/images/blogs/donation.jpg", link: "/blog/donation-vs-disposal" },
-    { title: "Houston’s Hidden Recycling Spots", image: "/images/blogs/recycling.jpg", link: "/blog/recycling-spots" },
+    { title: "Top 5 Items We Remove the Most", image: "/images/blogs/top-items.jpg", link: "/blog/top-items" },
+    { title: "Why You Should Schedule Online", image: "/images/blogs/schedule-online.jpg", link: "/blog/schedule-online" },
+    { title: "Houston’s Recycling & Donation Guide", image: "/images/blogs/recycling.jpg", link: "/blog/recycling-guide" },
   ];
 
+  // === FAQ (added 3 more) ===
   const faqs = [
     { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
     { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
     { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
-    { q: "How far in advance should I book?", a: "Same-day service is often available, but booking 24 hours ahead guarantees a spot." },
-    { q: "Do you handle large commercial jobs?", a: "Absolutely — we clear offices, warehouses, and construction debris with our 16ft trucks." },
-    { q: "Are there any items you can’t take?", a: "We can’t handle hazardous waste, but we’ll guide you to proper disposal options." },
+    { q: "How fast can you pick up?", a: "Most pickups happen same-day or next-day based on your location." },
+    { q: "What areas do you serve?", a: "We serve all major Houston areas including Katy, Sugar Land, Pearland, and more." },
+    { q: "Can I get a photo quote?", a: "Absolutely! Just upload your photos on our site for instant pricing." },
   ];
 
-  // === SCROLL REFS ===
+  // === SCROLL REFS & ARROW LOGIC (unchanged) ===
   const rowRefs = {
     other: useRef(null),
     cities: useRef(null),
@@ -77,10 +79,7 @@ function LandingPage() {
   };
 
   const scrollAmount = 300;
-
-  const scrollRight = (ref) => {
-    ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
-  };
+  const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
 
   const [arrowPositions, setArrowPositions] = useState({
     other: 0,
@@ -89,7 +88,6 @@ function LandingPage() {
     faq: 0,
   });
 
-  // Calculate where to visually anchor the arrow (aligned with last visible card)
   useEffect(() => {
     const updatePositions = () => {
       Object.keys(rowRefs).forEach((key) => {
@@ -98,11 +96,10 @@ function LandingPage() {
         const rect = el.getBoundingClientRect();
         setArrowPositions((prev) => ({
           ...prev,
-          [key]: rect.right - rect.left - 90, // stays on top of last visible card
+          [key]: rect.right - rect.left - 90,
         }));
       });
     };
-
     updatePositions();
     window.addEventListener("resize", updatePositions);
     return () => window.removeEventListener("resize", updatePositions);
@@ -110,10 +107,9 @@ function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO === */}
+      {/* === HERO (unchanged) === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
           <div className="absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
@@ -122,7 +118,6 @@ function LandingPage() {
               className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
           </div>
 
-          {/* CENTER */}
           <div className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
                           overflow-hidden border border-gold/40 shadow-2xl rounded-2xl">
@@ -130,11 +125,12 @@ function LandingPage() {
               className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]" />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                {slides[centerIndex].alt}
+              </h2>
             </div>
           </div>
 
-          {/* RIGHT CROPPED */}
           <div className="absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
                           h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]
@@ -143,17 +139,20 @@ function LandingPage() {
               className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]" />
           </div>
 
-          {/* ARROWS */}
           <button onClick={goPrev}
             className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">‹</button>
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">
+            ‹
+          </button>
           <button onClick={goNext}
             className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">›</button>
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">
+            ›
+          </button>
         </div>
       </section>
 
-      {/* === MAIN SERVICES === */}
+      {/* === MAIN SERVICES (unchanged) === */}
       <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
           {mainServices.map((s) => (
@@ -168,7 +167,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === ROW SECTIONS === */}
+      {/* === ROWS (unchanged logic) === */}
       {[
         { key: "other", label: "Other Services", data: otherServices },
         { key: "cities", label: "Cities", data: cities },
@@ -201,7 +200,7 @@ function LandingPage() {
               ))}
             </div>
 
-            {/* Dynamic Arrow — anchored to last visible card */}
+            {/* Fixed-position Arrow */}
             <button
               onClick={() => scrollRight(rowRefs[section.key])}
               style={{ left: `${arrowPositions[section.key]}px` }}
@@ -214,6 +213,8 @@ function LandingPage() {
           </div>
         </section>
       ))}
+
+
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
