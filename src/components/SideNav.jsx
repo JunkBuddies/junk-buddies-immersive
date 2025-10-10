@@ -8,11 +8,10 @@ import {
   MapPin,
   BookOpen,
   HelpCircle,
-  Menu,
 } from "lucide-react";
 import { useCallback } from "react";
 
-export default function SideNav({ open, setOpen }) {
+export default function SideNav({ open }) {
   const openChatWidget = useCallback(() => {
     const trigger = document.querySelector(".jb-chat-bubble, .chat-widget-trigger");
     if (trigger) trigger.click();
@@ -20,23 +19,11 @@ export default function SideNav({ open, setOpen }) {
 
   return (
     <motion.aside
-      className="hidden lg:flex fixed top-0 left-0 h-screen bg-black border-r border-gold z-40 flex-col"
+      className="hidden lg:flex fixed top-16 left-0 h-[calc(100vh-4rem)] bg-black border-r border-gold z-40 flex-col"
       animate={{ width: open ? 240 : 80 }}
       transition={{ duration: 0.3 }}
     >
-      {/* Collapse button in top corner */}
-      <div className="flex items-center justify-between w-full px-3 py-3 border-b border-gold/40 h-16">
-        {open && <span className="text-gold font-semibold text-sm">Navigation</span>}
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-gold hover:text-white transition"
-          title="Toggle sidebar"
-        >
-          <Menu size={22} />
-        </button>
-      </div>
-
-      {/* Navigation links (vertically centered) */}
+      {/* Vertical nav icons (centered) */}
       <nav className="flex flex-col justify-center items-start gap-2 flex-1 px-3">
         <NavItem to="/" icon={<Home />} label="Home" open={open} />
         <button
