@@ -1,42 +1,53 @@
 // LayoutShell.jsx
 import { Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import TopNav from "./TopNav";            // ← unchanged, as requested
+import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 import ChatWidget from "./chat/ChatWidget";
 
 export default function LayoutShell() {
-  const [isDesktop, setIsDesktop] = useState(true);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
     const onResize = () => setIsDesktop(window.innerWidth >= 1024);
-    onResize();
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">
-      {/* Desktop-only SideNav (solid, collapsible) */}
+      {/* Left vertical nav (L shape part 1) */}
       {isDesktop && <SideNav open={sidebarOpen} setOpen={setSidebarOpen} />}
 
-      {/* Main column: TopNav (unchanged) + page content */}
-      <div className="flex-1 flex flex-col">
+      {/* Main column (L shape part 2: Top bar + content) */}
+      <div className="flex-1 flex flex-col relative">
         <TopNav />
 
-        {/* Scrollable content; full width to right/bottom; only offset left under SideNav on desktop */}
+        {/* The gold L-line meeting at the corner (visual sync only) */}
+        {!isDesktop ? null : (
+          <div
+            className="absolute top-0 left-0 w-[1px] bg-gold h-full z-40"
+            style={{
+              transform: `translateX(${sidebarOpen ? "240px" : "80px"})`,
+              transition: "transform 0.3s ease",
+            }}
+          />
+        )}
+
+        {/* Scrollable main content — touches bottom/right edges */}
         <main
           className="flex-1 overflow-y-auto"
           style={{
-            paddingLeft: isDesktop ? (sidebarOpen ? 240 : 80) : 0, // match SideNav widths; no other padding
+            marginLeft: isDesktop ? (sidebarOpen ? 240 : 80) : 0,
+            marginTop: 64, // matches TopNav height
           }}
         >
           <Outlet />
         </main>
       </div>
 
-      {/* Floating chat stays global */}
+      {/* Global chat stays mounted */}
       <ChatWidget />
     </div>
   );
