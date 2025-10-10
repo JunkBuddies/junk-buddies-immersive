@@ -1,56 +1,44 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 function LandingPage() {
   const navigate = useNavigate();
-  const junkRef = useRef(null);
-  const buddiesRef = useRef(null);
-  const [aboutInView, setAboutInView] = useState(false);
 
-  const genres = [
+  const mainGenres = [
     { title: "Mattresses", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couches", image: "/images/genres/couch.jpg", link: "/couch-removal" },
     { title: "Fridges", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
     { title: "Tables", image: "/images/genres/table.jpg", link: "/itemized" },
     { title: "Recliners", image: "/images/genres/recliner.jpg", link: "/itemized" },
+  ];
+
+  const otherServices = [
     { title: "Washers & Dryers", image: "/images/genres/washer.jpg", link: "/itemized" },
     { title: "Desks", image: "/images/genres/desk.jpg", link: "/itemized" },
     { title: "Trampolines", image: "/images/genres/trampoline.jpg", link: "/itemized" },
     { title: "Beds", image: "/images/genres/bed.jpg", link: "/itemized" },
+    { title: "Exercise Equipment", image: "/images/genres/equipment.jpg", link: "/itemized" },
+    { title: "Hot Tubs", image: "/images/genres/hottub.jpg", link: "/itemized" },
   ];
-
-  useEffect(() => {
-    const junk = junkRef.current;
-    const buddies = buddiesRef.current;
-    if (junk && buddies) {
-      junk.classList.remove("shine-junk");
-      buddies.classList.remove("shine-buddies");
-      void junk.offsetWidth;
-      void buddies.offsetWidth;
-      buddies.classList.add("shine-buddies");
-      setTimeout(() => junk.classList.add("shine-junk"), 2500);
-    }
-  }, []);
 
   return (
     <div className="w-full overflow-hidden relative bg-black text-white">
-      {/* === HERO CINEMATIC === */}
+      {/* === HERO CINEMATIC (Houston Skyline) === */}
       <motion.section
-        initial={{ opacity: 0, y: 30 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="relative w-full min-h-screen flex flex-col justify-center items-center text-center"
+        transition={{ duration: 1 }}
+        className="relative w-full h-screen flex flex-col justify-center items-center text-center"
       >
-        {/* 🔥 Background */}
         <img
-          src="/images/hero-placeholder.jpg"
-          alt="Junk Buddies Hero"
+          src="/images/houston-skyline.png"
+          alt="Houston Skyline"
           className="absolute inset-0 w-full h-full object-cover brightness-90"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
-        {/* 🔗 Cities Button */}
+        {/* Cities Button (keep top-right) */}
         <div className="absolute top-6 right-6 z-50">
           <Link
             to="/service-areas"
@@ -59,98 +47,66 @@ function LandingPage() {
             Cities We Serve
           </Link>
         </div>
-
-        {/* 🧭 Promo Text */}
-        <div className="absolute top-16 left-6 sm:left-[12%] text-left z-20">
-          <p className="text-sm md:text-lg font-medium mb-1">Tired of waiting?</p>
-          <h2 className="text-2xl md:text-5xl font-bold leading-snug">
-            Need{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-300 via-gray-100 to-gray-400">
-              Junk Removal
-            </span>
-          </h2>
-          <h2 className="text-2xl md:text-5xl font-bold mt-2">
-            in{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 via-sky-500 to-sky-600">
-              Houston, TX
-            </span>
-          </h2>
-          <p className="text-xs sm:text-base mt-1">+ surrounding cities?</p>
-          <p className="mt-6 text-xs sm:text-base">Check prices in seconds — we haul it all.</p>
-        </div>
-
-        {/* 🪙 Logo & Tagline */}
-        <div className="relative z-20 flex flex-col items-center mt-24 md:mt-32">
-          <div className="flex items-center justify-center gap-3">
-            <span
-              ref={junkRef}
-              className="text-6xl md:text-7xl lg:text-8xl metallic-text-3d shine-junk"
-            >
-              Junk
-            </span>
-            <img
-              src="/images/logo-icon.png"
-              alt="Logo"
-              className="h-[4rem] md:h-[5.5rem] object-contain"
-            />
-            <span
-              ref={buddiesRef}
-              className="text-6xl md:text-7xl lg:text-8xl metallic-text-3d shine-buddies"
-            >
-              Buddies
-            </span>
-          </div>
-          <p className="text-xl sm:text-2xl font-semibold tracking-wide mt-3 text-gray-200">
-            Making Space For What Matters
-          </p>
-
-          {/* 🎬 CTA Buttons */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            <button
-              onClick={() => navigate("/selection")}
-              className="transition transform hover:scale-105 px-6 py-3 rounded-full bg-gradient-to-r from-gold to-yellow-400 text-black font-bold shadow-lg hover:shadow-gold/40"
-            >
-              Get Started
-            </button>
-            <button
-              onClick={() => navigate("/itemized")}
-              className="transition transform hover:scale-105 px-6 py-3 rounded-full bg-gradient-to-r from-gray-300 to-gray-500 text-black font-bold shadow-lg hover:shadow-white/30"
-            >
-              Instant Pricing
-            </button>
-            <button
-              onClick={() => document.getElementById("jb-open-button")?.click()}
-              className="transition transform hover:scale-105 px-6 py-3 rounded-full bg-gradient-to-r from-sky-400 to-sky-600 text-black font-bold shadow-lg hover:shadow-sky-400/30"
-            >
-              Chat with Your Junk Buddy
-            </button>
-          </div>
-        </div>
       </motion.section>
 
-      {/* === SERVICE GENRES (Disney+ Style) === */}
-      <section className="relative z-30 -mt-12 md:-mt-20 flex justify-center px-4 md:px-8">
-        <div className="flex flex-wrap justify-center gap-4 md:gap-8 bg-black/70 backdrop-blur-md py-6 px-4 rounded-2xl border border-gold/30 shadow-inner">
-          {genres.map((genre) => (
-            <motion.div
-              key={genre.title}
-              whileHover={{ scale: 1.08 }}
-              transition={{ type: "spring", stiffness: 200 }}
-              onClick={() => navigate(genre.link)}
-              className="cursor-pointer bg-zinc-900/70 border border-gold/30 hover:border-gold rounded-xl w-32 h-32 md:w-44 md:h-44 flex flex-col items-center justify-center text-center shadow-lg"
-            >
-              <img
-                src={genre.image}
-                alt={genre.title}
-                className="w-12 h-12 md:w-16 md:h-16 object-contain mb-2"
-              />
-              <h3 className="text-gold font-semibold text-sm md:text-base">
-                {genre.title}
-              </h3>
-            </motion.div>
-          ))}
+      {/* === MAIN SERVICES (Disney+ style) === */}
+      <section className="relative z-30 -mt-20 px-4 md:px-8">
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
+          Main Services
+        </h2>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4 md:gap-6 px-2 md:px-4 pb-6">
+            {mainGenres.map((genre) => (
+              <motion.div
+                key={genre.title}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 180 }}
+                onClick={() => navigate(genre.link)}
+                className="flex-shrink-0 cursor-pointer bg-zinc-900/80 border border-gold/40 hover:border-gold rounded-xl w-36 h-36 md:w-48 md:h-48 flex flex-col items-center justify-center text-center shadow-lg"
+              >
+                <img
+                  src={genre.image}
+                  alt={genre.title}
+                  className="w-14 h-14 md:w-20 md:h-20 object-contain mb-2"
+                />
+                <h3 className="text-gold font-semibold text-sm md:text-base">
+                  {genre.title}
+                </h3>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* === OTHER SERVICES WE ALSO OFFER (scrollable row) === */}
+      <section className="relative z-30 px-4 md:px-8 mt-4 md:mt-8 mb-12">
+        <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
+          Other Services We Also Offer
+        </h2>
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-4 md:gap-6 px-2 md:px-4 pb-6">
+            {otherServices.map((service) => (
+              <motion.div
+                key={service.title}
+                whileHover={{ scale: 1.05 }}
+                transition={{ type: "spring", stiffness: 180 }}
+                onClick={() => navigate(service.link)}
+                className="flex-shrink-0 cursor-pointer bg-zinc-900/80 border border-gold/40 hover:border-gold rounded-xl w-36 h-36 md:w-48 md:h-48 flex flex-col items-center justify-center text-center shadow-lg"
+              >
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="w-14 h-14 md:w-20 md:h-20 object-contain mb-2"
+                />
+                <h3 className="text-gold font-semibold text-sm md:text-base">
+                  {service.title}
+                </h3>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
   
 
       {/* REQUIRE SERVICE TODAY BAR */}
