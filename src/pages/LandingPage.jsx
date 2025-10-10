@@ -25,29 +25,30 @@ function LandingPage() {
   return (
     <div className="w-full overflow-hidden relative bg-black text-white">
       {/* === HERO CINEMATIC (Houston Skyline) === */}
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1 }}
-        className="relative w-full h-screen flex flex-col justify-center items-center text-center"
-      >
-        <img
-          src="/images/houston-skyline.png"
-          alt="Houston Skyline"
-          className="absolute inset-0 w-full h-full object-cover brightness-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+    <motion.section
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 1 }}
+  className="relative w-full h-[438px] sm:h-[480px] md:h-[520px] lg:h-[560px] flex justify-center items-center text-center overflow-hidden"
+>
+  <img
+    src="/images/houston-skyline.png"
+    alt="Houston Skyline"
+    className="absolute inset-0 w-full h-full object-cover brightness-90"
+  />
+  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
 
-        {/* Cities Button (keep top-right) */}
-        <div className="absolute top-6 right-6 z-50">
-          <Link
-            to="/service-areas"
-            className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
-          >
-            Cities We Serve
-          </Link>
-        </div>
-      </motion.section>
+  {/* Cities Button */}
+  <div className="absolute top-6 right-6 z-50">
+    <Link
+      to="/service-areas"
+      className="text-gold font-semibold hover:underline bg-black/70 px-3 py-2 text-sm rounded-md shadow-md sm:px-4 sm:text-base"
+    >
+      Cities We Serve
+    </Link>
+  </div>
+</motion.section>
+
 
       {/* === MAIN SERVICES (Disney+ style) === */}
       <section className="relative z-30 -mt-20 px-4 md:px-8">
