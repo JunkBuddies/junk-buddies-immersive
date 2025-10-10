@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -6,39 +6,60 @@ function LandingPage() {
   const navigate = useNavigate();
 
   // === HERO SLIDES ===
-  const heroSlides = [
-    {
-      id: 0,
-      image: "/images/donation-drop.png",
-      alt: "Donation Drop",
-    },
-    {
-      id: 1,
-      image: "/images/houston-skyline.png",
-      alt: "Houston Skyline",
-    },
-    {
-      id: 2,
-      image: "/images/truck-fleet.png",
-      alt: "Junk Buddies Fleet",
-    },
+  const slides = [
+    { id: 0, image: "/images/donation-drop.png", alt: "Donation Drop" },
+    { id: 1, image: "/images/houston-skyline.png", alt: "Houston Skyline" },
+    { id: 2, image: "/images/truck-fleet.png", alt: "Junk Buddies Fleet" },
   ];
 
-  const [current, setCurrent] = useState(1); // Start on skyline
+  // Duplicate slides before/after for smooth infinite loop illusion
+  const heroSlides = [...slides, ...slides, ...slides];
+  const centerOffset = slides.length; // middle set start index
+  const [current, setCurrent] = useState(centerOffset);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const sliderRef = useRef(null);
 
-  // === AUTO SLIDE LOGIC ===
+  // === Auto-scroll every 6 s ===
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % heroSlides.length);
-    }, 6000); // 6 sec
+    const interval = setInterval(() => goNext(), 6000);
     return () => clearInterval(interval);
-  }, [heroSlides.length]);
+  });
 
-  const goNext = () => setCurrent((prev) => (prev + 1) % heroSlides.length);
-  const goPrev = () =>
-    setCurrent((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  // === Handlers ===
+  const goNext = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrent((prev) => prev + 1);
+  };
+  const goPrev = () => {
+    if (isTransitioning) return;
+    setIsTransitioning(true);
+    setCurrent((prev) => prev - 1);
+  };
 
-  // === MAIN SERVICES ===
+  // === Snap-reset when crossing clone boundaries ===
+  useEffect(() => {
+    const transitionEnd = () => {
+      setIsTransitioning(false);
+      if (current >= heroSlides.length - slides.length) {
+        // jumped past end
+        setCurrent(centerOffset);
+      } else if (current < slides.length) {
+        // jumped before start
+        setCurrent(centerOffset + (current % slides.length));
+      }
+    };
+    const slider = sliderRef.current;
+    slider?.addEventListener("transitionend", transitionEnd);
+    return () => slider?.removeEventListener("transitionend", transitionEnd);
+  }, [current, heroSlides.length, slides.length]);
+
+  // === Position math ===
+  const slideWidth = 75; // vw width for each card
+  const gap = 2; // vw gap between cards
+  const translateX = -(current * (slideWidth + gap) - (100 - slideWidth) / 2);
+
+  // === MAIN SERVICES (unchanged) ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
@@ -50,73 +71,72 @@ function LandingPage() {
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
 
-      {/* === HERO CAROUSEL (Disney+ Style) === */}
+      {/* === HERO CAROUSEL === */}
       <section className="relative w-full flex justify-center py-10 overflow-hidden">
-        <div className="relative flex items-center justify-center w-full max-w-7xl">
-          {/* Prev Button */}
+        <div className="relative w-full max-w-7xl overflow-hidden">
+          {/* Prev / Next */}
           <button
             onClick={goPrev}
-            className="absolute left-0 z-40 bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
+            className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-40 
+                       bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
           >
             ‹
           </button>
-
-          {/* Slider Window */}
-          <div className="flex items-center justify-center w-full overflow-visible">
-            <div
-              className="relative flex justify-center items-center gap-6 transition-transform duration-700 ease-in-out"
-              style={{
-                transform: `translateX(calc(-${current * 100}% - ${current * 1.5}rem))`,
-              }}
-            >
-              {heroSlides.map((slide, index) => (
-                <motion.div
-                  key={slide.id}
-                  className={`relative flex-shrink-0 w-[88vw] sm:w-[82vw] md:w-[76vw] lg:w-[70vw] 
-                              h-[280px] sm:h-[340px] md:h-[400px] rounded-2xl overflow-hidden border border-gold/40 
-                              shadow-xl transition-all duration-700 ${
-                                index === current
-                                  ? "z-30 scale-100 opacity-100"
-                                  : "z-10 scale-95 opacity-70"
-                              }`}
-                >
-                  <img
-                    src={slide.image}
-                    alt={slide.alt}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                  <div className="absolute bottom-5 left-6">
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                      {slide.alt}
-                    </h3>
-                  </div>
-
-                  {/* Dots bottom-right (accurate to current) */}
-                  <div className="absolute bottom-4 right-6 flex gap-2">
-                    {heroSlides.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                          idx === current ? "bg-gold scale-110" : "bg-gray-500"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-
-          {/* Next Button */}
           <button
             onClick={goNext}
-            className="absolute right-0 z-40 bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
+            className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-40 
+                       bg-black/50 hover:bg-black/70 text-gold px-3 py-3 rounded-full"
           >
             ›
           </button>
 
-          {/* Cities Button */}
+          {/* Track */}
+          <div
+            ref={sliderRef}
+            className={`flex items-center transition-transform ${
+              isTransitioning ? "duration-700 ease-in-out" : "duration-0"
+            }`}
+            style={{
+              width: `${heroSlides.length * (slideWidth + gap)}vw`,
+              transform: `translateX(${translateX}vw)`,
+              gap: `${gap}vw`,
+            }}
+          >
+            {heroSlides.map((slide, idx) => (
+              <motion.div
+                key={`${slide.id}-${idx}`}
+                className={`relative flex-shrink-0 w-[75vw] sm:w-[70vw] md:w-[65vw] lg:w-[60vw]
+                            h-[260px] sm:h-[340px] md:h-[400px] rounded-2xl overflow-hidden 
+                            border border-gold/40 shadow-xl ${
+                              idx === current ? "scale-100 opacity-100 z-30" : "scale-95 opacity-70 z-10"
+                            }`}
+              >
+                <img src={slide.image} alt={slide.alt} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <div className="absolute bottom-5 left-6">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                    {slide.alt}
+                  </h3>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Dots (bottom-right) */}
+          <div className="absolute bottom-4 right-6 flex gap-2 z-50">
+            {slides.map((_, idx) => (
+              <div
+                key={idx}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  idx === ((current - slides.length) % slides.length + slides.length) % slides.length
+                    ? "bg-gold scale-110"
+                    : "bg-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+
+          {/* Cities button */}
           <div className="absolute top-0 right-6 z-50">
             <Link
               to="/service-areas"
@@ -128,7 +148,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === MAIN SERVICES ROW (Rectangular) === */}
+      {/* === MAIN SERVICES ROW (same as before) === */}
       <section className="relative z-30 mt-4 px-4 md:px-8">
         <h2 className="text-xl md:text-2xl font-bold mb-4 text-center text-gold">
           Main Services
@@ -150,15 +170,13 @@ function LandingPage() {
                   alt={service.title}
                   className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
                 />
-                <h3 className="text-gold font-semibold text-sm md:text-base">
-                  {service.title}
-                </h3>
+                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
- 
+    
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
