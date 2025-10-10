@@ -57,31 +57,25 @@ function LandingPage() {
   ];
 
   const faqs = [
-    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
-    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
-    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
+    { title: "Do I need to be home?", image: "/images/icons/question.png", link: "/faq#do-i-need-to-be-home" },
+    { title: "When do I pay?", image: "/images/icons/money.png", link: "/faq#when-do-i-pay" },
+    { title: "Do you recycle?", image: "/images/icons/recycle.png", link: "/faq#do-you-recycle" },
   ];
 
-  // === Refs for scrolling ===
+  // === Refs for Scroll Rows ===
   const otherRef = useRef(null);
-  const cityRef = useRef(null);
-  const blogRef = useRef(null);
+  const citiesRef = useRef(null);
+  const blogsRef = useRef(null);
   const faqRef = useRef(null);
+
   const scrollAmount = 300;
-
-  const makeScrollFns = (ref) => ({
-    scrollLeft: () => ref.current?.scrollBy({ left: -scrollAmount, behavior: "smooth" }),
-    scrollRight: () => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" }),
-  });
-
-  const otherScroll = makeScrollFns(otherRef);
-  const cityScroll = makeScrollFns(cityRef);
-  const blogScroll = makeScrollFns(blogRef);
-  const faqScroll = makeScrollFns(faqRef);
+  const makeScroll = (ref, dir) => {
+    ref.current?.scrollBy({ left: dir * scrollAmount, behavior: "smooth" });
+  };
 
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO === */}
+      {/* === HERO CAROUSEL === */}
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
           {/* LEFT CROPPED */}
@@ -139,60 +133,59 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === UNIFIED ROW FUNCTION === */}
+      {/* === SCROLL ROW TEMPLATE === */}
       {[
-        { label: "Other Services", data: otherServices, ref: otherRef, scroll: otherScroll },
-        { label: "Cities", data: cities, ref: cityRef, scroll: cityScroll },
-        { label: "Blogs & Articles", data: blogs, ref: blogRef, scroll: blogScroll },
-        { label: "FAQ", data: faqs, ref: faqRef, scroll: faqScroll, isFaq: true },
-      ].map(({ label, data, ref, scroll, isFaq }, idx) => (
-        <section key={idx} className="relative z-30 px-4 md:px-8 pb-16">
-          <p className="text-gold text-xs uppercase tracking-wide mb-2 pl-2">{label}</p>
-
+        { label: "Other Services", data: otherServices, ref: otherRef },
+        { label: "Cities", data: cities, ref: citiesRef },
+        { label: "Blogs & Articles", data: blogs, ref: blogsRef },
+        { label: "FAQ", data: faqs, ref: faqRef },
+      ].map((section) => (
+        <section key={section.label} className="relative z-30 px-4 md:px-8 pb-16">
+          <p className="text-gold text-xs uppercase tracking-wider mb-2 ml-4">{section.label}</p>
           <div className="relative flex items-center">
             {/* Left Arrow */}
-            <button onClick={scroll.scrollLeft}
+            <button
+              onClick={() => makeScroll(section.ref, -1)}
               className="z-40 absolute left-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                         font-bold rounded-r-2xl px-2 py-1 select-none">‹</button>
+                         font-bold rounded-r-2xl px-2 py-1 select-none"
+            >
+              ‹
+            </button>
 
             {/* Scrollable Row */}
-            <div ref={ref}
-              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]">
-              {data.map((item, i) => (
+            <div
+              ref={section.ref}
+              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[60px]"
+            >
+              {section.data.map((item) => (
                 <div
-                  key={i}
-                  onClick={() => !isFaq && navigate(item.link)}
+                  key={item.title}
+                  onClick={() => navigate(item.link)}
                   className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
                              bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                             flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform px-2"
+                             flex flex-col items-center justify-center text-center shadow-lg snap-center hover:scale-105 transition-transform"
                 >
-                  {isFaq ? (
-                    <>
-                      <h4 className="text-gold font-semibold text-sm md:text-base mb-2 text-center">{item.q}</h4>
-                      <p className="text-gray-300 text-xs md:text-sm leading-snug">{item.a}</p>
-                    </>
-                  ) : (
-                    <>
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2 rounded-md"
-                      />
-                      <h3 className="text-gold font-semibold text-sm md:text-base">{item.title}</h3>
-                    </>
-                  )}
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2"
+                  />
+                  <h3 className="text-gold font-semibold text-sm md:text-base">{item.title}</h3>
                 </div>
               ))}
             </div>
 
             {/* Right Arrow */}
-            <button onClick={scroll.scrollRight}
+            <button
+              onClick={() => makeScroll(section.ref, 1)}
               className="z-40 absolute right-0 bg-black/60 hover:bg-black/80 text-gold text-[60px] md:text-[90px]
-                         font-bold rounded-l-2xl px-2 py-1 select-none">&gt;</button>
+                         font-bold rounded-l-2xl px-2 py-1 select-none"
+            >
+              ›
+            </button>
           </div>
         </section>
-
-
+   
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
