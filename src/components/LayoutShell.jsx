@@ -10,44 +10,33 @@ export default function LayoutShell() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
-    const onResize = () => setIsDesktop(window.innerWidth >= 1024);
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
     <div className="flex h-screen bg-black text-white overflow-hidden">
-      {/* Left vertical nav (L shape part 1) */}
-      {isDesktop && <SideNav open={sidebarOpen} setOpen={setSidebarOpen} />}
+      {/* Left vertical nav */}
+      {isDesktop && <SideNav open={sidebarOpen} />}
 
-      {/* Main column (L shape part 2: Top bar + content) */}
+      {/* Main area */}
       <div className="flex-1 flex flex-col relative">
-        <TopNav />
+        <TopNav sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        {/* The gold L-line meeting at the corner (visual sync only) */}
-        {!isDesktop ? null : (
-          <div
-            className="absolute top-0 left-0 w-[1px] bg-gold h-full z-40"
-            style={{
-              transform: `translateX(${sidebarOpen ? "240px" : "80px"})`,
-              transition: "transform 0.3s ease",
-            }}
-          />
-        )}
-
-        {/* Scrollable main content — touches bottom/right edges */}
+        {/* Scrollable main content */}
         <main
           className="flex-1 overflow-y-auto"
           style={{
             marginLeft: isDesktop ? (sidebarOpen ? 240 : 80) : 0,
-            marginTop: 64, // matches TopNav height
+            marginTop: 64, // TopNav height
           }}
         >
           <Outlet />
         </main>
       </div>
 
-      {/* Global chat stays mounted */}
+      {/* Global chat widget */}
       <ChatWidget />
     </div>
   );
