@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ function LandingPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % heroSlides.length);
-    }, 3000); // 3 sec
+    }, 6000); // 6 sec
     return () => clearInterval(interval);
   }, [heroSlides.length]);
 
@@ -50,7 +50,7 @@ function LandingPage() {
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
 
-      {/* === HERO CAROUSEL (Disney+ style) === */}
+      {/* === HERO CAROUSEL (Disney+ Style) === */}
       <section className="relative w-full flex justify-center py-10 overflow-hidden">
         <div className="relative flex items-center justify-center w-full max-w-7xl">
           {/* Prev Button */}
@@ -63,7 +63,8 @@ function LandingPage() {
 
           {/* Slider Window */}
           <div className="flex items-center justify-center w-full overflow-visible">
-            <div className="relative flex justify-center items-center gap-4 md:gap-6 transition-transform duration-700 ease-in-out"
+            <div
+              className="relative flex justify-center items-center gap-6 transition-transform duration-700 ease-in-out"
               style={{
                 transform: `translateX(calc(-${current * 100}% - ${current * 1.5}rem))`,
               }}
@@ -71,10 +72,13 @@ function LandingPage() {
               {heroSlides.map((slide, index) => (
                 <motion.div
                   key={slide.id}
-                  className={`relative flex-shrink-0 w-[80vw] sm:w-[70vw] md:w-[60vw] lg:w-[55vw] h-[260px] sm:h-[320px] md:h-[360px] rounded-2xl overflow-hidden border border-gold/40 shadow-xl ${
-                    index === current ? "z-30 scale-100" : "z-10 scale-95 opacity-60"
-                  }`}
-                  transition={{ duration: 0.6 }}
+                  className={`relative flex-shrink-0 w-[88vw] sm:w-[82vw] md:w-[76vw] lg:w-[70vw] 
+                              h-[280px] sm:h-[340px] md:h-[400px] rounded-2xl overflow-hidden border border-gold/40 
+                              shadow-xl transition-all duration-700 ${
+                                index === current
+                                  ? "z-30 scale-100 opacity-100"
+                                  : "z-10 scale-95 opacity-70"
+                              }`}
                 >
                   <img
                     src={slide.image}
@@ -82,10 +86,22 @@ function LandingPage() {
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-                  <div className="absolute bottom-4 left-6">
+                  <div className="absolute bottom-5 left-6">
                     <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
                       {slide.alt}
                     </h3>
+                  </div>
+
+                  {/* Dots bottom-right (accurate to current) */}
+                  <div className="absolute bottom-4 right-6 flex gap-2">
+                    {heroSlides.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                          idx === current ? "bg-gold scale-110" : "bg-gray-500"
+                        }`}
+                      />
+                    ))}
                   </div>
                 </motion.div>
               ))}
@@ -99,18 +115,6 @@ function LandingPage() {
           >
             ›
           </button>
-
-          {/* Dots */}
-          <div className="absolute -bottom-3 flex justify-center w-full gap-2">
-            {heroSlides.map((_, idx) => (
-              <div
-                key={idx}
-                className={`w-2.5 h-2.5 rounded-full ${
-                  idx === current ? "bg-gold" : "bg-gray-500"
-                }`}
-              />
-            ))}
-          </div>
 
           {/* Cities Button */}
           <div className="absolute top-0 right-6 z-50">
@@ -137,7 +141,7 @@ function LandingPage() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 180 }}
                 onClick={() => navigate(service.link)}
-                className="cursor-pointer flex-shrink-0 w-[200px] md:w-[280px] h-[120px] md:h-[160px] 
+                className="cursor-pointer flex-shrink-0 w-[220px] md:w-[300px] h-[130px] md:h-[170px] 
                            bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                            flex flex-col items-center justify-center text-center shadow-lg snap-center"
               >
@@ -146,13 +150,15 @@ function LandingPage() {
                   alt={service.title}
                   className="w-16 h-16 md:w-20 md:h-20 object-contain mb-2"
                 />
-                <h3 className="text-gold font-semibold text-sm md:text-base">{service.title}</h3>
+                <h3 className="text-gold font-semibold text-sm md:text-base">
+                  {service.title}
+                </h3>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-
+ 
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
