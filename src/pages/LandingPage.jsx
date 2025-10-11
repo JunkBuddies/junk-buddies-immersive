@@ -111,39 +111,64 @@ function LandingPage() {
       <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
           {/* LEFT CROPPED */}
-          <div className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
+          <div
+            className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
-            <img src={slides[leftIndex].image} alt={slides[leftIndex].alt}
-              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
+                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+          >
+            <img
+              src={slides[leftIndex].image}
+              alt={slides[leftIndex].alt}
+              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+            />
           </div>
 
           {/* CENTER */}
-          <div className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                          ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}>
-            <img src={slides[centerIndex].image} alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]" />
+          <div
+            className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
+                          ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
+          >
+            <img
+              src={slides[centerIndex].image}
+              alt={slides[centerIndex].alt}
+              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+            />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-4 left-6">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                {slides[centerIndex].alt}
+              </h2>
             </div>
           </div>
 
           {/* RIGHT CROPPED */}
-          <div className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
+          <div
+            className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
-            <img src={slides[rightIndex].image} alt={slides[rightIndex].alt}
-              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]" />
+                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+          >
+            <img
+              src={slides[rightIndex].image}
+              alt={slides[rightIndex].alt}
+              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+            />
           </div>
 
           {/* ARROWS */}
-          <button onClick={goPrev}
+          <button
+            onClick={goPrev}
             className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">‹</button>
-          <button onClick={goNext}
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+          >
+            ‹
+          </button>
+          <button
+            onClick={goNext}
             className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">›</button>
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+          >
+            ›
+          </button>
         </div>
       </section>
 
@@ -151,12 +176,20 @@ function LandingPage() {
       <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
           {mainServices.map((s) => (
-            <div key={s.title} onClick={() => navigate(s.link)}
-              className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
-                         bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                         flex flex-col items-center justify-center text-center shadow-md snap-center hover:scale-105 transition-transform">
-              <img src={s.image} alt={s.title} className="w-14 h-14 md:w-16 md:h-16 object-contain mb-2" />
-              <h3 className="text-gold font-semibold text-xs md:text-sm">{s.title}</h3>
+            <div key={s.title} className="flex flex-col items-center">
+              <div
+                onClick={() => navigate(s.link)}
+                className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
+              >
+                <img
+                  src={s.image}
+                  alt={s.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-gold font-semibold text-xs md:text-sm mt-2">{s.title}</h3>
             </div>
           ))}
         </div>
@@ -178,19 +211,25 @@ function LandingPage() {
               className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
             >
               {section.data.map((item, i) => (
-                <div
-                  key={i}
-                  onClick={() => item.link && navigate(item.link)}
-                  className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                             bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                             flex flex-col items-center justify-center text-center shadow-lg snap-center
-                             hover:scale-105 transition-transform"
-                >
-                  {"image" in item ? (
-                    <img src={item.image} alt={item.title || item.q} className="w-20 h-20 md:w-24 md:h-24 object-contain mb-2" />
-                  ) : null}
-                  <h3 className="text-gold font-semibold text-sm md:text-base px-2">{item.title || item.q}</h3>
-                  {item.a && <p className="text-gray-400 text-xs mt-1 px-2">{item.a}</p>}
+                <div key={i} className="flex flex-col items-center">
+                  <div
+                    onClick={() => item.link && navigate(item.link)}
+                    className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
+                               bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                               overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform"
+                  >
+                    {"image" in item ? (
+                      <img
+                        src={item.image}
+                        alt={item.title || item.q}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : null}
+                  </div>
+                  <h3 className="text-gold font-semibold text-sm md:text-base mt-2 px-2 text-center">
+                    {item.title || item.q}
+                  </h3>
+                  {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
                 </div>
               ))}
             </div>
@@ -208,6 +247,7 @@ function LandingPage() {
           </div>
         </section>
       ))}
+
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
