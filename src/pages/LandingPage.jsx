@@ -43,11 +43,11 @@ function LandingPage() {
   ];
 
   const cities = [
-    { title: "Houston", image: "/images/cities/houston.jpg", link: "/houston" },
-    { title: "Katy", image: "/images/cities/katy.jpg", link: "/katy" },
-    { title: "Sugar Land", image: "/images/cities/sugar-land.jpg", link: "/sugar-land" },
-    { title: "Pearland", image: "/images/cities/pearland.jpg", link: "/pearland" },
-    { title: "The Woodlands", image: "/images/cities/woodlands.jpg", link: "/the-woodlands" },
+    { title: "Houston", image: "/images/Houston.webp", link: "/houston" },
+  { title: "Katy", image: "/images/Katy.webp", link: "/katy" },
+  { title: "Sugar Land", image: "/images/Sugar-Land.webp", link: "/sugar-land" },
+  { title: "Pearland", image: "/images/Pearland.webp", link: "/pearland" },
+  { title: "The Woodlands", image: "/images/the-woodlands.webp", link: "/the-woodlands" },
   ];
 
   const blogs = [
