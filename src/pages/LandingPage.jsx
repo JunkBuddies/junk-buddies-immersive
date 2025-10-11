@@ -35,11 +35,11 @@ function LandingPage() {
   ];
 
   const otherServices = [
-    { title: "Bed Removal", image: "/images/genres/bed.jpg", link: "/bed-removal" },
-    { title: "Trampoline Removal", image: "/images/genres/trampoline.jpg", link: "/trampoline-removal" },
-    { title: "Recliner Removal", image: "/images/genres/recliner.jpg", link: "/recliner-removal" },
-    { title: "Sofa Removal", image: "/images/genres/sofa.jpg", link: "/sofa-removal" },
-    { title: "Table Removal", image: "/images/genres/table.jpg", link: "/table-removal" },
+ { title: "Bed Removal", image: "/images/bed.webp", link: "/bed-removal" },
+  { title: "Trampoline Removal", image: "/images/trampoline.webp", link: "/trampoline-removal" },
+  { title: "Recliner Removal", image: "/images/recliner.webp", link: "/recliner-removal" },
+  { title: "Sectional Removal", image: "/images/sectional-couch.webp", link: "/sectional-couch" },
+  { title: "Table Removal", image: "/images/table.webp", link: "/table-removal" },
   ];
 
   const cities = [
