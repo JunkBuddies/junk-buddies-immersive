@@ -27,11 +27,11 @@ function LandingPage() {
 
   // === SERVICE DATA ===
   const mainServices = [
-    { title: "Mattress Removal", image: "/images/genres/mattress.jpg", link: "/mattress-removal" },
-    { title: "Couch Removal", image: "/images/genres/couch.jpg", link: "/couch-removal" },
-    { title: "Fridge Removal", image: "/images/genres/fridge.jpg", link: "/fridge-removal" },
-    { title: "Washer & Dryer Removal", image: "/images/genres/washer.jpg", link: "/washer-dryer-removal" },
-    { title: "Desk Removal", image: "/images/genres/desk.jpg", link: "/desk-removal" },
+    { title: "Mattress Removal", image: "/images/mattress.webp", link: "/mattress-removal" },
+    { title: "Couch Removal", image: "/images/couch.webp", link: "/couch-removal" },
+    { title: "Fridge Removal", image: "/images/fridge.webp", link: "/fridge-removal" },
+    { title: "Washer & Dryer Removal", image: "/images/washer-dryer.webp", link: "/washer-dryer-removal" },
+    { title: "Desk Removal", image: "/images/desk.webp", link: "/desk-removal" },
   ];
 
   const otherServices = [
