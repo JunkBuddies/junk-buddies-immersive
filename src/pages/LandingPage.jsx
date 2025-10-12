@@ -91,7 +91,7 @@ function LandingPage() {
   },
 ];
 
-
+ 
   // === SCROLL REFS ===
   const rowRefs = {
     other: useRef(null),
