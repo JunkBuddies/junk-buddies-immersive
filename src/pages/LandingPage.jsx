@@ -51,11 +51,11 @@ function LandingPage() {
   ];
 
   const blogs = [
-    { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
-    { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", link: "/blog/save-money" },
-    { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
-    { title: "Top 10 Items We Remove Most Often", image: "/images/blogs/top10.jpg", link: "/blog/top-10-items" },
-    { title: "Houston's Guide to Responsible Recycling", image: "/images/blogs/recycle.jpg", link: "/blog/houston-recycling" },
+    { title: "How Much Does Junk Removal Cost?", image: "/images/pricing.webp", link: "/blog/junk-removal-cost" },
+  { title: "Save Money on Junk Removal", image: "/images/save-money.webp", link: "/blog/save-money" },
+  { title: "Eco-Friendly Disposal in Houston", image: "/images/eco.webp", link: "/blog/eco-friendly" },
+  { title: "Top 10 Items We Remove Most Often", image: "/images/top10.webp", link: "/blog/top-10-items" },
+  { title: "Houston's Guide to Responsible Recycling", image: "/images/recycle.webp", link: "/blog/houston-recycling" },
   ];
 
   const faqs = [
