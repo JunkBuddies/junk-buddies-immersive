@@ -58,13 +58,39 @@ function LandingPage() {
   { title: "Houston's Guide to Responsible Recycling", image: "/images/recycle.webp", link: "/blog/houston-recycling" },
   ];
 
-  const faqs = [
-    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
-    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
-    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
-    { q: "Do you take hazardous materials?", a: "We follow safety guidelines and local laws — contact us for specifics." },
-    { q: "Can I get a same-day pickup?", a: "Yes, depending on truck availability and your location. Book early to lock in." },
-  ];
+ const faqs = [
+  {
+    q: "Do I need to be home?",
+    a: "Not always! We can remove items curbside or from access areas.",
+    image: "/images/faq-home.webp",
+    link: "/faq#do-i-need-to-be-home",
+  },
+  {
+    q: "When do I pay?",
+    a: "You don’t pay until the job is complete and you’re satisfied.",
+    image: "/images/faq-payment.webp",
+    link: "/faq#when-do-i-pay",
+  },
+  {
+    q: "Do you recycle?",
+    a: "Yes! We donate and recycle whenever possible to reduce landfill waste.",
+    image: "/images/faq-recycle.webp",
+    link: "/faq#do-you-recycle",
+  },
+  {
+    q: "Do you take hazardous materials?",
+    a: "We follow safety guidelines and local laws — contact us for specifics.",
+    image: "/images/faq-hazard.webp",
+    link: "/faq#hazardous-materials",
+  },
+  {
+    q: "Can I get a same-day pickup?",
+    a: "Yes, depending on truck availability and your location. Book early to lock in.",
+    image: "/images/faq-sameday.webp",
+    link: "/faq#same-day-pickup",
+  },
+];
+
 
   // === SCROLL REFS ===
   const rowRefs = {
