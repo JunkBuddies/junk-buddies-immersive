@@ -226,7 +226,7 @@ function LandingPage() {
         { key: "other", label: "Other Services", data: otherServices },
         { key: "cities", label: "Cities", data: cities },
         { key: "blogs", label: "Blogs & Articles", data: blogs },
-        { key: "faq", label: "FAQ", data: faqs.map((f) => ({ ...f, image: "/images/icons/faq.png" })) },
+        { key: "faq", label: "FAQ", data: faqs },
       ].map((section) => (
         <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
           <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
