@@ -25,6 +25,19 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
+  // === DEVICE DETECTION ===
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const getImage = (img) => {
+    if (!img.endsWith(".webp")) return img;
+    return isMobile ? img.replace(".webp", "-mobile.webp") : img;
+  };
+
   // === SERVICE DATA ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/mattress.webp", link: "/mattress-removal" },
@@ -209,7 +222,7 @@ function LandingPage() {
                            overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
               >
                 <img
-                  src={s.image}
+                  src={getImage(s.image)}
                   alt={s.title}
                   className="w-full h-full object-cover"
                 />
@@ -245,7 +258,7 @@ function LandingPage() {
                   >
                     {"image" in item ? (
                       <img
-                        src={item.image}
+                        src={getImage(item.image)}
                         alt={item.title || item.q}
                         className="w-full h-full object-cover"
                       />
@@ -261,7 +274,7 @@ function LandingPage() {
           </div>
         </section>
       ))}
- 
+   
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
