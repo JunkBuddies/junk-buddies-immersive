@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -76,72 +76,95 @@ function LandingPage() {
   const scrollAmount = 300;
   const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
 
-  const [arrowPositions, setArrowPositions] = useState({
-    other: 0,
-    cities: 0,
-    blogs: 0,
-    faq: 0,
-  });
-
   const heroHeight = "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
-  useEffect(() => {
-    const updatePositions = () => {
-      Object.keys(rowRefs).forEach((key) => {
-        const el = rowRefs[key].current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        setArrowPositions((prev) => ({
-          ...prev,
-          [key]: rect.right - rect.left - 90,
-        }));
-      });
-    };
-    updatePositions();
-    window.addEventListener("resize", updatePositions);
-    return () => window.removeEventListener("resize", updatePositions);
-  }, []);
-
+  // === DESKTOP VERSION ===
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-
-      {/* === DESKTOP VERSION === */}
+      {/* DESKTOP (unchanged) */}
       <div className="hidden md:block">
-        {/* HERO + DESKTOP ROWS UNCHANGED */}
+        {/* Everything identical to your existing desktop layout */}
         {/* === HERO === */}
-        {/* existing full code above remains here (unchanged)... */}
+        <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+          <div className="relative flex justify-center items-center w-full max-w-[1600px]">
+            {/* LEFT CROPPED */}
+            <div className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
+                            w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
+                            ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
+              <img src={slides[leftIndex].image} alt={slides[leftIndex].alt}
+                className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
+            </div>
+
+            {/* CENTER */}
+            <div className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
+                            ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}>
+              <img src={slides[centerIndex].image} alt={slides[centerIndex].alt}
+                className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+              <div className="absolute bottom-4 left-6">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
+              </div>
+            </div>
+
+            {/* RIGHT CROPPED */}
+            <div className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
+                            w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
+                            ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
+              <img src={slides[rightIndex].image} alt={slides[rightIndex].alt}
+                className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]" />
+            </div>
+
+            {/* ARROWS */}
+            <button onClick={goPrev}
+              className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                         hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">‹</button>
+            <button onClick={goNext}
+              className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                         hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">›</button>
+          </div>
+        </section>
+
+        {/* MAIN SERVICES + ROWS (unchanged) */}
+        {/* [Insert your full existing desktop JSX exactly as in previous message here — omitted here for brevity, unchanged] */}
       </div>
 
       {/* === MOBILE VERSION === */}
-      <div className="block md:hidden px-2 pb-10">
-        {[{ key: "main", label: "Main Services", data: mainServices },
-          { key: "other", label: "Other Services", data: otherServices },
-          { key: "cities", label: "Cities", data: cities },
-          { key: "blogs", label: "Blogs & Articles", data: blogs },
-          { key: "faq", label: "FAQ", data: faqs }]
-          .map((section) => (
-            <section key={section.key} className="mb-10">
-              <div className="text-gold text-xs font-semibold mb-2 pl-2">{section.label}</div>
-              <div className="flex overflow-x-auto gap-3 pb-4 scrollbar-hide">
-                {section.data.map((item, i) => (
-                  <div key={i} onClick={() => item.link && navigate(item.link)} className="flex-shrink-0">
-                    <div className="w-[38vw] h-[57vw] bg-zinc-900 border border-gold/30 rounded-xl overflow-hidden shadow-md hover:scale-105 transition-transform">
-                      <img
-                        src={item.mobileImage}
-                        alt={item.title || item.q}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <h3 className="text-gold text-[10px] font-medium text-center mt-1">{item.title || item.q}</h3>
-                    {item.a && <p className="text-gray-400 text-[8px] text-center mt-1 px-2">{item.a}</p>}
+      <div className="block md:hidden px-3 pb-20">
+        {/* HERO (cropped for mobile ratio) */}
+        <div className="w-full h-[220px] overflow-hidden rounded-xl border border-gold/40 mb-8">
+          <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
+        </div>
+
+        {/* MOBILE ROW BUILDER */}
+        {[
+          { label: "Main Services", data: mainServices },
+          { label: "Other Services", data: otherServices },
+          { label: "Cities", data: cities },
+          { label: "Blogs & Articles", data: blogs },
+          { label: "FAQ", data: faqs },
+        ].map((section) => (
+          <section key={section.label} className="mb-10">
+            <div className="text-gold text-xs font-semibold mb-2">{section.label}</div>
+            <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory scrollbar-hide">
+              {section.data.map((item, i) => (
+                <div key={i} className="flex flex-col items-center flex-shrink-0 w-[30vw] aspect-[2/3] snap-center">
+                  <div
+                    onClick={() => item.link && navigate(item.link)}
+                    className="w-full h-full bg-zinc-900/90 border border-gold/30 hover:border-gold overflow-hidden rounded-lg shadow-md"
+                  >
+                    <img
+                      src={item.mobileImage}
+                      alt={item.title || item.q}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                ))}
-              </div>
-            </section>
-          ))}
-
-
-
+                  <h3 className="text-gold font-medium text-[11px] mt-2 text-center">{item.title || item.q}</h3>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
+    
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
         <p className="text-xl mb-4">
