@@ -120,7 +120,7 @@ function LandingPage() {
       {/* === HERO === */}
       <section
         className={`relative w-full flex justify-center items-center overflow-visible ${
-          isMobile ? "mt-4 mb-4 min-h-[180px]" : "mt-8 sm:mt-12 mb-6"
+          isMobile ? "mt-4 mb-4 min-h-[200px] sm:min-h-[300px]" : "mt-8 sm:mt-12 mb-6"
         }`}
       >
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
@@ -198,6 +198,9 @@ function LandingPage() {
         </div>
       </section>
 
+      {/* MOBILE SPACER FIX */}
+      {isMobile && <div className="h-[20px] sm:h-[40px]"></div>}
+
       {/* === MAIN SERVICES === */}
       <section className="relative z-30 px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
@@ -269,6 +272,7 @@ function LandingPage() {
         </section>
       ))}
    
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
