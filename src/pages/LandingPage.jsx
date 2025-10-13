@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // === Detect mobile view ===
+  useEffect(() => {
+    const checkScreen = () => setIsMobile(window.innerWidth < 768);
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
 
   // === HERO SLIDES ===
   const slides = [
@@ -25,73 +34,48 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === SERVICE DATA (unchanged) ===
+  // === SERVICE DATA (with -mobile placeholders) ===
   const mainServices = [
-    { title: "Mattress Removal", image: "/images/mattress.webp", link: "/mattress-removal" },
-    { title: "Couch Removal", image: "/images/couch.webp", link: "/couch-removal" },
-    { title: "Fridge Removal", image: "/images/fridge.webp", link: "/fridge-removal" },
-    { title: "Washer & Dryer Removal", image: "/images/washer-dryer.webp", link: "/washer-dryer-removal" },
-    { title: "Desk Removal", image: "/images/desk.webp", link: "/desk-removal" },
+    { title: "Mattress Removal", image: isMobile ? "/images/mattress-mobile.webp" : "/images/mattress.webp", link: "/mattress-removal" },
+    { title: "Couch Removal", image: isMobile ? "/images/couch-mobile.webp" : "/images/couch.webp", link: "/couch-removal" },
+    { title: "Fridge Removal", image: isMobile ? "/images/fridge-mobile.webp" : "/images/fridge.webp", link: "/fridge-removal" },
+    { title: "Washer & Dryer Removal", image: isMobile ? "/images/washer-dryer-mobile.webp" : "/images/washer-dryer.webp", link: "/washer-dryer-removal" },
+    { title: "Desk Removal", image: isMobile ? "/images/desk-mobile.webp" : "/images/desk.webp", link: "/desk-removal" },
   ];
 
   const otherServices = [
-    { title: "Bed Removal", image: "/images/bed.webp", link: "/bed-removal" },
-    { title: "Trampoline Removal", image: "/images/trampoline.webp", link: "/trampoline-removal" },
-    { title: "Recliner Removal", image: "/images/recliner.webp", link: "/recliner-removal" },
-    { title: "Sectional Removal", image: "/images/sectional-couch.webp", link: "/sectional-couch" },
-    { title: "Table Removal", image: "/images/table.webp", link: "/table-removal" },
+    { title: "Bed Removal", image: isMobile ? "/images/genres/bed-mobile.jpg" : "/images/genres/bed.jpg", link: "/bed-removal" },
+    { title: "Trampoline Removal", image: isMobile ? "/images/genres/trampoline-mobile.jpg" : "/images/genres/trampoline.jpg", link: "/trampoline-removal" },
+    { title: "Recliner Removal", image: isMobile ? "/images/genres/recliner-mobile.jpg" : "/images/genres/recliner.jpg", link: "/recliner-removal" },
+    { title: "Sofa Removal", image: isMobile ? "/images/genres/sofa-mobile.jpg" : "/images/genres/sofa.jpg", link: "/sofa-removal" },
+    { title: "Table Removal", image: isMobile ? "/images/genres/table-mobile.jpg" : "/images/genres/table.jpg", link: "/table-removal" },
   ];
 
   const cities = [
-    { title: "Houston", image: "/images/Houston.webp", link: "/houston" },
-    { title: "Katy", image: "/images/Katy.webp", link: "/katy" },
-    { title: "Sugar Land", image: "/images/Sugar-Land.webp", link: "/sugar-land" },
-    { title: "Pearland", image: "/images/Pearland.webp", link: "/pearland" },
-    { title: "The Woodlands", image: "/images/the-woodlands.webp", link: "/the-woodlands" },
+    { title: "Houston", image: isMobile ? "/images/cities/houston-mobile.jpg" : "/images/cities/houston.jpg", link: "/houston" },
+    { title: "Katy", image: isMobile ? "/images/cities/katy-mobile.jpg" : "/images/cities/katy.jpg", link: "/katy" },
+    { title: "Sugar Land", image: isMobile ? "/images/cities/sugar-land-mobile.jpg" : "/images/cities/sugar-land.jpg", link: "/sugar-land" },
+    { title: "Pearland", image: isMobile ? "/images/cities/pearland-mobile.jpg" : "/images/cities/pearland.jpg", link: "/pearland" },
+    { title: "The Woodlands", image: isMobile ? "/images/cities/woodlands-mobile.jpg" : "/images/cities/woodlands.jpg", link: "/the-woodlands" },
   ];
 
   const blogs = [
-    { title: "How Much Does Junk Removal Cost?", image: "/images/pricing.webp", link: "/blog/junk-removal-cost" },
-    { title: "Save Money on Junk Removal", image: "/images/save-money.webp", link: "/blog/save-money" },
-    { title: "Eco-Friendly Disposal in Houston", image: "/images/eco.webp", link: "/blog/eco-friendly" },
-    { title: "Top 10 Items We Remove Most Often", image: "/images/top10.webp", link: "/blog/top-10-items" },
-    { title: "Houston's Guide to Responsible Recycling", image: "/images/recycle.webp", link: "/blog/houston-recycling" },
+    { title: "How Much Does Junk Removal Cost?", image: isMobile ? "/images/blogs/pricing-mobile.jpg" : "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
+    { title: "Save Money on Junk Removal", image: isMobile ? "/images/blogs/save-mobile.jpg" : "/images/blogs/save.jpg", link: "/blog/save-money" },
+    { title: "Eco-Friendly Disposal in Houston", image: isMobile ? "/images/blogs/eco-mobile.jpg" : "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
+    { title: "Top 10 Items We Remove Most Often", image: isMobile ? "/images/blogs/top10-mobile.jpg" : "/images/blogs/top10.jpg", link: "/blog/top-10-items" },
+    { title: "Houston's Guide to Responsible Recycling", image: isMobile ? "/images/blogs/recycle-mobile.jpg" : "/images/blogs/recycle.jpg", link: "/blog/houston-recycling" },
   ];
 
   const faqs = [
-    {
-      q: "Do I need to be home?",
-      a: "Not always! We can remove items curbside or from access areas.",
-      image: "/images/faq-home.webp",
-      link: "/faq#do-i-need-to-be-home",
-    },
-    {
-      q: "When do I pay?",
-      a: "You don’t pay until the job is complete and you’re satisfied.",
-      image: "/images/faq-payment.webp",
-      link: "/faq#when-do-i-pay",
-    },
-    {
-      q: "Do you recycle?",
-      a: "Yes! We donate and recycle whenever possible to reduce landfill waste.",
-      image: "/images/faq-recycle.webp",
-      link: "/faq#do-you-recycle",
-    },
-    {
-      q: "Do you take hazardous materials?",
-      a: "We follow safety guidelines and local laws — contact us for specifics.",
-      image: "/images/faq-hazard.webp",
-      link: "/faq#hazardous-materials",
-    },
-    {
-      q: "Can I get a same-day pickup?",
-      a: "Yes, depending on truck availability and your location. Book early to lock in.",
-      image: "/images/faq-sameday.webp",
-      link: "/faq#same-day-pickup",
-    },
+    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas.", image: "/images/icons/faq.png" },
+    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied.", image: "/images/icons/faq.png" },
+    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste.", image: "/images/icons/faq.png" },
+    { q: "Do you take hazardous materials?", a: "We follow safety guidelines and local laws — contact us for specifics.", image: "/images/icons/faq.png" },
+    { q: "Can I get a same-day pickup?", a: "Yes, depending on truck availability and your location. Book early to lock in.", image: "/images/icons/faq.png" },
   ];
 
-  // === SCROLL REFS (unchanged) ===
+  // === SCROLL REFS ===
   const rowRefs = {
     other: useRef(null),
     cities: useRef(null),
@@ -109,10 +93,7 @@ function LandingPage() {
     faq: 0,
   });
 
-  // Keep carousel from stretching (unchanged)
-  const heroHeight = "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
-
-  // Arrow placement update (unchanged)
+  // === Arrow placement update ===
   useEffect(() => {
     const updatePositions = () => {
       Object.keys(rowRefs).forEach((key) => {
@@ -130,206 +111,78 @@ function LandingPage() {
     return () => window.removeEventListener("resize", updatePositions);
   }, []);
 
-  // ===== Helper: build -mobile variant safely (no crashes) =====
-  const getMobileSrc = (src) => {
-    if (!src || typeof src !== "string") return src;
-    // Insert "-mobile" before extension if it looks like an image path.
-    const m = src.match(/\.(webp|png|jpe?g)$/i);
-    if (!m) return src; // not a recognized image extension, use as-is
-    const ext = m[0]; // .webp / .png / .jpg / .jpeg
-    return src.replace(ext, `-mobile${ext}`);
-  };
+  // === Dimensions ===
+  const cardWidth = isMobile ? "w-[120px]" : "w-[240px] md:w-[320px]";
+  const cardHeight = isMobile ? "h-[180px]" : "h-[140px] md:h-[190px]";
 
-  // ===== MOBILE VERSION FUNCTION (new, safe) =====
-  const MobileLayout = () => {
-    const sections = [
-      { key: "main", data: mainServices.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
-      { key: "other", data: otherServices.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
-      { key: "cities", data: cities.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
-      { key: "blogs", data: blogs.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
-      { key: "faq", data: faqs.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
-    ];
-
-    return (
-      <div className="flex flex-col gap-6 px-3 pb-16 overflow-y-auto">
-        {sections.map((section) => (
-          <div key={section.key} className="flex flex-col gap-3">
-            {/* Horizontal row — 3.5 cards visible (44vw each, 2:3 aspect) */}
-            <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory pb-3 scrollbar-hide">
-              {section.data.map((item, i) => (
-                <div
-                  key={i}
-                  onClick={() => item.link && navigate(item.link)}
-                  className="cursor-pointer flex-shrink-0 w-[44vw] aspect-[2/3] bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl overflow-hidden shadow-md snap-center transition-transform hover:scale-105"
-                >
-                  {item.mobile ? (
-                    <img
-                      src={item.mobile}
-                      alt={item.title || item.q || `item-${i}`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : null}
-                </div>
-              ))}
-            </div>
-
-            {/* Labels under first 3 to keep tight; tweak as desired */}
-            <div className="grid grid-cols-3 gap-2 text-center text-gold text-xs font-semibold px-1">
-              {section.data.slice(0, 3).map((item, i) => (
-                <span key={i}>{item.title || item.q}</span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  // ===== DESKTOP (unchanged) + MOBILE switch =====
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO (desktop only) === */}
-      <section className="hidden sm:flex relative w-full justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+      {/* HERO untouched */}
+      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
-          <div
-            className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
-          >
-            <img
-              src={slides[leftIndex].image}
-              alt={slides[leftIndex].alt}
-              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
-            />
+          {/* Left */}
+          <div className="absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[30vw] overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
+            <img src={slides[leftIndex].image} alt={slides[leftIndex].alt} className="w-[130vw] h-full object-cover object-right opacity-70" />
           </div>
 
-          {/* CENTER */}
-          <div
-            className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                          ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
-          >
-            <img
-              src={slides[centerIndex].image}
-              alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+          {/* Center */}
+          <div className="relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw] h-[250px] sm:h-[275px] md:h-[300px] overflow-hidden border border-gold/40 shadow-2xl rounded-2xl">
+            <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
             <div className="absolute bottom-4 left-6">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-                {slides[centerIndex].alt}
-              </h2>
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
             </div>
           </div>
 
-          {/* RIGHT CROPPED */}
-          <div
-            className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
-          >
-            <img
-              src={slides[rightIndex].image}
-              alt={slides[rightIndex].alt}
-              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
-            />
+          {/* Right */}
+          <div className="absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[30vw] overflow-hidden border border-gold/30 shadow-2xl rounded-2xl">
+            <img src={slides[rightIndex].image} alt={slides[rightIndex].alt} className="w-[130vw] h-full object-cover object-left opacity-70" />
           </div>
-
-          {/* ARROWS */}
-          <button
-            onClick={goPrev}
-            className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-          >
-            ‹
-          </button>
-          <button
-            onClick={goNext}
-            className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-          >
-            ›
-          </button>
         </div>
       </section>
 
-      {/* === DESKTOP SECTIONS (unchanged) === */}
-      <div className="hidden sm:block">
-        {/* Main services */}
-        <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {mainServices.map((s) => (
-              <div key={s.title} className="flex flex-col items-center">
-                <div
-                  onClick={() => navigate(s.link)}
-                  className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
-                             bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                             overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
-                >
-                  <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
+      {/* === REUSABLE ROWS (mobile adaptive) === */}
+      {[
+        { key: "main", label: "Main Services", data: mainServices },
+        { key: "other", label: "Other Services", data: otherServices },
+        { key: "cities", label: "Cities", data: cities },
+        { key: "blogs", label: "Blogs & Articles", data: blogs },
+        { key: "faq", label: "FAQ", data: faqs },
+      ].map((section) => (
+        <section key={section.key} className="relative z-30 px-4 md:px-8 pb-12">
+          <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
+
+          <div className="relative flex items-center">
+            <div
+              ref={rowRefs[section.key]}
+              className={`flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-6 scrollbar-hide w-full px-[20px]`}
+            >
+              {section.data.map((item, i) => (
+                <div key={i} className="flex flex-col items-center flex-shrink-0">
+                  <div
+                    onClick={() => item.link && navigate(item.link)}
+                    className={`${cardWidth} ${cardHeight} cursor-pointer bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
+                  >
+                    <img src={item.image} alt={item.title || item.q} className="w-full h-full object-cover" />
+                  </div>
+                  <h3 className="text-gold font-semibold text-xs md:text-sm mt-2 text-center px-1">{item.title || item.q}</h3>
+                  {item.a && <p className="text-gray-400 text-[10px] mt-1 px-2 text-center">{item.a}</p>}
                 </div>
-                <h3 className="text-gold font-semibold text-xs md:text-sm mt-2">{s.title}</h3>
-              </div>
-            ))}
+              ))}
+            </div>
+
+            {/* Arrows */}
+            <button
+              onClick={() => scrollRight(rowRefs[section.key])}
+              style={{ left: `${arrowPositions[section.key]}px` }}
+              className="absolute top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80
+                         text-gold text-[60px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none
+                         shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300"
+            >
+              &gt;
+            </button>
           </div>
         </section>
-
-        {/* Other rows */}
-        {[
-          { key: "other", label: "Other Services", data: otherServices },
-          { key: "cities", label: "Cities", data: cities },
-          { key: "blogs", label: "Blogs & Articles", data: blogs },
-          { key: "faq", label: "FAQ", data: faqs },
-        ].map((section) => (
-          <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
-            <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
-
-            <div className="relative flex items-center">
-              <div
-                ref={rowRefs[section.key]}
-                className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
-              >
-                {section.data.map((item, i) => (
-                  <div key={i} className="flex flex-col items-center">
-                    <div
-                      onClick={() => item.link && navigate(item.link)}
-                      className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                                 bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                                 overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform"
-                    >
-                      {"image" in item ? (
-                        <img src={item.image} alt={item.title || item.q} className="w-full h-full object-cover" />
-                      ) : null}
-                    </div>
-                    <h3 className="text-gold font-semibold text-sm md:text-base mt-2 px-2 text-center">
-                      {item.title || item.q}
-                    </h3>
-                    {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
-                  </div>
-                ))}
-              </div>
-
-              {/* Arrow aligned with last visible slide (unchanged behavior) */}
-              <button
-                onClick={() => scrollRight(rowRefs[section.key])}
-                style={{ left: `${arrowPositions[section.key]}px` }}
-                className="absolute top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80
-                           text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none
-                           shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300"
-              >
-                &gt;
-              </button>
-            </div>
-          </section>
-        ))}
-      </div>
-
-      {/* === MOBILE VERSION (new) === */}
-      <div className="block sm:hidden">
-        <MobileLayout />
-      </div>
-
+      ))}
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
