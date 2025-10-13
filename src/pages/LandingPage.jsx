@@ -117,86 +117,91 @@ function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white overflow-x-hidden overflow-y-auto relative">
-      {/* === HERO === */}
-      <section
-        className={`relative w-full flex justify-center items-center overflow-visible ${
-          isMobile ? "mt-4 mb-4 min-h-[280px] sm:min-h-[360px]" : "mt-8 sm:mt-12 mb-6"
-        }`}
-      >
-        <div className="relative flex justify-center items-center w-full max-w-[1600px] overflow-hidden">
-          {/* LEFT CROPPED */}
-          <div
-            className={`absolute ${
-              isMobile
-                ? "left-[-5vw] w-[25vw]"
-                : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
-            } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
-          >
-            <img
-              src={slides[leftIndex].image}
-              alt={slides[leftIndex].alt}
-              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
-            />
-          </div>
+{/* === HERO === */}
+<section
+  className={`relative w-full flex justify-center items-center overflow-visible ${
+    isMobile ? "mt-4 mb-4 min-h-[320px]" : "mt-8 sm:mt-12 mb-6"
+  }`}
+>
+  <div
+    className={`relative flex justify-center items-center w-full max-w-[1600px] overflow-hidden ${
+      isMobile ? "scale-[0.33] origin-center" : ""
+    }`}
+  >
+    {/* LEFT CROPPED */}
+    <div
+      className={`absolute ${
+        isMobile
+          ? "left-[-3vw] w-[18vw]"
+          : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
+      } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+    >
+      <img
+        src={slides[leftIndex].image}
+        alt={slides[leftIndex].alt}
+        className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+      />
+    </div>
 
-          {/* CENTER */}
-          <div
-            className={`relative z-20 ${
-              isMobile ? "w-[90vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
-            } ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
-          >
-            <img
-              src={slides[centerIndex].image}
-              alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
-              <h2
-                className={`font-bold text-gold drop-shadow-lg ${
-                  isMobile ? "text-base" : "text-lg sm:text-xl md:text-2xl"
-                }`}
-              >
-                {slides[centerIndex].alt}
-              </h2>
-            </div>
-          </div>
+    {/* CENTER */}
+    <div
+      className={`relative z-20 ${
+        isMobile ? "w-[60vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
+      } ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
+    >
+      <img
+        src={slides[centerIndex].image}
+        alt={slides[centerIndex].alt}
+        className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
+        <h2
+          className={`font-bold text-gold drop-shadow-lg ${
+            isMobile ? "text-xs" : "text-lg sm:text-xl md:text-2xl"
+          }`}
+        >
+          {slides[centerIndex].alt}
+        </h2>
+      </div>
+    </div>
 
-          {/* RIGHT CROPPED */}
-          <div
-            className={`absolute ${
-              isMobile
-                ? "right-[-5vw] w-[25vw]"
-                : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
-            } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
-          >
-            <img
-              src={slides[rightIndex].image}
-              alt={slides[rightIndex].alt}
-              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
-            />
-          </div>
+    {/* RIGHT CROPPED */}
+    <div
+      className={`absolute ${
+        isMobile
+          ? "right-[-3vw] w-[18vw]"
+          : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
+      } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+    >
+      <img
+        src={slides[rightIndex].image}
+        alt={slides[rightIndex].alt}
+        className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+      />
+    </div>
 
-          {!isMobile && (
-            <>
-              <button
-                onClick={goPrev}
-                className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                           hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-              >
-                ‹
-              </button>
-              <button
-                onClick={goNext}
-                className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                           hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-              >
-                ›
-              </button>
-            </>
-          )}
-        </div>
-      </section>
+    {!isMobile && (
+      <>
+        <button
+          onClick={goPrev}
+          className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                     hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+        >
+          ‹
+        </button>
+        <button
+          onClick={goNext}
+          className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                     hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+        >
+          ›
+        </button>
+      </>
+    )}
+  </div>
+</section>
+
 
       {/* MOBILE SPACER FIX */}
       {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
