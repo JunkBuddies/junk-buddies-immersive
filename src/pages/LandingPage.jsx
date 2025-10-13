@@ -38,7 +38,7 @@ function LandingPage() {
     return isMobile ? img.replace(".webp", "-mobile.webp") : img;
   };
 
-  // === SERVICE DATA ===
+  // === DATA ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/mattress.webp", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/couch.webp", link: "/couch-removal" },
@@ -104,33 +104,28 @@ function LandingPage() {
     },
   ];
 
-  // === SCROLL REFS ===
-  const rowRefs = {
-    other: useRef(null),
-    cities: useRef(null),
-    blogs: useRef(null),
-    faq: useRef(null),
-  };
-
+  // === HERO HEIGHT ===
   const heroHeight = isMobile
-    ? "h-[140px]" // scaled down hero height on mobile
+    ? "h-[130px]" // smaller hero height
     : "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
-  // === RESPONSIVE COMPONENT ===
+  // === RENDER ===
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO === */}
       <section
         className={`relative w-full flex justify-center items-center ${
-          isMobile ? "mt-4 mb-4" : "mt-8 sm:mt-12 mb-6"
+          isMobile ? "mt-3 mb-3" : "mt-8 sm:mt-12 mb-6"
         } overflow-visible`}
       >
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
+          {/* LEFT CROPPED (tighter spacing on mobile) */}
           <div
-            className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+            className={`absolute ${
+              isMobile
+                ? "left-[-15vw] w-[45vw]"
+                : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
+            } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
           >
             <img
               src={slides[leftIndex].image}
@@ -142,13 +137,15 @@ function LandingPage() {
           {/* CENTER */}
           <div
             className={`relative z-20 ${
-              isMobile ? "w-[88vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
+              isMobile
+                ? "w-[90vw]"
+                : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
             } ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
           >
             <img
               src={slides[centerIndex].image}
               alt={slides[centerIndex].alt}
-              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+              className="w-full h-full object-cover transition-all duration-[1500ms]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
@@ -164,9 +161,11 @@ function LandingPage() {
 
           {/* RIGHT CROPPED */}
           <div
-            className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+            className={`absolute ${
+              isMobile
+                ? "right-[-15vw] w-[45vw]"
+                : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
+            } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
           >
             <img
               src={slides[rightIndex].image}
@@ -175,7 +174,7 @@ function LandingPage() {
             />
           </div>
 
-          {/* ARROWS */}
+          {/* ARROWS (desktop only) */}
           {!isMobile && (
             <>
               <button
@@ -206,7 +205,7 @@ function LandingPage() {
                 onClick={() => navigate(s.link)}
                 className={`cursor-pointer flex-shrink-0 ${
                   isMobile
-                    ? "w-[160px] h-[240px]" // 2:3 ratio on mobile
+                    ? "w-[96px] h-[144px]" // 60% of previous 160x240
                     : "w-[190px] md:w-[260px] h-[115px] md:h-[150px]"
                 } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                   overflow-hidden shadow-md snap-center hover:scale-105 transition-transform`}
@@ -223,7 +222,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === REUSABLE SCROLL ROWS === */}
+      {/* === REUSABLE ROWS === */}
       {[
         { key: "other", label: "Other Services", data: otherServices },
         { key: "cities", label: "Cities", data: cities },
@@ -232,7 +231,6 @@ function LandingPage() {
       ].map((section) => (
         <section key={section.key} className="relative z-30 px-4 md:px-8 pb-14 md:pb-16">
           <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
-
           <div className="relative flex items-center">
             <div
               ref={rowRefs[section.key]}
@@ -244,7 +242,7 @@ function LandingPage() {
                     onClick={() => item.link && navigate(item.link)}
                     className={`cursor-pointer flex-shrink-0 ${
                       isMobile
-                        ? "w-[160px] h-[240px]" // 2:3 ratio on mobile
+                        ? "w-[96px] h-[144px]" // 60% smaller, 2:3 ratio
                         : "w-[240px] md:w-[320px] h-[140px] md:h-[190px]"
                     } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                       overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
@@ -260,14 +258,18 @@ function LandingPage() {
                   <h3 className="text-gold font-semibold text-xs md:text-base mt-2 px-2 text-center">
                     {item.title || item.q}
                   </h3>
-                  {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
+                  {item.a && (
+                    <p className="text-gray-400 text-xs mt-1 px-2 text-center">
+                      {item.a}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           </div>
         </section>
       ))}
-  
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
