@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -109,10 +109,8 @@ function LandingPage() {
     faq: 0,
   });
 
-  // === Keep carousel from stretching ===
   const heroHeight = "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
-  // === Arrow placement update ===
   useEffect(() => {
     const updatePositions = () => {
       Object.keys(rowRefs).forEach((key) => {
@@ -130,12 +128,60 @@ function LandingPage() {
     return () => window.removeEventListener("resize", updatePositions);
   }, []);
 
+  // === MOBILE VERSION FUNCTION ===
+  const MobileLayout = () => {
+    const sections = [
+      { key: "main", data: mainServices },
+      { key: "other", data: otherServices },
+      { key: "cities", data: cities },
+      { key: "blogs", data: blogs },
+      { key: "faq", data: faqs },
+    ];
+
+    return (
+      <div className="flex flex-col gap-6 px-3 pb-16 overflow-y-auto">
+        {sections.map((section) => (
+          <div key={section.key} className="flex flex-col gap-3">
+            <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory pb-3 scrollbar-hide">
+              {section.data.map((item, i) => (
+                <div
+                  key={i}
+                  onClick={() => item.link && navigate(item.link)}
+                  className="cursor-pointer flex-shrink-0 w-[44vw] aspect-[2/3] bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl overflow-hidden shadow-md snap-center transition-transform hover:scale-105"
+                >
+                  {"image" in item ? (
+                    <img
+                      src={
+                        item.image.replace(".webp", "-mobile.webp") ||
+                        item.image.replace(".png", "-mobile.png") ||
+                        item.image.replace(".jpg", "-mobile.jpg")
+                      }
+                      alt={item.title || item.q}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : null}
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 text-center text-gold text-xs font-semibold px-1">
+              {section.data.slice(0, 3).map((item, i) => (
+                <span key={i}>{item.title || item.q}</span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  // === MAIN DESKTOP RENDER ===
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO === */}
-      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+      <section className="hidden sm:flex relative w-full justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
+          {/* LEFT */}
           <div
             className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
@@ -166,7 +212,7 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT CROPPED */}
+          {/* RIGHT */}
           <div
             className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
@@ -197,71 +243,71 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* === MAIN SERVICES === */}
-      <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-          {mainServices.map((s) => (
-            <div key={s.title} className="flex flex-col items-center">
-              <div
-                onClick={() => navigate(s.link)}
-                className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
-              >
-                <img
-                  src={s.image}
-                  alt={s.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <h3 className="text-gold font-semibold text-xs md:text-sm mt-2">{s.title}</h3>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* === REUSABLE SCROLL ROWS === */}
-      {[
-        { key: "other", label: "Other Services", data: otherServices },
-        { key: "cities", label: "Cities", data: cities },
-        { key: "blogs", label: "Blogs & Articles", data: blogs },
-        { key: "faq", label: "FAQ", data: faqs },
-      ].map((section) => (
-        <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
-          <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
-
-          <div className="relative flex items-center">
-            <div
-              ref={rowRefs[section.key]}
-              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
-            >
-              {section.data.map((item, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <div
-                    onClick={() => item.link && navigate(item.link)}
-                    className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                               bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                               overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform"
-                  >
-                    {"image" in item ? (
-                      <img
-                        src={item.image}
-                        alt={item.title || item.q}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : null}
-                  </div>
-                  <h3 className="text-gold font-semibold text-sm md:text-base mt-2 px-2 text-center">
-                    {item.title || item.q}
-                  </h3>
-                  {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
+      {/* === DESKTOP SECTIONS (unchanged) === */}
+      <div className="hidden sm:block">
+        {/* Main services */}
+        <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+            {mainServices.map((s) => (
+              <div key={s.title} className="flex flex-col items-center">
+                <div
+                  onClick={() => navigate(s.link)}
+                  className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
+                             bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                             overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
+                >
+                  <img src={s.image} alt={s.title} className="w-full h-full object-cover" />
                 </div>
-              ))}
-            </div>
+                <h3 className="text-gold font-semibold text-xs md:text-sm mt-2">{s.title}</h3>
+              </div>
+            ))}
           </div>
         </section>
-      ))}
 
+        {/* Other sections */}
+        {[
+          { key: "other", label: "Other Services", data: otherServices },
+          { key: "cities", label: "Cities", data: cities },
+          { key: "blogs", label: "Blogs & Articles", data: blogs },
+          { key: "faq", label: "FAQ", data: faqs },
+        ].map((section) => (
+          <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
+            <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
+            <div className="relative flex items-center">
+              <div
+                ref={rowRefs[section.key]}
+                className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
+              >
+                {section.data.map((item, i) => (
+                  <div key={i} className="flex flex-col items-center">
+                    <div
+                      onClick={() => item.link && navigate(item.link)}
+                      className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
+                                 bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                                 overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform"
+                    >
+                      {"image" in item ? (
+                        <img src={item.image} alt={item.title || item.q} className="w-full h-full object-cover" />
+                      ) : null}
+                    </div>
+                    <h3 className="text-gold font-semibold text-sm md:text-base mt-2 px-2 text-center">
+                      {item.title || item.q}
+                    </h3>
+                    {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        ))}
+      </div>
+
+      {/* === MOBILE VERSION === */}
+      <div className="block sm:hidden">
+        <MobileLayout />
+  
+
+ 
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
