@@ -300,11 +300,11 @@ function LandingPage() {
             </div>
           </section>
         ))}
-
+</div>
       {/* === MOBILE VERSION === */}
       <div className="block sm:hidden">
         <MobileLayout />
-  
+  </div>
 
  
 
