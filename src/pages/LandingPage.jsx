@@ -112,41 +112,19 @@ function LandingPage() {
     faq: useRef(null),
   };
 
-  const scrollAmount = 300;
-  const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  const heroHeight = isMobile
+    ? "h-[140px]" // scaled down hero height on mobile
+    : "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
-  const [arrowPositions, setArrowPositions] = useState({
-    other: 0,
-    cities: 0,
-    blogs: 0,
-    faq: 0,
-  });
-
-  // === Keep carousel from stretching ===
-  const heroHeight = "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
-
-  // === Arrow placement update ===
-  useEffect(() => {
-    const updatePositions = () => {
-      Object.keys(rowRefs).forEach((key) => {
-        const el = rowRefs[key].current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        setArrowPositions((prev) => ({
-          ...prev,
-          [key]: rect.right - rect.left - 90,
-        }));
-      });
-    };
-    updatePositions();
-    window.addEventListener("resize", updatePositions);
-    return () => window.removeEventListener("resize", updatePositions);
-  }, []);
-
+  // === RESPONSIVE COMPONENT ===
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
       {/* === HERO === */}
-      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+      <section
+        className={`relative w-full flex justify-center items-center ${
+          isMobile ? "mt-4 mb-4" : "mt-8 sm:mt-12 mb-6"
+        } overflow-visible`}
+      >
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
           {/* LEFT CROPPED */}
           <div
@@ -163,8 +141,9 @@ function LandingPage() {
 
           {/* CENTER */}
           <div
-            className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                          ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
+            className={`relative z-20 ${
+              isMobile ? "w-[88vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
+            } ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
           >
             <img
               src={slides[centerIndex].image}
@@ -172,8 +151,12 @@ function LandingPage() {
               className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="absolute bottom-4 left-6">
-              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+            <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
+              <h2
+                className={`font-bold text-gold drop-shadow-lg ${
+                  isMobile ? "text-base" : "text-lg sm:text-xl md:text-2xl"
+                }`}
+              >
                 {slides[centerIndex].alt}
               </h2>
             </div>
@@ -193,33 +176,40 @@ function LandingPage() {
           </div>
 
           {/* ARROWS */}
-          <button
-            onClick={goPrev}
-            className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-          >
-            ‹
-          </button>
-          <button
-            onClick={goNext}
-            className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-          >
-            ›
-          </button>
+          {!isMobile && (
+            <>
+              <button
+                onClick={goPrev}
+                className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                           hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+              >
+                ‹
+              </button>
+              <button
+                onClick={goNext}
+                className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                           hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+              >
+                ›
+              </button>
+            </>
+          )}
         </div>
       </section>
 
       {/* === MAIN SERVICES === */}
-      <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
-        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+      <section className="relative z-30 px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
           {mainServices.map((s) => (
             <div key={s.title} className="flex flex-col items-center">
               <div
                 onClick={() => navigate(s.link)}
-                className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
-                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                           overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
+                className={`cursor-pointer flex-shrink-0 ${
+                  isMobile
+                    ? "w-[160px] h-[240px]" // 2:3 ratio on mobile
+                    : "w-[190px] md:w-[260px] h-[115px] md:h-[150px]"
+                } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                  overflow-hidden shadow-md snap-center hover:scale-105 transition-transform`}
               >
                 <img
                   src={getImage(s.image)}
@@ -240,21 +230,24 @@ function LandingPage() {
         { key: "blogs", label: "Blogs & Articles", data: blogs },
         { key: "faq", label: "FAQ", data: faqs },
       ].map((section) => (
-        <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
+        <section key={section.key} className="relative z-30 px-4 md:px-8 pb-14 md:pb-16">
           <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
 
           <div className="relative flex items-center">
             <div
               ref={rowRefs[section.key]}
-              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
+              className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
             >
               {section.data.map((item, i) => (
                 <div key={i} className="flex flex-col items-center">
                   <div
                     onClick={() => item.link && navigate(item.link)}
-                    className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
-                               bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                               overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform"
+                    className={`cursor-pointer flex-shrink-0 ${
+                      isMobile
+                        ? "w-[160px] h-[240px]" // 2:3 ratio on mobile
+                        : "w-[240px] md:w-[320px] h-[140px] md:h-[190px]"
+                    } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                      overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
                   >
                     {"image" in item ? (
                       <img
@@ -264,7 +257,7 @@ function LandingPage() {
                       />
                     ) : null}
                   </div>
-                  <h3 className="text-gold font-semibold text-sm md:text-base mt-2 px-2 text-center">
+                  <h3 className="text-gold font-semibold text-xs md:text-base mt-2 px-2 text-center">
                     {item.title || item.q}
                   </h3>
                   {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
@@ -274,8 +267,7 @@ function LandingPage() {
           </div>
         </section>
       ))}
-   
-
+  
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
