@@ -25,7 +25,7 @@ function LandingPage() {
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
 
-  // === SERVICE DATA ===
+  // === SERVICE DATA (unchanged) ===
   const mainServices = [
     { title: "Mattress Removal", image: "/images/mattress.webp", link: "/mattress-removal" },
     { title: "Couch Removal", image: "/images/couch.webp", link: "/couch-removal" },
@@ -91,7 +91,7 @@ function LandingPage() {
     },
   ];
 
-  // === SCROLL REFS ===
+  // === SCROLL REFS (unchanged) ===
   const rowRefs = {
     other: useRef(null),
     cities: useRef(null),
@@ -109,8 +109,10 @@ function LandingPage() {
     faq: 0,
   });
 
+  // Keep carousel from stretching (unchanged)
   const heroHeight = "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
+  // Arrow placement update (unchanged)
   useEffect(() => {
     const updatePositions = () => {
       Object.keys(rowRefs).forEach((key) => {
@@ -128,20 +130,31 @@ function LandingPage() {
     return () => window.removeEventListener("resize", updatePositions);
   }, []);
 
-  // === MOBILE VERSION FUNCTION ===
+  // ===== Helper: build -mobile variant safely (no crashes) =====
+  const getMobileSrc = (src) => {
+    if (!src || typeof src !== "string") return src;
+    // Insert "-mobile" before extension if it looks like an image path.
+    const m = src.match(/\.(webp|png|jpe?g)$/i);
+    if (!m) return src; // not a recognized image extension, use as-is
+    const ext = m[0]; // .webp / .png / .jpg / .jpeg
+    return src.replace(ext, `-mobile${ext}`);
+  };
+
+  // ===== MOBILE VERSION FUNCTION (new, safe) =====
   const MobileLayout = () => {
     const sections = [
-      { key: "main", data: mainServices },
-      { key: "other", data: otherServices },
-      { key: "cities", data: cities },
-      { key: "blogs", data: blogs },
-      { key: "faq", data: faqs },
+      { key: "main", data: mainServices.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
+      { key: "other", data: otherServices.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
+      { key: "cities", data: cities.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
+      { key: "blogs", data: blogs.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
+      { key: "faq", data: faqs.map((d) => ({ ...d, mobile: getMobileSrc(d.image) })) },
     ];
 
     return (
       <div className="flex flex-col gap-6 px-3 pb-16 overflow-y-auto">
         {sections.map((section) => (
           <div key={section.key} className="flex flex-col gap-3">
+            {/* Horizontal row — 3.5 cards visible (44vw each, 2:3 aspect) */}
             <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory pb-3 scrollbar-hide">
               {section.data.map((item, i) => (
                 <div
@@ -149,21 +162,19 @@ function LandingPage() {
                   onClick={() => item.link && navigate(item.link)}
                   className="cursor-pointer flex-shrink-0 w-[44vw] aspect-[2/3] bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl overflow-hidden shadow-md snap-center transition-transform hover:scale-105"
                 >
-                  {"image" in item ? (
+                  {item.mobile ? (
                     <img
-                      src={
-                        item.image.replace(".webp", "-mobile.webp") ||
-                        item.image.replace(".png", "-mobile.png") ||
-                        item.image.replace(".jpg", "-mobile.jpg")
-                      }
-                      alt={item.title || item.q}
+                      src={item.mobile}
+                      alt={item.title || item.q || `item-${i}`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   ) : null}
                 </div>
               ))}
             </div>
 
+            {/* Labels under first 3 to keep tight; tweak as desired */}
             <div className="grid grid-cols-3 gap-2 text-center text-gold text-xs font-semibold px-1">
               {section.data.slice(0, 3).map((item, i) => (
                 <span key={i}>{item.title || item.q}</span>
@@ -175,13 +186,13 @@ function LandingPage() {
     );
   };
 
-  // === MAIN DESKTOP RENDER ===
+  // ===== DESKTOP (unchanged) + MOBILE switch =====
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* === HERO === */}
+      {/* === HERO (desktop only) === */}
       <section className="hidden sm:flex relative w-full justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT */}
+          {/* LEFT CROPPED */}
           <div
             className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
@@ -212,7 +223,7 @@ function LandingPage() {
             </div>
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT CROPPED */}
           <div
             className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
                           w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
@@ -264,7 +275,7 @@ function LandingPage() {
           </div>
         </section>
 
-        {/* Other sections */}
+        {/* Other rows */}
         {[
           { key: "other", label: "Other Services", data: otherServices },
           { key: "cities", label: "Cities", data: cities },
@@ -273,6 +284,7 @@ function LandingPage() {
         ].map((section) => (
           <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
             <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
+
             <div className="relative flex items-center">
               <div
                 ref={rowRefs[section.key]}
@@ -297,16 +309,28 @@ function LandingPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Arrow aligned with last visible slide (unchanged behavior) */}
+              <button
+                onClick={() => scrollRight(rowRefs[section.key])}
+                style={{ left: `${arrowPositions[section.key]}px` }}
+                className="absolute top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80
+                           text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none
+                           shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300"
+              >
+                &gt;
+              </button>
             </div>
           </section>
         ))}
-</div>
-      {/* === MOBILE VERSION === */}
+      </div>
+
+      {/* === MOBILE VERSION (new) === */}
       <div className="block sm:hidden">
         <MobileLayout />
-  </div>
+      </div>
 
- 
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
