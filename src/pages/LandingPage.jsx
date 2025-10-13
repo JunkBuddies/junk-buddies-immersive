@@ -123,12 +123,12 @@ function LandingPage() {
           isMobile ? "mt-4 mb-4 min-h-[280px] sm:min-h-[360px]" : "mt-8 sm:mt-12 mb-6"
         }`}
       >
-        <div className="relative flex justify-center items-center w-full max-w-[1600px]">
+        <div className="relative flex justify-center items-center w-full max-w-[1600px] overflow-hidden">
           {/* LEFT CROPPED */}
           <div
             className={`absolute ${
               isMobile
-                ? "left-[-6vw] w-[24vw]"
+                ? "left-[-5vw] w-[25vw]"
                 : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
             } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
           >
@@ -142,7 +142,7 @@ function LandingPage() {
           {/* CENTER */}
           <div
             className={`relative z-20 ${
-              isMobile ? "w-[88vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
+              isMobile ? "w-[90vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"
             } ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
           >
             <img
@@ -166,7 +166,7 @@ function LandingPage() {
           <div
             className={`absolute ${
               isMobile
-                ? "right-[-6vw] w-[24vw]"
+                ? "right-[-5vw] w-[25vw]"
                 : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
             } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
           >
@@ -198,7 +198,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* MOBILE SPACER FIX (extended 40% taller) */}
+      {/* MOBILE SPACER FIX */}
       {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
 
       {/* === MAIN SERVICES === */}
@@ -271,8 +271,6 @@ function LandingPage() {
           </div>
         </section>
       ))}
- 
-
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
