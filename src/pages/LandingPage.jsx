@@ -35,35 +35,60 @@ function LandingPage() {
   ];
 
   const otherServices = [
-    { title: "Bed Removal", image: "/images/genres/bed.jpg", link: "/bed-removal" },
-    { title: "Trampoline Removal", image: "/images/genres/trampoline.jpg", link: "/trampoline-removal" },
-    { title: "Recliner Removal", image: "/images/genres/recliner.jpg", link: "/recliner-removal" },
-    { title: "Sofa Removal", image: "/images/genres/sofa.jpg", link: "/sofa-removal" },
-    { title: "Table Removal", image: "/images/genres/table.jpg", link: "/table-removal" },
+    { title: "Bed Removal", image: "/images/bed.webp", link: "/bed-removal" },
+    { title: "Trampoline Removal", image: "/images/trampoline.webp", link: "/trampoline-removal" },
+    { title: "Recliner Removal", image: "/images/recliner.webp", link: "/recliner-removal" },
+    { title: "Sectional Removal", image: "/images/sectional-couch.webp", link: "/sectional-couch" },
+    { title: "Table Removal", image: "/images/table.webp", link: "/table-removal" },
   ];
 
   const cities = [
-    { title: "Houston", image: "/images/cities/houston.jpg", link: "/houston" },
-    { title: "Katy", image: "/images/cities/katy.jpg", link: "/katy" },
-    { title: "Sugar Land", image: "/images/cities/sugar-land.jpg", link: "/sugar-land" },
-    { title: "Pearland", image: "/images/cities/pearland.jpg", link: "/pearland" },
-    { title: "The Woodlands", image: "/images/cities/woodlands.jpg", link: "/the-woodlands" },
+    { title: "Houston", image: "/images/Houston.webp", link: "/houston" },
+    { title: "Katy", image: "/images/Katy.webp", link: "/katy" },
+    { title: "Sugar Land", image: "/images/Sugar-Land.webp", link: "/sugar-land" },
+    { title: "Pearland", image: "/images/Pearland.webp", link: "/pearland" },
+    { title: "The Woodlands", image: "/images/the-woodlands.webp", link: "/the-woodlands" },
   ];
 
   const blogs = [
-    { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
-    { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", link: "/blog/save-money" },
-    { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
-    { title: "Top 10 Items We Remove Most Often", image: "/images/blogs/top10.jpg", link: "/blog/top-10-items" },
-    { title: "Houston's Guide to Responsible Recycling", image: "/images/blogs/recycle.jpg", link: "/blog/houston-recycling" },
+    { title: "How Much Does Junk Removal Cost?", image: "/images/pricing.webp", link: "/blog/junk-removal-cost" },
+    { title: "Save Money on Junk Removal", image: "/images/save-money.webp", link: "/blog/save-money" },
+    { title: "Eco-Friendly Disposal in Houston", image: "/images/eco.webp", link: "/blog/eco-friendly" },
+    { title: "Top 10 Items We Remove Most Often", image: "/images/top10.webp", link: "/blog/top-10-items" },
+    { title: "Houston's Guide to Responsible Recycling", image: "/images/recycle.webp", link: "/blog/houston-recycling" },
   ];
 
   const faqs = [
-    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
-    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
-    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
-    { q: "Do you take hazardous materials?", a: "We follow safety guidelines and local laws — contact us for specifics." },
-    { q: "Can I get a same-day pickup?", a: "Yes, depending on truck availability and your location. Book early to lock in." },
+    {
+      q: "Do I need to be home?",
+      a: "Not always! We can remove items curbside or from access areas.",
+      image: "/images/faq-home.webp",
+      link: "/faq#do-i-need-to-be-home",
+    },
+    {
+      q: "When do I pay?",
+      a: "You don’t pay until the job is complete and you’re satisfied.",
+      image: "/images/faq-payment.webp",
+      link: "/faq#when-do-i-pay",
+    },
+    {
+      q: "Do you recycle?",
+      a: "Yes! We donate and recycle whenever possible to reduce landfill waste.",
+      image: "/images/faq-recycle.webp",
+      link: "/faq#do-you-recycle",
+    },
+    {
+      q: "Do you take hazardous materials?",
+      a: "We follow safety guidelines and local laws — contact us for specifics.",
+      image: "/images/faq-hazard.webp",
+      link: "/faq#hazardous-materials",
+    },
+    {
+      q: "Can I get a same-day pickup?",
+      a: "Yes, depending on truck availability and your location. Book early to lock in.",
+      image: "/images/faq-sameday.webp",
+      link: "/faq#same-day-pickup",
+    },
   ];
 
   // === SCROLL REFS ===
@@ -200,7 +225,7 @@ function LandingPage() {
         { key: "other", label: "Other Services", data: otherServices },
         { key: "cities", label: "Cities", data: cities },
         { key: "blogs", label: "Blogs & Articles", data: blogs },
-        { key: "faq", label: "FAQ", data: faqs.map((f) => ({ ...f, image: "/images/icons/faq.png" })) },
+        { key: "faq", label: "FAQ", data: faqs },
       ].map((section) => (
         <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
           <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
@@ -233,21 +258,11 @@ function LandingPage() {
                 </div>
               ))}
             </div>
-
-            {/* Arrow stays aligned with last visible slide */}
-            <button
-              onClick={() => scrollRight(rowRefs[section.key])}
-              style={{ left: `${arrowPositions[section.key]}px` }}
-              className="absolute top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80
-                         text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none
-                         shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300"
-            >
-              &gt;
-            </button>
           </div>
         </section>
       ))}
-   
+ 
+
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
