@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -27,45 +27,46 @@ function LandingPage() {
 
   // === SERVICE DATA ===
   const mainServices = [
-    { title: "Mattress Removal", image: "/images/mattress.webp", mobileImage: "/images/mattress-mobile.webp", link: "/mattress-removal" },
-    { title: "Couch Removal", image: "/images/couch.webp", mobileImage: "/images/couch-mobile.webp", link: "/couch-removal" },
-    { title: "Fridge Removal", image: "/images/fridge.webp", mobileImage: "/images/fridge-mobile.webp", link: "/fridge-removal" },
-    { title: "Washer & Dryer Removal", image: "/images/washer-dryer.webp", mobileImage: "/images/washer-dryer-mobile.webp", link: "/washer-dryer-removal" },
-    { title: "Desk Removal", image: "/images/desk.webp", mobileImage: "/images/desk-mobile.webp", link: "/desk-removal" },
+    { title: "Mattress Removal", image: "/images/mattress.webp", link: "/mattress-removal" },
+    { title: "Couch Removal", image: "/images/couch.webp", link: "/couch-removal" },
+    { title: "Fridge Removal", image: "/images/fridge.webp", link: "/fridge-removal" },
+    { title: "Washer & Dryer Removal", image: "/images/washer-dryer.webp", link: "/washer-dryer-removal" },
+    { title: "Desk Removal", image: "/images/desk.webp", link: "/desk-removal" },
   ];
 
   const otherServices = [
-    { title: "Bed Removal", image: "/images/genres/bed.jpg", mobileImage: "/images/genres/bed-mobile.jpg", link: "/bed-removal" },
-    { title: "Trampoline Removal", image: "/images/genres/trampoline.jpg", mobileImage: "/images/genres/trampoline-mobile.jpg", link: "/trampoline-removal" },
-    { title: "Recliner Removal", image: "/images/genres/recliner.jpg", mobileImage: "/images/genres/recliner-mobile.jpg", link: "/recliner-removal" },
-    { title: "Sofa Removal", image: "/images/genres/sofa.jpg", mobileImage: "/images/genres/sofa-mobile.jpg", link: "/sofa-removal" },
-    { title: "Table Removal", image: "/images/genres/table.jpg", mobileImage: "/images/genres/table-mobile.jpg", link: "/table-removal" },
+    { title: "Bed Removal", image: "/images/genres/bed.jpg", link: "/bed-removal" },
+    { title: "Trampoline Removal", image: "/images/genres/trampoline.jpg", link: "/trampoline-removal" },
+    { title: "Recliner Removal", image: "/images/genres/recliner.jpg", link: "/recliner-removal" },
+    { title: "Sofa Removal", image: "/images/genres/sofa.jpg", link: "/sofa-removal" },
+    { title: "Table Removal", image: "/images/genres/table.jpg", link: "/table-removal" },
   ];
 
   const cities = [
-    { title: "Houston", image: "/images/cities/houston.jpg", mobileImage: "/images/cities/houston-mobile.jpg", link: "/houston" },
-    { title: "Katy", image: "/images/cities/katy.jpg", mobileImage: "/images/cities/katy-mobile.jpg", link: "/katy" },
-    { title: "Sugar Land", image: "/images/cities/sugar-land.jpg", mobileImage: "/images/cities/sugar-land-mobile.jpg", link: "/sugar-land" },
-    { title: "Pearland", image: "/images/cities/pearland.jpg", mobileImage: "/images/cities/pearland-mobile.jpg", link: "/pearland" },
-    { title: "The Woodlands", image: "/images/cities/woodlands.jpg", mobileImage: "/images/cities/woodlands-mobile.jpg", link: "/the-woodlands" },
+    { title: "Houston", image: "/images/cities/houston.jpg", link: "/houston" },
+    { title: "Katy", image: "/images/cities/katy.jpg", link: "/katy" },
+    { title: "Sugar Land", image: "/images/cities/sugar-land.jpg", link: "/sugar-land" },
+    { title: "Pearland", image: "/images/cities/pearland.jpg", link: "/pearland" },
+    { title: "The Woodlands", image: "/images/cities/woodlands.jpg", link: "/the-woodlands" },
   ];
 
   const blogs = [
-    { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", mobileImage: "/images/blogs/pricing-mobile.jpg", link: "/blog/junk-removal-cost" },
-    { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", mobileImage: "/images/blogs/save-mobile.jpg", link: "/blog/save-money" },
-    { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", mobileImage: "/images/blogs/eco-mobile.jpg", link: "/blog/eco-friendly" },
-    { title: "Top 10 Items We Remove Most Often", image: "/images/blogs/top10.jpg", mobileImage: "/images/blogs/top10-mobile.jpg", link: "/blog/top-10-items" },
-    { title: "Houston's Guide to Responsible Recycling", image: "/images/blogs/recycle.jpg", mobileImage: "/images/blogs/recycle-mobile.jpg", link: "/blog/houston-recycling" },
+    { title: "How Much Does Junk Removal Cost?", image: "/images/blogs/pricing.jpg", link: "/blog/junk-removal-cost" },
+    { title: "Save Money on Junk Removal", image: "/images/blogs/save.jpg", link: "/blog/save-money" },
+    { title: "Eco-Friendly Disposal in Houston", image: "/images/blogs/eco.jpg", link: "/blog/eco-friendly" },
+    { title: "Top 10 Items We Remove Most Often", image: "/images/blogs/top10.jpg", link: "/blog/top-10-items" },
+    { title: "Houston's Guide to Responsible Recycling", image: "/images/blogs/recycle.jpg", link: "/blog/houston-recycling" },
   ];
 
   const faqs = [
-    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas.", image: "/images/icons/faq.png", mobileImage: "/images/icons/faq-mobile.png" },
-    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied.", image: "/images/icons/faq.png", mobileImage: "/images/icons/faq-mobile.png" },
-    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste.", image: "/images/icons/faq.png", mobileImage: "/images/icons/faq-mobile.png" },
-    { q: "Do you take hazardous materials?", a: "We follow safety guidelines and local laws — contact us for specifics.", image: "/images/icons/faq.png", mobileImage: "/images/icons/faq-mobile.png" },
-    { q: "Can I get a same-day pickup?", a: "Yes, depending on truck availability and your location. Book early to lock in.", image: "/images/icons/faq.png", mobileImage: "/images/icons/faq-mobile.png" },
+    { q: "Do I need to be home?", a: "Not always! We can remove items curbside or from access areas." },
+    { q: "When do I pay?", a: "You don’t pay until the job is complete and you’re satisfied." },
+    { q: "Do you recycle?", a: "Yes! We donate and recycle whenever possible to reduce landfill waste." },
+    { q: "Do you take hazardous materials?", a: "We follow safety guidelines and local laws — contact us for specifics." },
+    { q: "Can I get a same-day pickup?", a: "Yes, depending on truck availability and your location. Book early to lock in." },
   ];
 
+  // === SCROLL REFS ===
   const rowRefs = {
     other: useRef(null),
     cities: useRef(null),
@@ -76,95 +77,178 @@ function LandingPage() {
   const scrollAmount = 300;
   const scrollRight = (ref) => ref.current?.scrollBy({ left: scrollAmount, behavior: "smooth" });
 
+  const [arrowPositions, setArrowPositions] = useState({
+    other: 0,
+    cities: 0,
+    blogs: 0,
+    faq: 0,
+  });
+
+  // === Keep carousel from stretching ===
   const heroHeight = "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
-  // === DESKTOP VERSION ===
+  // === Arrow placement update ===
+  useEffect(() => {
+    const updatePositions = () => {
+      Object.keys(rowRefs).forEach((key) => {
+        const el = rowRefs[key].current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        setArrowPositions((prev) => ({
+          ...prev,
+          [key]: rect.right - rect.left - 90,
+        }));
+      });
+    };
+    updatePositions();
+    window.addEventListener("resize", updatePositions);
+    return () => window.removeEventListener("resize", updatePositions);
+  }, []);
+
   return (
     <div className="w-full bg-black text-white overflow-hidden relative">
-      {/* DESKTOP (unchanged) */}
-      <div className="hidden md:block">
-        {/* Everything identical to your existing desktop layout */}
-        {/* === HERO === */}
-        <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
-          <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-            {/* LEFT CROPPED */}
-            <div className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-                            w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                            ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
-              <img src={slides[leftIndex].image} alt={slides[leftIndex].alt}
-                className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]" />
-            </div>
-
-            {/* CENTER */}
-            <div className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                            ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}>
-              <img src={slides[centerIndex].image} alt={slides[centerIndex].alt}
-                className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-              <div className="absolute bottom-4 left-6">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">{slides[centerIndex].alt}</h2>
-              </div>
-            </div>
-
-            {/* RIGHT CROPPED */}
-            <div className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-                            w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                            ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
-              <img src={slides[rightIndex].image} alt={slides[rightIndex].alt}
-                className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]" />
-            </div>
-
-            {/* ARROWS */}
-            <button onClick={goPrev}
-              className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                         hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">‹</button>
-            <button onClick={goNext}
-              className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                         hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform">›</button>
+      {/* === HERO === */}
+      <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+        <div className="relative flex justify-center items-center w-full max-w-[1600px]">
+          {/* LEFT CROPPED */}
+          <div
+            className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
+                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
+                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+          >
+            <img
+              src={slides[leftIndex].image}
+              alt={slides[leftIndex].alt}
+              className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+            />
           </div>
-        </section>
 
-        {/* MAIN SERVICES + ROWS (unchanged) */}
-        {/* [Insert your full existing desktop JSX exactly as in previous message here — omitted here for brevity, unchanged] */}
-      </div>
+          {/* CENTER */}
+          <div
+            className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
+                          ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
+          >
+            <img
+              src={slides[centerIndex].image}
+              alt={slides[centerIndex].alt}
+              className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+            <div className="absolute bottom-4 left-6">
+              <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+                {slides[centerIndex].alt}
+              </h2>
+            </div>
+          </div>
 
-      {/* === MOBILE VERSION === */}
-      <div className="block md:hidden px-3 pb-20">
-        {/* HERO (cropped for mobile ratio) */}
-        <div className="w-full h-[220px] overflow-hidden rounded-xl border border-gold/40 mb-8">
-          <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
+          {/* RIGHT CROPPED */}
+          <div
+            className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
+                          w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
+                          ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+          >
+            <img
+              src={slides[rightIndex].image}
+              alt={slides[rightIndex].alt}
+              className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+            />
+          </div>
+
+          {/* ARROWS */}
+          <button
+            onClick={goPrev}
+            className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+          >
+            ‹
+          </button>
+          <button
+            onClick={goNext}
+            className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                       hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+          >
+            ›
+          </button>
         </div>
+      </section>
 
-        {/* MOBILE ROW BUILDER */}
-        {[
-          { label: "Main Services", data: mainServices },
-          { label: "Other Services", data: otherServices },
-          { label: "Cities", data: cities },
-          { label: "Blogs & Articles", data: blogs },
-          { label: "FAQ", data: faqs },
-        ].map((section) => (
-          <section key={section.label} className="mb-10">
-            <div className="text-gold text-xs font-semibold mb-2">{section.label}</div>
-            <div className="flex overflow-x-auto gap-3 snap-x snap-mandatory scrollbar-hide">
+      {/* === MAIN SERVICES === */}
+      <section className="relative z-30 px-4 md:px-8 pt-8 pb-16 md:pt-12 md:pb-20 flex justify-center items-center">
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+          {mainServices.map((s) => (
+            <div key={s.title} className="flex flex-col items-center">
+              <div
+                onClick={() => navigate(s.link)}
+                className="cursor-pointer flex-shrink-0 w-[190px] md:w-[260px] h-[115px] md:h-[150px]
+                           bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                           overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
+              >
+                <img
+                  src={s.image}
+                  alt={s.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <h3 className="text-gold font-semibold text-xs md:text-sm mt-2">{s.title}</h3>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* === REUSABLE SCROLL ROWS === */}
+      {[
+        { key: "other", label: "Other Services", data: otherServices },
+        { key: "cities", label: "Cities", data: cities },
+        { key: "blogs", label: "Blogs & Articles", data: blogs },
+        { key: "faq", label: "FAQ", data: faqs.map((f) => ({ ...f, image: "/images/icons/faq.png" })) },
+      ].map((section) => (
+        <section key={section.key} className="relative z-30 px-4 md:px-8 pb-16">
+          <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
+
+          <div className="relative flex items-center">
+            <div
+              ref={rowRefs[section.key]}
+              className="flex overflow-x-auto snap-x snap-mandatory gap-5 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
+            >
               {section.data.map((item, i) => (
-                <div key={i} className="flex flex-col items-center flex-shrink-0 w-[30vw] aspect-[2/3] snap-center">
+                <div key={i} className="flex flex-col items-center">
                   <div
                     onClick={() => item.link && navigate(item.link)}
-                    className="w-full h-full bg-zinc-900/90 border border-gold/30 hover:border-gold overflow-hidden rounded-lg shadow-md"
+                    className="cursor-pointer flex-shrink-0 w-[240px] md:w-[320px] h-[140px] md:h-[190px]
+                               bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                               overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform"
                   >
-                    <img
-                      src={item.mobileImage}
-                      alt={item.title || item.q}
-                      className="w-full h-full object-cover"
-                    />
+                    {"image" in item ? (
+                      <img
+                        src={item.image}
+                        alt={item.title || item.q}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : null}
                   </div>
-                  <h3 className="text-gold font-medium text-[11px] mt-2 text-center">{item.title || item.q}</h3>
+                  <h3 className="text-gold font-semibold text-sm md:text-base mt-2 px-2 text-center">
+                    {item.title || item.q}
+                  </h3>
+                  {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
                 </div>
               ))}
             </div>
-          </section>
-        ))}
-    
+
+            {/* Arrow stays aligned with last visible slide */}
+            <button
+              onClick={() => scrollRight(rowRefs[section.key])}
+              style={{ left: `${arrowPositions[section.key]}px` }}
+              className="absolute top-1/2 -translate-y-1/2 z-50 bg-black/70 hover:bg-black/80
+                         text-gold text-[70px] md:text-[100px] font-bold rounded-l-2xl px-3 py-1 select-none
+                         shadow-[0_0_20px_rgba(212,175,55,0.5)] transition-all duration-300"
+            >
+              &gt;
+            </button>
+          </div>
+        </section>
+      ))}
+   
+
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
         <p className="text-xl mb-4">
