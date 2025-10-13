@@ -120,7 +120,7 @@ function LandingPage() {
       {/* === HERO === */}
       <section
         className={`relative w-full flex justify-center items-center overflow-visible ${
-          isMobile ? "mt-4 mb-4 min-h-[200px] sm:min-h-[300px]" : "mt-8 sm:mt-12 mb-6"
+          isMobile ? "mt-4 mb-4 min-h-[280px] sm:min-h-[360px]" : "mt-8 sm:mt-12 mb-6"
         }`}
       >
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
@@ -198,8 +198,8 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* MOBILE SPACER FIX */}
-      {isMobile && <div className="h-[20px] sm:h-[40px]"></div>}
+      {/* MOBILE SPACER FIX (extended 40% taller) */}
+      {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
 
       {/* === MAIN SERVICES === */}
       <section className="relative z-30 px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
@@ -210,7 +210,7 @@ function LandingPage() {
                 onClick={() => navigate(s.link)}
                 className={`cursor-pointer flex-shrink-0 ${
                   isMobile
-                    ? "w-[96px] h-[144px]" // 60% smaller on mobile
+                    ? "w-[96px] h-[144px]"
                     : "w-[190px] md:w-[260px] h-[115px] md:h-[150px]"
                 } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                   overflow-hidden shadow-md snap-center hover:scale-105 transition-transform`}
@@ -248,7 +248,7 @@ function LandingPage() {
                     onClick={() => item.link && navigate(item.link)}
                     className={`cursor-pointer flex-shrink-0 ${
                       isMobile
-                        ? "w-[96px] h-[144px]" // 60% smaller on mobile
+                        ? "w-[96px] h-[144px]"
                         : "w-[240px] md:w-[320px] h-[140px] md:h-[190px]"
                     } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                       overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
@@ -271,7 +271,7 @@ function LandingPage() {
           </div>
         </section>
       ))}
-   
+ 
 
 
       {/* REQUIRE SERVICE TODAY BAR */}
