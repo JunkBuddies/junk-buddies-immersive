@@ -104,7 +104,6 @@ function LandingPage() {
     },
   ];
 
-  // === SCROLL REFS ===
   const rowRefs = {
     other: useRef(null),
     cities: useRef(null),
@@ -117,19 +116,19 @@ function LandingPage() {
     : "h-[200px] sm:h-[250px] md:h-[275px] lg:h-[300px]";
 
   return (
-    <div className="w-full bg-black text-white overflow-hidden relative">
+    <div className="w-full bg-black text-white overflow-x-hidden overflow-y-auto relative">
       {/* === HERO === */}
       <section
-        className={`relative w-full flex justify-center items-center ${
-          isMobile ? "mt-4 mb-4" : "mt-8 sm:mt-12 mb-6"
-        } overflow-visible`}
+        className={`relative w-full flex justify-center items-center overflow-visible ${
+          isMobile ? "mt-4 mb-4 min-h-[180px]" : "mt-8 sm:mt-12 mb-6"
+        }`}
       >
         <div className="relative flex justify-center items-center w-full max-w-[1600px]">
           {/* LEFT CROPPED */}
           <div
             className={`absolute ${
               isMobile
-                ? "left-[-12vw] w-[26vw]"
+                ? "left-[-6vw] w-[24vw]"
                 : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
             } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
           >
@@ -167,7 +166,7 @@ function LandingPage() {
           <div
             className={`absolute ${
               isMobile
-                ? "right-[-12vw] w-[26vw]"
+                ? "right-[-6vw] w-[24vw]"
                 : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"
             } ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
           >
@@ -208,7 +207,7 @@ function LandingPage() {
                 onClick={() => navigate(s.link)}
                 className={`cursor-pointer flex-shrink-0 ${
                   isMobile
-                    ? "w-[96px] h-[144px]" // 60% of previous mobile 160x240
+                    ? "w-[96px] h-[144px]" // 60% smaller on mobile
                     : "w-[190px] md:w-[260px] h-[115px] md:h-[150px]"
                 } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                   overflow-hidden shadow-md snap-center hover:scale-105 transition-transform`}
@@ -246,7 +245,7 @@ function LandingPage() {
                     onClick={() => item.link && navigate(item.link)}
                     className={`cursor-pointer flex-shrink-0 ${
                       isMobile
-                        ? "w-[96px] h-[144px]" // 60% scale of previous 160x240
+                        ? "w-[96px] h-[144px]" // 60% smaller on mobile
                         : "w-[240px] md:w-[320px] h-[140px] md:h-[190px]"
                     } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                       overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
@@ -269,7 +268,7 @@ function LandingPage() {
           </div>
         </section>
       ))}
- 
+   
 
       {/* REQUIRE SERVICE TODAY BAR */}
       <div className="w-full text-center text-lg text-white py-10 px-6 about-reveal silver">
