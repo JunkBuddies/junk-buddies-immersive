@@ -202,7 +202,7 @@ function LandingPage() {
       )}
     </div>
   </section>
-
+</div>
 
 
 
