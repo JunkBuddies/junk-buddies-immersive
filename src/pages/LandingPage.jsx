@@ -247,7 +247,7 @@ function LandingPage() {
         <div
           onClick={() => navigate(s.link)}
           className="cursor-pointer flex-shrink-0 
-                     w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px]
+                     w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] md:w-[160px] md:h-[160px]
                      bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                      overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
         >
@@ -257,13 +257,14 @@ function LandingPage() {
             className="w-full h-full object-cover"
           />
         </div>
-        <h3 className="text-gold font-semibold text-xs sm:text-sm md:text-base mt-2 text-center">
+        <h3 className="text-gold font-semibold text-[10px] sm:text-xs md:text-sm mt-2 text-center">
           {s.title}
         </h3>
       </div>
     ))}
   </div>
 </section>
+
 
         {/* === REUSABLE SCROLL ROWS === */}
         {[
