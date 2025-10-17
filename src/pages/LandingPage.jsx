@@ -122,17 +122,19 @@ function LandingPage() {
       <div className="relative w-full overflow-x-hidden">
         <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
           <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-          {/* LEFT CROPPED */}
+       {/* LEFT CROPPED */}
 <div
   className={`absolute 
-    ${isMobile ? "left-[-12vw] w-[40vw]" : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"}
+    ${isMobile
+      ? "left-[-6vw] w-[13vw]"
+      : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"}
     ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
 >
   <img
     src={slides[leftIndex].image}
     alt={slides[leftIndex].alt}
     className={`h-full object-cover object-right opacity-70 transition-all duration-[1500ms] ${
-      isMobile ? "w-[120vw]" : "w-[130vw]"
+      isMobile ? "w-[80vw]" : "w-[130vw]"
     }`}
   />
 </div>
@@ -140,7 +142,7 @@ function LandingPage() {
 {/* CENTER */}
 <div
   className={`relative z-20 
-    ${isMobile ? "w-[80vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"}
+    ${isMobile ? "w-[72vw]" : "w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]"}
     ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
 >
   <img
@@ -159,17 +161,20 @@ function LandingPage() {
 {/* RIGHT CROPPED */}
 <div
   className={`absolute 
-    ${isMobile ? "right-[-12vw] w-[40vw]" : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"}
+    ${isMobile
+      ? "right-[-6vw] w-[13vw]"
+      : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"}
     ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
 >
   <img
     src={slides[rightIndex].image}
     alt={slides[rightIndex].alt}
     className={`h-full object-cover object-left opacity-70 transition-all duration-[1500ms] ${
-      isMobile ? "w-[120vw]" : "w-[130vw]"
+      isMobile ? "w-[80vw]" : "w-[130vw]"
     }`}
   />
 </div>
+
 
 
             {/* ARROWS */}
