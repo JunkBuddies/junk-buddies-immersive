@@ -244,8 +244,8 @@ function LandingPage() {
   <div
     className="flex flex-wrap sm:flex-nowrap justify-between sm:justify-center 
                w-full max-w-[1600px] mx-auto 
-               gap-[1.5vw] sm:gap-[3vw] md:gap-[4.5vw]
-               px-[2vw] sm:px-4 md:px-8"
+               gap-[0.5vw] sm:gap-[3vw] md:gap-[4.5vw]
+               px-[1vw] sm:px-4 md:px-8"
   >
     {mainServices.map((s) => (
       <div
@@ -269,6 +269,7 @@ function LandingPage() {
     ))}
   </div>
 </section>
+
 
         {/* === REUSABLE SCROLL ROWS === */}
         {[
