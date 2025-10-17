@@ -671,7 +671,7 @@ function LandingPage() {
             <div className="flex flex-col items-center transform hover:-translate-y-2 transition">
               <span className="text-4xl">🌎</span>
               <p className="mt-2 font-semibold">Eco Commitment</p>
-            </div }
+            </div> 
             {/* Badge 4 */}
             <div className="flex flex-col items-center transform hover:-translate-y-2 transition">
               <span className="text-4xl">🤝</span>
