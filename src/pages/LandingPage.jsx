@@ -240,24 +240,29 @@ function LandingPage() {
         {/* MOBILE SPACER FIX */}
         {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
 {/* === MAIN SERVICES === */}
-<section className="relative z-30 px-2 sm:px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
-  <div className="flex justify-between items-center w-full max-w-[900px] mx-auto flex-wrap gap-2 sm:gap-3 md:gap-4">
+<section className="relative z-30 px-2 sm:px-4 md:px-10 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
+  <div
+    className="flex flex-wrap sm:flex-nowrap justify-between sm:justify-center 
+               w-full max-w-[1600px] mx-auto 
+               gap-[1.5vw] sm:gap-[3vw] md:gap-[4.5vw]
+               px-[2vw] sm:px-4 md:px-8"
+  >
     {mainServices.map((s) => (
       <div
         key={s.title}
         onClick={() => navigate(s.link)}
-        className="cursor-pointer flex flex-col items-center w-[18%] sm:w-[18%] md:w-[18%]
+        className="cursor-pointer flex flex-col items-center 
+                   w-[18vw] sm:w-[140px] md:w-[200px] lg:w-[240px]
+                   aspect-square
                    bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                    overflow-hidden shadow-md hover:scale-105 transition-transform"
       >
-        <div className="aspect-square w-full overflow-hidden">
-          <img
-            src={getImage(s.image)}
-            alt={s.title}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <h3 className="text-gold font-semibold text-[10px] sm:text-xs md:text-sm mt-2 text-center">
+        <img
+          src={getImage(s.image)}
+          alt={s.title}
+          className="w-full h-full object-cover"
+        />
+        <h3 className="text-gold font-semibold text-[2.5vw] sm:text-xs md:text-sm mt-2 text-center">
           {s.title}
         </h3>
       </div>
