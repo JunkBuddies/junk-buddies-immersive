@@ -122,11 +122,11 @@ function LandingPage() {
       <div className="relative w-full overflow-x-hidden">
         <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
           <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-       {/* LEFT CROPPED */}
+   {/* LEFT CROPPED */}
 <div
   className={`absolute 
     ${isMobile
-      ? "left-[-6vw] w-[13vw]"
+      ? "left-[-0.5vw] w-[13vw]"
       : "left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"}
     ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
 >
@@ -162,7 +162,7 @@ function LandingPage() {
 <div
   className={`absolute 
     ${isMobile
-      ? "right-[-6vw] w-[13vw]"
+      ? "right-[-0.5vw] w-[13vw]"
       : "right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw] w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]"}
     ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
 >
@@ -174,8 +174,6 @@ function LandingPage() {
     }`}
   />
 </div>
-
-
 
             {/* ARROWS */}
             <button
