@@ -128,13 +128,13 @@ function LandingPage() {
         style={{ contain: "layout paint" }}
       >
 
-  {/* === HERO === */}
+{/* === HERO === */}
 {isMobile ? (
-  // MOBILE HERO: 3-column grid, precise gap, no absolute offsets, no arrows
+  // MOBILE HERO: 3-column grid with 6vw spacing
   <section className="relative w-screen overflow-hidden mt-6 mb-4">
     <div
-      className="grid grid-cols-[14vw_72vw_14vw] gap-[0.1vw] items-center w-screen"
-      // full-viewport width so vw math is exact, and no parent max-w interference
+      className="grid grid-cols-[14vw_72vw_14vw] gap-[6vw] items-center w-screen"
+      // sets 6vw gap between each image
     >
       {/* LEFT CROPPED */}
       <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
@@ -171,7 +171,7 @@ function LandingPage() {
     </div>
   </section>
 ) : (
-  // DESKTOP/TABLET: your original absolute-positioned hero (unchanged)
+  // DESKTOP HERO (unchanged)
   <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
     <div className="relative flex justify-center items-center w-full max-w-[1600px]">
       {/* LEFT CROPPED */}
