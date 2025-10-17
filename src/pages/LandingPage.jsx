@@ -128,86 +128,114 @@ function LandingPage() {
         style={{ contain: "layout paint" }}
       >
 
-      {/* === HERO === */}
-<section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
-  <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-{/* LEFT CROPPED */}
-<div
-  className={`absolute 
-    max-[639px]:left-[-0.1vw] max-[639px]:w-[13vw]
-    sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-    sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-    ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
->
-  <img
-    src={slides[leftIndex].image}
-    alt={slides[leftIndex].alt}
-    className={`h-full object-cover object-right opacity-70 transition-all duration-[1500ms] ${
-      isMobile ? "w-[80vw]" : "w-[130vw]"
-    }`}
-  />
-</div>
+  {/* === HERO === */}
+{isMobile ? (
+  // MOBILE HERO: 3-column grid, precise gap, no absolute offsets, no arrows
+  <section className="relative w-screen overflow-hidden mt-6 mb-4">
+    <div
+      className="grid grid-cols-[14vw_72vw_14vw] gap-[0.1vw] items-center w-screen"
+      // full-viewport width so vw math is exact, and no parent max-w interference
+    >
+      {/* LEFT CROPPED */}
+      <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
+        <img
+          src={slides[leftIndex].image}
+          alt={slides[leftIndex].alt}
+          className="w-full h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+        />
+      </div>
 
-{/* CENTER */}
-<div
-  className={`relative z-20 
-    max-[639px]:w-[72vw]
-    sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-    ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
->
-  <img
-    src={slides[centerIndex].image}
-    alt={slides[centerIndex].alt}
-    className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
-  />
-  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-  <div className="absolute bottom-4 left-6">
-    <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-      {slides[centerIndex].alt}
-    </h2>
-  </div>
-</div>
+      {/* CENTER */}
+      <div className={`${heroHeight} relative overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}>
+        <img
+          src={slides[centerIndex].image}
+          alt={slides[centerIndex].alt}
+          className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute bottom-3 left-4">
+          <h2 className="text-base font-bold text-gold drop-shadow-lg">
+            {slides[centerIndex].alt}
+          </h2>
+        </div>
+      </div>
 
-{/* RIGHT CROPPED */}
-<div
-  className={`absolute 
-    max-[639px]:right-[-0.1vw] max-[639px]:w-[13vw]
-    sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-    sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-    ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
->
-  <img
-    src={slides[rightIndex].image}
-    alt={slides[rightIndex].alt}
-    className={`h-full object-cover object-left opacity-70 transition-all duration-[1500ms] ${
-      isMobile ? "w-[80vw]" : "w-[130vw]"
-    }`}
-  />
-</div>
+      {/* RIGHT CROPPED */}
+      <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
+        <img
+          src={slides[rightIndex].image}
+          alt={slides[rightIndex].alt}
+          className="w-full h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+        />
+      </div>
+    </div>
+  </section>
+) : (
+  // DESKTOP/TABLET: your original absolute-positioned hero (unchanged)
+  <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
+    <div className="relative flex justify-center items-center w-full max-w-[1600px]">
+      {/* LEFT CROPPED */}
+      <div
+        className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
+                    w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
+                    ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+      >
+        <img
+          src={slides[leftIndex].image}
+          alt={slides[leftIndex].alt}
+          className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+        />
+      </div>
 
+      {/* CENTER */}
+      <div
+        className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
+                    ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
+      >
+        <img
+          src={slides[centerIndex].image}
+          alt={slides[centerIndex].alt}
+          className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+        <div className="absolute bottom-4 left-6">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+            {slides[centerIndex].alt}
+          </h2>
+        </div>
+      </div>
 
-    {/* ARROWS (hidden on mobile) */}
-    {!isMobile && (
-      <>
-        <button
-          onClick={goPrev}
-          className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                     hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-        >
-          ‹
-        </button>
-        <button
-          onClick={goNext}
-          className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                     hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-        >
-          ›
-        </button>
-      </>
-    )}
-  </div>
-</section>
+      {/* RIGHT CROPPED */}
+      <div
+        className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
+                    w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
+                    ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
+      >
+        <img
+          src={slides[rightIndex].image}
+          alt={slides[rightIndex].alt}
+          className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+        />
+      </div>
 
+      {/* ARROWS */}
+      <button
+        onClick={goPrev}
+        className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                   hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+      >
+        ‹
+      </button>
+      <button
+        onClick={goNext}
+        className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
+                   hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+      >
+        ›
+      </button>
+    </div>
+  </section>
+)}
 
         {/* MOBILE SPACER FIX */}
         {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
