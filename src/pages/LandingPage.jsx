@@ -239,32 +239,31 @@ function LandingPage() {
 
         {/* MOBILE SPACER FIX */}
         {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
-
-        {/* === MAIN SERVICES === */}
-        <section className="relative z-30 px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
-          <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
-            {mainServices.map((s) => (
-              <div key={s.title} className="flex flex-col items-center">
-                <div
-                  onClick={() => navigate(s.link)}
-                  className={`cursor-pointer flex-shrink-0 ${
-                    isMobile
-                      ? "w-[96px] h-[144px]"
-                      : "w-[190px] md:w-[260px] h-[115px] md:h-[150px]"
-                  } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                    overflow-hidden shadow-md snap-center hover:scale-105 transition-transform`}
-                >
-                  <img
-                    src={getImage(s.image)}
-                    alt={s.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <h3 className="text-gold font-semibold text-xs md:text-sm mt-2">{s.title}</h3>
-              </div>
-            ))}
-          </div>
-        </section>
+{/* === MAIN SERVICES === */}
+<section className="relative z-30 px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
+  <div className="flex overflow-x-auto snap-x snap-mandatory gap-3 md:gap-6 px-2 md:px-4 pb-6 scrollbar-hide">
+    {mainServices.map((s) => (
+      <div key={s.title} className="flex flex-col items-center">
+        <div
+          onClick={() => navigate(s.link)}
+          className="cursor-pointer flex-shrink-0 
+                     w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px]
+                     bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                     overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
+        >
+          <img
+            src={getImage(s.image)}
+            alt={s.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <h3 className="text-gold font-semibold text-xs sm:text-sm md:text-base mt-2 text-center">
+          {s.title}
+        </h3>
+      </div>
+    ))}
+  </div>
+</section>
 
         {/* === REUSABLE SCROLL ROWS === */}
         {[
