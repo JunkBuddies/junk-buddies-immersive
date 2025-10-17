@@ -241,20 +241,16 @@ function LandingPage() {
         {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
 {/* === MAIN SERVICES === */}
 <section className="relative z-30 px-2 sm:px-4 md:px-8 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
-  <div className="flex overflow-x-auto snap-x snap-mandatory 
-                  gap-4 sm:gap-5 md:gap-6 
-                  pb-6 scrollbar-hide 
-                  w-full 
-                  justify-start sm:justify-center px-1 sm:px-2 md:px-4">
+  <div className="flex justify-between items-center w-full max-w-[900px] mx-auto flex-wrap gap-2 sm:gap-3 md:gap-4">
     {mainServices.map((s) => (
-      <div key={s.title} className="flex flex-col items-center">
-        <div
-          onClick={() => navigate(s.link)}
-          className="cursor-pointer flex-shrink-0 
-                     w-[80px] h-[80px] sm:w-[120px] sm:h-[120px] md:w-[160px] md:h-[160px]
-                     bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                     overflow-hidden shadow-md snap-center hover:scale-105 transition-transform"
-        >
+      <div
+        key={s.title}
+        onClick={() => navigate(s.link)}
+        className="cursor-pointer flex flex-col items-center w-[18%] sm:w-[18%] md:w-[18%]
+                   bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                   overflow-hidden shadow-md hover:scale-105 transition-transform"
+      >
+        <div className="aspect-square w-full overflow-hidden">
           <img
             src={getImage(s.image)}
             alt={s.title}
