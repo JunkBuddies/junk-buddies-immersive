@@ -19,8 +19,8 @@ export default function SideNav({ open }) {
 
   return (
     <motion.aside
-      className="hidden lg:flex fixed top-16 left-0 h-[calc(100vh-4rem)] bg-black border-r border-gold z-40 flex-col"
-      animate={{ width: open ? 240 : 80 }}
+      className="hidden lg:flex fixed top-16 left-0 h-[calc(100vh-4rem)] bg-black border-r border-gold z-40 flex-col shadow-2xl"
+      animate={{ width: 240, x: open ? 0 : -240, opacity: open ? 1 : 0 }}
       transition={{ duration: 0.3 }}
     >
       {/* Vertical nav icons (centered) */}
