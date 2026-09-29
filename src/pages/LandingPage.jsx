@@ -129,130 +129,73 @@ function LandingPage() {
       >
 
 {/* === HERO === */}
-{isMobile ? (
-  // MOBILE HERO: 3-column grid with 6vw spacing
-  <section className="relative w-screen overflow-hidden mt-6 mb-4">
-    <div
-      className="grid grid-cols-[14vw_72vw_14vw] gap-[6vw] items-center w-screen"
-      // sets 6vw gap between each image
-    >
-      {/* LEFT CROPPED */}
-      <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
-        <img
-          src={slides[leftIndex].image}
-          alt={slides[leftIndex].alt}
-          className="w-full h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
-        />
-      </div>
+<section className="relative w-full overflow-hidden mt-4 sm:mt-6 mb-4">
+  <div className="grid grid-cols-[14%_72%_14%] lg:grid-cols-[18%_64%_18%] items-center w-full">
+    <div className={`${heroHeight} overflow-hidden border-y border-r border-gold/30 shadow-2xl`}>
+      <img
+        src={slides[leftIndex].image}
+        alt={slides[leftIndex].alt}
+        className="w-full h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+      />
+    </div>
 
-      {/* CENTER */}
-      <div className={`${heroHeight} relative overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}>
-        <img
-          src={slides[centerIndex].image}
-          alt={slides[centerIndex].alt}
-          className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        <div className="absolute bottom-3 left-4">
-          <h2 className="text-base font-bold text-gold drop-shadow-lg">
-            {slides[centerIndex].alt}
-          </h2>
-        </div>
-      </div>
-
-      {/* RIGHT CROPPED */}
-      <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}>
-        <img
-          src={slides[rightIndex].image}
-          alt={slides[rightIndex].alt}
-          className="w-full h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
-        />
+    <div className={`${heroHeight} relative overflow-hidden border border-gold/40 shadow-2xl z-10`}>
+      <img
+        src={slides[centerIndex].image}
+        alt={slides[centerIndex].alt}
+        className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
+        <h2 className="text-base sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
+          {slides[centerIndex].alt}
+        </h2>
       </div>
     </div>
-  </section>
-) : (
-  // DESKTOP HERO (unchanged)
-  <section className="relative w-full flex justify-center items-center mt-8 sm:mt-12 mb-6 overflow-visible">
-    <div className="relative flex justify-center items-center w-full max-w-[1600px]">
-      {/* LEFT CROPPED */}
-      <div
-        className={`absolute left-[-30vw] sm:left-[-25vw] md:left-[-22vw] lg:left-[-20vw]
-                    w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                    ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
-      >
-        <img
-          src={slides[leftIndex].image}
-          alt={slides[leftIndex].alt}
-          className="w-[130vw] h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
-        />
-      </div>
 
-      {/* CENTER */}
-      <div
-        className={`relative z-20 w-[75vw] sm:w-[70vw] md:w-[68vw] lg:w-[65vw]
-                    ${heroHeight} overflow-hidden border border-gold/40 shadow-2xl rounded-2xl`}
-      >
-        <img
-          src={slides[centerIndex].image}
-          alt={slides[centerIndex].alt}
-          className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-        <div className="absolute bottom-4 left-6">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-            {slides[centerIndex].alt}
-          </h2>
-        </div>
-      </div>
-
-      {/* RIGHT CROPPED */}
-      <div
-        className={`absolute right-[-30vw] sm:right-[-25vw] md:right-[-22vw] lg:right-[-20vw]
-                    w-[32.5vw] sm:w-[30vw] md:w-[29vw] lg:w-[28vw]
-                    ${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-2xl`}
-      >
-        <img
-          src={slides[rightIndex].image}
-          alt={slides[rightIndex].alt}
-          className="w-[130vw] h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
-        />
-      </div>
-
-      {/* ARROWS */}
-      <button
-        onClick={goPrev}
-        className="absolute left-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                   hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-      >
-        ‹
-      </button>
-      <button
-        onClick={goNext}
-        className="absolute right-[11%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold
-                   hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-      >
-        ›
-      </button>
+    <div className={`${heroHeight} overflow-hidden border-y border-l border-gold/30 shadow-2xl`}>
+      <img
+        src={slides[rightIndex].image}
+        alt={slides[rightIndex].alt}
+        className="w-full h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+      />
     </div>
-  </section>
-)}
 
-        {/* MOBILE SPACER FIX */}
-        {isMobile && <div className="h-[60px] sm:h-[80px]"></div>}
+    {!isMobile && (
+      <>
+        <button
+          onClick={goPrev}
+          aria-label="Previous hero image"
+          className="absolute left-[20%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+        >
+          ‹
+        </button>
+        <button
+          onClick={goNext}
+          aria-label="Next hero image"
+          className="absolute right-[20%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+        >
+          ›
+        </button>
+      </>
+    )}
+  </div>
+</section>
+
 {/* === MAIN SERVICES === */}
 <section className="relative z-30 px-2 sm:px-4 md:px-10 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
   <div
-    className="flex flex-wrap sm:flex-nowrap justify-between sm:justify-center 
-               w-full max-w-[1600px] mx-auto 
-               gap-[0.5vw] sm:gap-[3vw] md:gap-[4.5vw]
-               px-[1vw] sm:px-4 md:px-8"
+    className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory scrollbar-hide
+               w-full max-w-[1600px] mx-auto gap-3 sm:gap-5 md:gap-7
+               px-3 sm:px-4 md:px-8 pb-3"
+    style={{ WebkitOverflowScrolling: "touch" }}
   >
     {mainServices.map((s) => (
       <div
         key={s.title}
         onClick={() => navigate(s.link)}
-        className="cursor-pointer flex flex-col items-center 
-                   w-[18vw] sm:w-[140px] md:w-[200px] lg:w-[240px]
+        className="cursor-pointer flex flex-col items-center flex-shrink-0 snap-start
+                   w-[112px] sm:w-[150px] md:w-[200px] lg:w-[240px]
                    aspect-square
                    bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                    overflow-hidden shadow-md hover:scale-105 transition-transform"
