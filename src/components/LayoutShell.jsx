@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 import TopNavMobile from "./TopNavMobile";
-import ChatWidget from "./chat/ChatWidget";
 
 export default function LayoutShell() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Detect window resize for responsive layout
   useEffect(() => {
@@ -21,6 +20,13 @@ export default function LayoutShell() {
     <div className="flex h-screen bg-black text-white overflow-hidden">
       {/* === SIDENAV (Desktop only) === */}
       {isDesktop && <SideNav open={sidebarOpen} />}
+      {isDesktop && sidebarOpen && (
+        <button
+          aria-label="Close navigation"
+          className="fixed top-16 inset-x-0 bottom-0 z-30 bg-black/45 backdrop-blur-[1px]"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
 
       {/* === MAIN CONTAINER === */}
       <div className="flex-1 flex flex-col relative">
@@ -34,17 +40,15 @@ export default function LayoutShell() {
         {/* === PAGE CONTENT === */}
         <main
           className="flex-1 overflow-y-auto"
-          style={{
-            marginLeft: isDesktop ? (sidebarOpen ? 240 : 80) : 0,
-            marginTop: isDesktop ? 64 : 56, // 64px desktop height, ~56px mobile
+          style={{ marginTop: isDesktop ? 64 : 56 }}
+          onClick={() => {
+            if (isDesktop && sidebarOpen) setSidebarOpen(false);
           }}
         >
           <Outlet />
         </main>
       </div>
 
-      {/* === GLOBAL CHAT WIDGET === */}
-      <ChatWidget />
     </div>
   );
 }
