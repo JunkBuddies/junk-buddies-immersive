@@ -104,6 +104,25 @@ function LandingPage() {
     },
   ];
 
+  const mainServicesRef = useRef(null);
+
+  const handleHorizontalWheel = (event) => {
+    const rail = mainServicesRef.current;
+    if (!rail) return;
+
+    // Trackpads commonly provide deltaX; mouse wheels provide deltaY.
+    // Route either gesture through the invisible horizontal rail when it can scroll.
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    if (Math.abs(delta) < 1) return;
+
+    const atStart = rail.scrollLeft <= 0;
+    const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 1;
+    if ((delta < 0 && atStart) || (delta > 0 && atEnd)) return;
+
+    event.preventDefault();
+    rail.scrollLeft += delta;
+  };
+
   const rowRefs = {
     other: useRef(null),
     cities: useRef(null),
@@ -130,8 +149,8 @@ function LandingPage() {
 
 {/* === HERO === */}
 <section className="relative w-full overflow-hidden mt-4 sm:mt-6 mb-4">
-  <div className="grid grid-cols-[14%_72%_14%] lg:grid-cols-[18%_64%_18%] items-center w-full">
-    <div className={`${heroHeight} overflow-hidden border-y border-r border-gold/30 shadow-2xl`}>
+  <div className="grid grid-cols-[1fr_4fr_1fr] sm:grid-cols-[1fr_3fr_1fr] lg:grid-cols-[1fr_3fr_1fr] items-stretch w-full">
+    <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-r-2xl`}>
       <img
         src={slides[leftIndex].image}
         alt={slides[leftIndex].alt}
@@ -139,7 +158,7 @@ function LandingPage() {
       />
     </div>
 
-    <div className={`${heroHeight} relative overflow-hidden border border-gold/40 shadow-2xl z-10`}>
+    <div className={`${heroHeight} relative overflow-hidden border border-gold/40 shadow-2xl z-10 rounded-2xl`}>
       <img
         src={slides[centerIndex].image}
         alt={slides[centerIndex].alt}
@@ -153,7 +172,7 @@ function LandingPage() {
       </div>
     </div>
 
-    <div className={`${heroHeight} overflow-hidden border-y border-l border-gold/30 shadow-2xl`}>
+    <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-l-2xl`}>
       <img
         src={slides[rightIndex].image}
         alt={slides[rightIndex].alt}
@@ -166,14 +185,14 @@ function LandingPage() {
         <button
           onClick={goPrev}
           aria-label="Previous hero image"
-          className="absolute left-[20%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+          className="absolute left-[18%] sm:left-[21%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
         >
           ‹
         </button>
         <button
           onClick={goNext}
           aria-label="Next hero image"
-          className="absolute right-[20%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
+          className="absolute right-[18%] sm:right-[21%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
         >
           ›
         </button>
@@ -185,10 +204,17 @@ function LandingPage() {
 {/* === MAIN SERVICES === */}
 <section className="relative z-30 px-2 sm:px-4 md:px-10 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
   <div
-    className="flex flex-nowrap overflow-x-auto snap-x snap-mandatory scrollbar-hide
-               w-full max-w-[1600px] mx-auto gap-3 sm:gap-5 md:gap-7
-               px-3 sm:px-4 md:px-8 pb-3"
-    style={{ WebkitOverflowScrolling: "touch" }}
+    ref={mainServicesRef}
+    onWheel={handleHorizontalWheel}
+    className="flex flex-nowrap overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide
+               touch-pan-x scroll-smooth w-full max-w-[1600px] mx-auto gap-3 sm:gap-5 md:gap-7
+               px-3 sm:px-4 md:px-8 pb-3 cursor-grab active:cursor-grabbing"
+    style={{
+      WebkitOverflowScrolling: "touch",
+      scrollbarWidth: "none",
+      msOverflowStyle: "none",
+      touchAction: "pan-x",
+    }}
   >
     {mainServices.map((s) => (
       <div
