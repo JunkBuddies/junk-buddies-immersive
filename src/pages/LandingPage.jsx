@@ -184,8 +184,8 @@ function LandingPage() {
       >
 
 {/* === HERO: CINEMATIC CENTER CAROUSEL === */}
-<section className="relative w-full overflow-hidden mt-4 sm:mt-6 mb-4 py-2 sm:py-3">
-  <div className="relative w-full flex items-center justify-center">
+<section className="relative left-1/2 -translate-x-1/2 w-screen overflow-hidden mt-4 sm:mt-6 mb-4 py-2 sm:py-3">
+  <div className="relative w-screen flex items-center justify-center">
     {/* Previous: smaller and intentionally clipped by the viewport */}
     <button
       type="button"
