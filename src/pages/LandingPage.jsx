@@ -224,11 +224,6 @@ function LandingPage() {
     >
       <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
-      <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
-        <h2 className="text-base sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
-          {slides[centerIndex].alt}
-        </h2>
-      </div>
     </div>
 
     {/* Next preview — exact mirror of previous with a visible 24px+ gap */}
