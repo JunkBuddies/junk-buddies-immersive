@@ -183,41 +183,46 @@ function LandingPage() {
         style={{ contain: "layout paint" }}
       >
 
-{/* === HERO: CINEMATIC CENTER CAROUSEL === */}
-<section
-  className="relative w-screen overflow-hidden mt-4 sm:mt-6 mb-4 py-2 sm:py-3"
-  style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
->
-  <div className="relative w-screen flex items-center justify-center">
-    {/* Previous: smaller and intentionally clipped by the viewport */}
+{/* === HERO: VIEWPORT-CENTERED CINEMATIC CAROUSEL === */}
+<section className="relative mt-4 sm:mt-6 mb-4 py-2 sm:py-3" style={{ height: "clamp(156px, 22vw, 324px)" }}>
+  <div
+    className="absolute overflow-hidden"
+    style={{
+      left: "50vw",
+      width: "100vw",
+      transform: "translateX(-50%)",
+      top: 0,
+      height: "100%",
+    }}
+  >
+    {/* Previous preview — smaller, separated, partially off-screen */}
     <button
       type="button"
       onClick={goPrev}
       aria-label="Show previous hero image"
-      className={`absolute left-[-19%] sm:left-[-15%] lg:left-[-11%]
-                  w-[42%] sm:w-[38%] lg:w-[34%] ${heroHeight}
-                  overflow-hidden rounded-2xl border border-gold/25 shadow-xl
-                  opacity-60 scale-[0.82] sm:scale-[0.86] transition-all duration-700 ease-in-out
-                  hover:opacity-80 focus:outline-none`}
+      className="absolute overflow-hidden rounded-2xl border border-gold/25 shadow-xl opacity-60 transition-all duration-700 ease-in-out hover:opacity-80 focus:outline-none"
+      style={{
+        width: "clamp(220px, 34vw, 560px)",
+        height: "82%",
+        left: "calc(50% - min(32vw, 520px) - min(29vw, 475px) - 24px)",
+        top: "9%",
+      }}
     >
-      <img
-        src={slides[leftIndex].image}
-        alt={slides[leftIndex].alt}
-        className="w-full h-full object-cover"
-      />
+      <img src={slides[leftIndex].image} alt={slides[leftIndex].alt} className="w-full h-full object-cover" />
     </button>
 
-    {/* Active selection */}
+    {/* Active card — its center is always the physical viewport center */}
     <div
-      className={`relative z-20 w-[72%] sm:w-[68%] lg:w-[64%] ${heroHeight}
-                  overflow-hidden rounded-2xl border border-gold/50 shadow-2xl
-                  transition-all duration-700 ease-in-out`}
+      className="absolute z-20 overflow-hidden rounded-2xl border border-gold/50 shadow-2xl transition-all duration-700 ease-in-out"
+      style={{
+        width: "min(64vw, 1040px)",
+        height: "100%",
+        left: "50%",
+        top: 0,
+        transform: "translateX(-50%)",
+      }}
     >
-      <img
-        src={slides[centerIndex].image}
-        alt={slides[centerIndex].alt}
-        className="w-full h-full object-cover transition-all duration-700 ease-in-out"
-      />
+      <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
       <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
         <h2 className="text-base sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
@@ -226,22 +231,20 @@ function LandingPage() {
       </div>
     </div>
 
-    {/* Next: smaller and intentionally clipped by the viewport */}
+    {/* Next preview — exact mirror of previous with a visible 24px+ gap */}
     <button
       type="button"
       onClick={goNext}
       aria-label="Show next hero image"
-      className={`absolute right-[-19%] sm:right-[-15%] lg:right-[-11%]
-                  w-[42%] sm:w-[38%] lg:w-[34%] ${heroHeight}
-                  overflow-hidden rounded-2xl border border-gold/25 shadow-xl
-                  opacity-60 scale-[0.82] sm:scale-[0.86] transition-all duration-700 ease-in-out
-                  hover:opacity-80 focus:outline-none`}
+      className="absolute overflow-hidden rounded-2xl border border-gold/25 shadow-xl opacity-60 transition-all duration-700 ease-in-out hover:opacity-80 focus:outline-none"
+      style={{
+        width: "clamp(220px, 34vw, 560px)",
+        height: "82%",
+        right: "calc(50% - min(32vw, 520px) - min(29vw, 475px) - 24px)",
+        top: "9%",
+      }}
     >
-      <img
-        src={slides[rightIndex].image}
-        alt={slides[rightIndex].alt}
-        className="w-full h-full object-cover"
-      />
+      <img src={slides[rightIndex].image} alt={slides[rightIndex].alt} className="w-full h-full object-cover" />
     </button>
   </div>
 </section>
