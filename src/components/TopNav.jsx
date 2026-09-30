@@ -134,15 +134,16 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-[76px] z-[80] w-[min(32rem,46vw)]"
-              style={{ left: "50vw", transform: "translateX(-50%)" }}
+              className="fixed top-[76px] left-0 z-[80] w-screen pointer-events-none"
             >
-              <div className="mb-2 text-center text-[11px] uppercase tracking-[0.2em] text-gold/65">
+              <div
+                className="mb-2 mx-auto w-[min(32rem,46vw)] text-center text-[11px] uppercase tracking-[0.2em] text-gold/65"
+              >
                 Suggested
               </div>
-              <div className="flex flex-col gap-1.5">
+              <div className="flex flex-col items-center gap-1.5">
                 {filteredSuggestions.length === 0 && (
-                  <div className="px-4 py-4 text-sm text-gray-400 bg-black/25 backdrop-blur-md rounded-xl">
+                  <div className="pointer-events-auto w-[min(32rem,46vw)] px-4 py-4 text-center text-sm text-gray-400 bg-black/25 backdrop-blur-md rounded-xl">
                     No matching shortcut
                   </div>
                 )}
@@ -154,14 +155,14 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.035 }}
-                    className="group relative flex items-center justify-center rounded-xl px-4 py-3 text-center text-gray-100
+                    className="group pointer-events-auto relative flex w-[min(32rem,46vw)] items-center justify-center rounded-xl px-4 py-3 text-center text-gray-100
                                bg-black/35 border border-transparent backdrop-blur-md
                                hover:bg-zinc-900/75 hover:border-gold/30 transition"
                   >
                     <span className="absolute left-4 flex h-9 w-9 items-center justify-center rounded-lg bg-black/35 border border-gold/15">
                       <Icon className="text-gold/90 group-hover:text-gold" size={20} />
                     </span>
-                    <span className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-medium text-center">{label}</span>
+                    <span className="font-medium text-center">{label}</span>
                   </motion.button>
                 ))}
               </div>
