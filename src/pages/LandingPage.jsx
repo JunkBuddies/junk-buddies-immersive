@@ -105,22 +105,58 @@ function LandingPage() {
   ];
 
   const mainServicesRef = useRef(null);
+  const serviceDrag = useRef({ active: false, startX: 0, startScrollLeft: 0, moved: false });
 
-  const handleHorizontalWheel = (event) => {
+  const handleServiceWheel = (event) => {
     const rail = mainServicesRef.current;
-    if (!rail) return;
+    if (!rail || rail.scrollWidth <= rail.clientWidth) return;
 
-    // Trackpads commonly provide deltaX; mouse wheels provide deltaY.
-    // Route either gesture through the invisible horizontal rail when it can scroll.
-    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-    if (Math.abs(delta) < 1) return;
+    // Preserve native two-finger horizontal trackpad scrolling.
+    // A regular vertical wheel over this rail is translated horizontally.
+    if (Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
 
+    const delta = event.deltaY;
     const atStart = rail.scrollLeft <= 0;
     const atEnd = rail.scrollLeft + rail.clientWidth >= rail.scrollWidth - 1;
     if ((delta < 0 && atStart) || (delta > 0 && atEnd)) return;
 
     event.preventDefault();
     rail.scrollLeft += delta;
+  };
+
+  const startServiceDrag = (event) => {
+    const rail = mainServicesRef.current;
+    if (!rail) return;
+    serviceDrag.current = {
+      active: true,
+      startX: event.clientX,
+      startScrollLeft: rail.scrollLeft,
+      moved: false,
+    };
+    rail.setPointerCapture?.(event.pointerId);
+  };
+
+  const moveServiceDrag = (event) => {
+    const rail = mainServicesRef.current;
+    const drag = serviceDrag.current;
+    if (!rail || !drag.active) return;
+    const distance = event.clientX - drag.startX;
+    if (Math.abs(distance) > 5) drag.moved = true;
+    rail.scrollLeft = drag.startScrollLeft - distance;
+  };
+
+  const endServiceDrag = (event) => {
+    const rail = mainServicesRef.current;
+    if (rail?.hasPointerCapture?.(event.pointerId)) rail.releasePointerCapture(event.pointerId);
+    serviceDrag.current.active = false;
+  };
+
+  const openService = (link) => {
+    if (serviceDrag.current.moved) {
+      serviceDrag.current.moved = false;
+      return;
+    }
+    navigate(link);
   };
 
   const rowRefs = {
@@ -147,24 +183,39 @@ function LandingPage() {
         style={{ contain: "layout paint" }}
       >
 
-{/* === HERO === */}
-<section className="relative w-full overflow-hidden mt-4 sm:mt-6 mb-4">
-  <div className="grid grid-cols-[1fr_4fr_1fr] sm:grid-cols-[1fr_3fr_1fr] lg:grid-cols-[1fr_3fr_1fr] items-stretch w-full">
-    <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-r-2xl`}>
+{/* === HERO: CINEMATIC CENTER CAROUSEL === */}
+<section className="relative w-full overflow-hidden mt-4 sm:mt-6 mb-4 py-2 sm:py-3">
+  <div className="relative w-full flex items-center justify-center">
+    {/* Previous: smaller and intentionally clipped by the viewport */}
+    <button
+      type="button"
+      onClick={goPrev}
+      aria-label="Show previous hero image"
+      className={`absolute left-[-19%] sm:left-[-15%] lg:left-[-11%]
+                  w-[42%] sm:w-[38%] lg:w-[34%] ${heroHeight}
+                  overflow-hidden rounded-2xl border border-gold/25 shadow-xl
+                  opacity-60 scale-[0.82] sm:scale-[0.86] transition-all duration-700 ease-in-out
+                  hover:opacity-80 focus:outline-none`}
+    >
       <img
         src={slides[leftIndex].image}
         alt={slides[leftIndex].alt}
-        className="w-full h-full object-cover object-right opacity-70 transition-all duration-[1500ms]"
+        className="w-full h-full object-cover"
       />
-    </div>
+    </button>
 
-    <div className={`${heroHeight} relative overflow-hidden border border-gold/40 shadow-2xl z-10 rounded-2xl`}>
+    {/* Active selection */}
+    <div
+      className={`relative z-20 w-[72%] sm:w-[68%] lg:w-[64%] ${heroHeight}
+                  overflow-hidden rounded-2xl border border-gold/50 shadow-2xl
+                  transition-all duration-700 ease-in-out`}
+    >
       <img
         src={slides[centerIndex].image}
         alt={slides[centerIndex].alt}
-        className="w-full h-full object-cover opacity-100 transition-all duration-[1500ms]"
+        className="w-full h-full object-cover transition-all duration-700 ease-in-out"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
       <div className="absolute bottom-3 left-4 sm:bottom-4 sm:left-6">
         <h2 className="text-base sm:text-xl md:text-2xl font-bold text-gold drop-shadow-lg">
           {slides[centerIndex].alt}
@@ -172,56 +223,54 @@ function LandingPage() {
       </div>
     </div>
 
-    <div className={`${heroHeight} overflow-hidden border border-gold/30 shadow-2xl rounded-l-2xl`}>
+    {/* Next: smaller and intentionally clipped by the viewport */}
+    <button
+      type="button"
+      onClick={goNext}
+      aria-label="Show next hero image"
+      className={`absolute right-[-19%] sm:right-[-15%] lg:right-[-11%]
+                  w-[42%] sm:w-[38%] lg:w-[34%] ${heroHeight}
+                  overflow-hidden rounded-2xl border border-gold/25 shadow-xl
+                  opacity-60 scale-[0.82] sm:scale-[0.86] transition-all duration-700 ease-in-out
+                  hover:opacity-80 focus:outline-none`}
+    >
       <img
         src={slides[rightIndex].image}
         alt={slides[rightIndex].alt}
-        className="w-full h-full object-cover object-left opacity-70 transition-all duration-[1500ms]"
+        className="w-full h-full object-cover"
       />
-    </div>
-
-    {!isMobile && (
-      <>
-        <button
-          onClick={goPrev}
-          aria-label="Previous hero image"
-          className="absolute left-[18%] sm:left-[21%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-        >
-          ‹
-        </button>
-        <button
-          onClick={goNext}
-          aria-label="Next hero image"
-          className="absolute right-[18%] sm:right-[21%] top-1/2 -translate-y-1/2 z-40 text-gold text-4xl md:text-5xl font-bold hover:scale-110 bg-black/40 hover:bg-black/70 rounded-full px-3 py-2 transition-transform"
-        >
-          ›
-        </button>
-      </>
-    )}
+    </button>
   </div>
 </section>
+
 
 {/* === MAIN SERVICES === */}
 <section className="relative z-30 px-2 sm:px-4 md:px-10 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
   <div
     ref={mainServicesRef}
-    onWheel={handleHorizontalWheel}
+    onWheel={handleServiceWheel}
+    onPointerDown={startServiceDrag}
+    onPointerMove={moveServiceDrag}
+    onPointerUp={endServiceDrag}
+    onPointerCancel={endServiceDrag}
     className="flex flex-nowrap overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide
-               touch-pan-x scroll-smooth w-full max-w-[1600px] mx-auto gap-3 sm:gap-5 md:gap-7
+               touch-pan-x scroll-smooth w-full max-w-[1600px] mx-auto gap-4 sm:gap-5 md:gap-7
                px-3 sm:px-4 md:px-8 pb-3 cursor-grab active:cursor-grabbing"
     style={{
       WebkitOverflowScrolling: "touch",
       scrollbarWidth: "none",
       msOverflowStyle: "none",
       touchAction: "pan-x",
+      userSelect: "none",
     }}
   >
     {mainServices.map((s) => (
       <div
         key={s.title}
-        onClick={() => navigate(s.link)}
-        className="cursor-pointer flex flex-col items-center flex-shrink-0 snap-start
-                   w-[112px] sm:w-[150px] md:w-[200px] lg:w-[240px]
+        onClick={() => openService(s.link)}
+        draggable={false}
+        className="cursor-pointer flex flex-col items-center flex-none snap-start
+                   w-[42vw] sm:w-[220px] md:w-[260px] lg:w-[300px]
                    aspect-square
                    bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
                    overflow-hidden shadow-md hover:scale-105 transition-transform"
@@ -229,6 +278,7 @@ function LandingPage() {
         <img
           src={getImage(s.image)}
           alt={s.title}
+          draggable="false"
           className="w-full h-full object-cover"
         />
         <h3 className="text-gold font-semibold text-[2.5vw] sm:text-xs md:text-sm mt-2 text-center">
