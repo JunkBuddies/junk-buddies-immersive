@@ -3,6 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 
 function LandingPage() {
   const navigate = useNavigate();
+  const [topTheme, setTopTheme] = useState(() => localStorage.getItem("jb_top_theme") || "night");
+
+  useEffect(() => {
+    const syncTheme = (event) => setTopTheme(event.detail || document.documentElement.dataset.jbTopTheme || "night");
+    window.addEventListener("jb-top-theme", syncTheme);
+    return () => window.removeEventListener("jb-top-theme", syncTheme);
+  }, []);
 
   // === HERO SLIDES ===
   const slides = [
@@ -179,9 +186,25 @@ function LandingPage() {
          ========================= */}
       <div
         id="stack-a"
-        className="relative w-full overflow-x-hidden isolate"
+        className={`relative w-full overflow-x-hidden isolate transition-colors duration-700 ${topTheme === "day" ? "bg-[#25241f]" : "bg-black"}`}
         style={{ contain: "layout paint" }}
       >
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${topTheme === "day" ? "opacity-100" : "opacity-0"}`}
+          style={{
+            background:
+              "radial-gradient(circle at 50% 12%, rgba(212,175,55,0.14), transparent 32%), linear-gradient(180deg, #343128 0%, #25241f 48%, #171717 100%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className={`pointer-events-none absolute inset-0 transition-opacity duration-700 ${topTheme === "night" ? "opacity-100" : "opacity-0"}`}
+          style={{
+            background:
+              "radial-gradient(circle at 50% 8%, rgba(212,175,55,0.07), transparent 28%), linear-gradient(180deg, #090909 0%, #050505 62%, #000 100%)",
+          }}
+        />
 
 {/* === HERO: VIEWPORT-CENTERED CINEMATIC CAROUSEL === */}
 <section className="relative mt-4 sm:mt-6 mb-4 py-2 sm:py-3" style={{ height: "clamp(156px, 22vw, 324px)" }}>
@@ -223,7 +246,7 @@ function LandingPage() {
       }}
     >
       <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
+      <div className={`absolute inset-0 transition-colors duration-700 ${topTheme === "day" ? "bg-gradient-to-t from-black/55 via-black/10 to-transparent" : "bg-gradient-to-t from-black via-black/25 to-transparent"}`} />
     </div>
 
     {/* Next preview — exact mirror of previous with a visible 24px+ gap */}
@@ -273,7 +296,7 @@ function LandingPage() {
         className="cursor-pointer flex flex-col items-center flex-none snap-start
                    w-[42vw] sm:w-[220px] md:w-[260px] lg:w-[300px]
                    aspect-square
-                   bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                   ${topTheme === "day" ? "bg-[#343128]/95" : "bg-zinc-900/90"} border border-gold/30 hover:border-gold rounded-xl 
                    overflow-hidden shadow-md hover:scale-105 transition-transform"
       >
         <img
