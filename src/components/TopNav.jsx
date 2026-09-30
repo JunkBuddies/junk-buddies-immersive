@@ -117,15 +117,15 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
         {searchOpen && (
           <>
             {/* Page fade — starts below the fixed top bar */}
-            <motion.button
-              type="button"
-              aria-label="Close search"
+            <motion.div
+              role="presentation"
               className="fixed top-16 inset-x-0 bottom-0 z-[55] bg-black/65 backdrop-blur-[2px]"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              onClick={closeSearch}
+              onMouseDown={closeSearch}
+              onTouchStart={closeSearch}
             />
 
             {/* Floating suggestions — no second search bar or enclosing panel */}
