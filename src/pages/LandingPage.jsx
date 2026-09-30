@@ -194,12 +194,19 @@ function LandingPage() {
 
         <div className="relative z-20 mx-auto flex min-h-[calc(100svh-56px)] lg:min-h-[calc(100svh-64px)] w-full max-w-[1600px] items-center px-6 sm:px-10 lg:px-16 xl:px-20">
           <div className="relative z-30 w-full max-w-[650px] pb-[42vh] sm:pb-[36vh] lg:pb-0 lg:w-[47%]">
-            <div className="mb-5 flex items-center gap-4 text-[10px] sm:text-xs font-medium uppercase tracking-[0.34em] text-[#c3ad70]">
+            <div className="mb-5 flex items-center gap-4 text-[10px] sm:text-xs font-medium uppercase tracking-[0.34em]">
               <span className="h-px w-10 bg-[#aa9257]" />
-              Junk Buddies
+              <span className="bg-clip-text text-transparent" style={
+                  backgroundImage:
+                    "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 1px 0 rgba(255,248,205,0.34)) drop-shadow(0 5px 12px rgba(0,0,0,0.34))",
+                  textShadow: "0 -1px 0 rgba(255,255,220,0.16), 0 1px 0 rgba(72,43,4,0.32)",
+                }>Junk Buddies</span>
             </div>
             <h1 className="max-w-[620px] text-[clamp(2.65rem,7.2vw,6.8rem)] font-semibold leading-[0.91] tracking-[-0.055em] text-[#f3f1ec]">
-              Make space.
+              Making space
               <span
                 className="mt-2 block bg-clip-text text-transparent"
                 style={{
