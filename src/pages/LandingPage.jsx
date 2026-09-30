@@ -242,10 +242,10 @@ function LandingPage() {
           {/* Art stage: independent layers so they read as objects in one scene */}
           <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[36%] sm:top-[31%] lg:inset-y-0 lg:left-[43%] lg:right-[-2%]">
             <div className="absolute left-[47%] top-[49%] h-[52%] w-[42%] -translate-x-1/2 -translate-y-1/2 rotate-[-24deg] opacity-95 lg:left-[58%] lg:top-[48%] lg:h-[78%] lg:w-[34%]">
-              <img src="/images/jb-gold-shovel.webp" alt="" className="h-full w-full object-contain drop-shadow-[0_32px_50px_rgba(0,0,0,0.6)]" />
+              <img src="/images/jb-gold-shovel.png" alt="" className="h-full w-full object-contain drop-shadow-[0_32px_50px_rgba(0,0,0,0.6)]" />
             </div>
             <div className="absolute bottom-[-2%] right-[1%] h-[94%] w-[96%] sm:right-[4%] sm:w-[88%] lg:bottom-[2%] lg:right-[2%] lg:h-[88%] lg:w-[82%]">
-              <img src="/images/jb-buddies-sculpture.webp" alt="Two sculptural Junk Buddies figures" className="h-full w-full object-contain object-bottom drop-shadow-[0_38px_60px_rgba(0,0,0,0.68)]" />
+              <img src="/images/jb-buddies-sculpture.png" alt="Two sculptural Junk Buddies figures" className="h-full w-full object-contain object-bottom drop-shadow-[0_38px_60px_rgba(0,0,0,0.68)]" />
             </div>
             <div aria-hidden="true" className="absolute bottom-[4%] right-[8%] h-[18%] w-[68%] rounded-[50%] bg-[#aa9257]/10 blur-3xl" />
           </div>
