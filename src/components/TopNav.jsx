@@ -137,7 +137,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
               className="fixed top-[76px] z-[80] w-[min(32rem,46vw)]"
               style={{ left: "50vw", transform: "translateX(-50%)" }}
             >
-              <div className="mb-2 px-3 text-[11px] uppercase tracking-[0.2em] text-gold/65">
+              <div className="mb-2 text-center text-[11px] uppercase tracking-[0.2em] text-gold/65">
                 Suggested
               </div>
               <div className="flex flex-col gap-1.5">
@@ -154,11 +154,11 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
                     initial={{ opacity: 0, y: -5 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.035 }}
-                    className="group flex items-center gap-4 rounded-xl px-4 py-3 text-left text-gray-100
+                    className="group relative flex items-center justify-center rounded-xl px-4 py-3 text-center text-gray-100
                                bg-black/35 border border-transparent backdrop-blur-md
                                hover:bg-zinc-900/75 hover:border-gold/30 transition"
                   >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-black/35 border border-gold/15">
+                    <span className="absolute left-4 flex h-9 w-9 items-center justify-center rounded-lg bg-black/35 border border-gold/15">
                       <Icon className="text-gold/90 group-hover:text-gold" size={20} />
                     </span>
                     <span className="font-medium">{label}</span>
