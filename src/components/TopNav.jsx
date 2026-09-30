@@ -1,6 +1,6 @@
 // TopNav.jsx
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -11,11 +11,20 @@ import {
   MapPin,
   BookOpen,
   HelpCircle,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export default function TopNav({ sidebarOpen, setSidebarOpen }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [topTheme, setTopTheme] = useState(() => localStorage.getItem("jb_top_theme") || "night");
+
+  useEffect(() => {
+    document.documentElement.dataset.jbTopTheme = topTheme;
+    localStorage.setItem("jb_top_theme", topTheme);
+    window.dispatchEvent(new CustomEvent("jb-top-theme", { detail: topTheme }));
+  }, [topTheme]);
   const navigate = useNavigate();
 
   const closeSearch = () => setSearchOpen(false);
@@ -56,7 +65,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
         initial={{ y: -25, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="fixed top-0 left-0 right-0 z-[70] h-16 bg-black flex items-center border-b border-gold"
+        className={`fixed top-0 left-0 right-0 z-[70] h-16 flex items-center border-b border-gold transition-colors duration-500 ${topTheme === "day" ? "bg-[#292720]" : "bg-black"}`}
       >
         {/* Left controls remain independent from the viewport-centered search */}
         <div className="flex items-center gap-3 pl-4 z-10">
@@ -111,6 +120,18 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
             </button>
           </form>
         </div>
+        <button
+          type="button"
+          onClick={() => setTopTheme((current) => current === "night" ? "day" : "night")}
+          className="absolute right-5 top-1/2 -translate-y-1/2 z-10 flex h-9 w-[68px] items-center rounded-full border border-gold/40 bg-black/30 p-1 transition hover:border-gold"
+          aria-label={topTheme === "night" ? "Switch to day atmosphere" : "Switch to night atmosphere"}
+          title={topTheme === "night" ? "Day atmosphere" : "Night atmosphere"}
+        >
+          <span className={`absolute h-7 w-7 rounded-full bg-gold transition-transform duration-300 ${topTheme === "day" ? "translate-x-[31px]" : "translate-x-0"}`} />
+          <Moon size={15} className="relative z-10 ml-1 text-black" />
+          <Sun size={15} className="relative z-10 ml-auto mr-1 text-black" />
+        </button>
+
       </motion.header>
 
       <AnimatePresence>
