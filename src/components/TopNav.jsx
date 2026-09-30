@@ -15,6 +15,7 @@ import {
 
 export default function TopNav({ sidebarOpen, setSidebarOpen }) {
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const closeSearch = () => setSearchOpen(false);
@@ -38,6 +39,16 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
     { label: "Blog", icon: BookOpen, action: () => go("/blog") },
     { label: "FAQ", icon: HelpCircle, action: () => go("/faq") },
   ];
+
+  const filteredSuggestions = suggestions.filter(({ label }) =>
+    label.toLowerCase().includes(searchQuery.trim().toLowerCase())
+  );
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const first = filteredSuggestions[0];
+    if (first) first.action();
+  };
 
   return (
     <>
@@ -70,17 +81,35 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
           className="absolute top-1/2 -translate-y-1/2"
           style={{ left: "50vw", transform: "translate(-50%, -50%)" }}
         >
-          <button
-            type="button"
-            onClick={() => setSearchOpen(true)}
-            aria-expanded={searchOpen}
-            className="relative w-[min(32rem,46vw)] text-left z-[90]"
+          <form
+            onSubmit={submitSearch}
+            className="relative w-[min(32rem,46vw)] z-[90]"
           >
-            <span className={`block w-full px-5 py-2.5 pr-12 rounded-full bg-zinc-900 border text-gray-400 transition ${searchOpen ? "border-gold shadow-[0_0_24px_rgba(212,175,55,0.16)]" : "border-gold/50 hover:border-gold"}`}>
-              Search items, pricing, or cities...
-            </span>
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gold" size={20} />
-          </button>
+            <input
+              type="search"
+              value={searchQuery}
+              onFocus={() => setSearchOpen(true)}
+              onClick={() => setSearchOpen(true)}
+              onChange={(event) => {
+                setSearchQuery(event.target.value);
+                setSearchOpen(true);
+              }}
+              aria-expanded={searchOpen}
+              placeholder="Search items, pricing, or cities..."
+              className={`block w-full px-5 py-2.5 pr-12 rounded-full bg-zinc-900 border text-white
+                         placeholder-gray-400 outline-none cursor-text caret-gold transition
+                         ${searchOpen
+                           ? "border-gold shadow-[0_0_24px_rgba(212,175,55,0.16)]"
+                           : "border-gold/50 hover:border-gold focus:border-gold"}`}
+            />
+            <button
+              type="submit"
+              aria-label="Search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gold hover:text-yellow-300 transition"
+            >
+              <Search size={20} />
+            </button>
+          </form>
         </div>
       </motion.header>
 
@@ -105,14 +134,19 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -8 }}
               transition={{ duration: 0.2 }}
-              className="fixed top-[76px] z-[80] w-[min(560px,52vw)]"
+              className="fixed top-[76px] z-[80] w-[min(32rem,46vw)]"
               style={{ left: "50vw", transform: "translateX(-50%)" }}
             >
               <div className="mb-2 px-3 text-[11px] uppercase tracking-[0.2em] text-gold/65">
                 Suggested
               </div>
               <div className="flex flex-col gap-1.5">
-                {suggestions.map(({ label, icon: Icon, action }, index) => (
+                {filteredSuggestions.length === 0 && (
+                  <div className="px-4 py-4 text-sm text-gray-400 bg-black/25 backdrop-blur-md rounded-xl">
+                    No matching shortcut
+                  </div>
+                )}
+                {filteredSuggestions.map(({ label, icon: Icon, action }, index) => (
                   <motion.button
                     key={label}
                     type="button"
