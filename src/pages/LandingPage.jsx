@@ -184,7 +184,10 @@ function LandingPage() {
       >
 
 {/* === HERO: CINEMATIC CENTER CAROUSEL === */}
-<section className="relative left-1/2 -translate-x-1/2 w-screen overflow-hidden mt-4 sm:mt-6 mb-4 py-2 sm:py-3">
+<section
+  className="relative w-screen overflow-hidden mt-4 sm:mt-6 mb-4 py-2 sm:py-3"
+  style={{ marginLeft: "calc(50% - 50vw)", marginRight: "calc(50% - 50vw)" }}
+>
   <div className="relative w-screen flex items-center justify-center">
     {/* Previous: smaller and intentionally clipped by the viewport */}
     <button
