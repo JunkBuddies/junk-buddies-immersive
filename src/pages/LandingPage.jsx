@@ -293,11 +293,11 @@ function LandingPage() {
         key={s.title}
         onClick={() => openService(s.link)}
         draggable={false}
-        className="cursor-pointer flex flex-col items-center flex-none snap-start
+        className={`cursor-pointer flex flex-col items-center flex-none snap-start
                    w-[42vw] sm:w-[220px] md:w-[260px] lg:w-[300px]
                    aspect-square
-                   ${topTheme === "day" ? "bg-[#343128]/95" : "bg-zinc-900/90"} border border-gold/30 hover:border-gold rounded-xl 
-                   overflow-hidden shadow-md hover:scale-105 transition-transform"
+                   ${topTheme === "day" ? "bg-[#343128]/95" : "bg-zinc-900/90"} border border-gold/30 hover:border-gold rounded-xl
+                   overflow-hidden shadow-md hover:scale-105 transition-transform`}
       >
         <img
           src={getImage(s.image)}
