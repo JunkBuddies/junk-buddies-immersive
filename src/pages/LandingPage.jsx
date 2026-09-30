@@ -245,7 +245,7 @@ function LandingPage() {
               <img src="/images/jb-gold-shovel.png" alt="" className="h-full w-full object-contain drop-shadow-[0_32px_50px_rgba(0,0,0,0.6)]" />
             </div>
             <div className="absolute bottom-[10%] right-[5%] h-[47%] w-[48%] sm:right-[8%] sm:w-[44%] lg:bottom-[18%] lg:right-[10%] lg:h-[44%] lg:w-[41%]">
-              <img src="/images/jb-buddies-sculpture.png" alt="Two sculptural Junk Buddies figures" className="h-full w-full object-contain object-bottom drop-shadow-[0_38px_60px_rgba(0,0,0,0.68)]" />
+              <img src="/images/jb-buddies-sculpture.png?v=20260930-2" alt="Two sculptural Junk Buddies figures" className="h-full w-full object-contain object-bottom drop-shadow-[0_38px_60px_rgba(0,0,0,0.68)]" />
             </div>
             <div aria-hidden="true" className="absolute bottom-[4%] right-[8%] h-[18%] w-[68%] rounded-[50%] bg-[#aa9257]/10 blur-3xl" />
           </div>
