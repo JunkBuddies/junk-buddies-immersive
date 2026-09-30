@@ -161,7 +161,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
                     <span className="absolute left-4 flex h-9 w-9 items-center justify-center rounded-lg bg-black/35 border border-gold/15">
                       <Icon className="text-gold/90 group-hover:text-gold" size={20} />
                     </span>
-                    <span className="font-medium">{label}</span>
+                    <span className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-medium text-center">{label}</span>
                   </motion.button>
                 ))}
               </div>
