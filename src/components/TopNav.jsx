@@ -1,7 +1,7 @@
 // TopNav.jsx
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Menu,
@@ -11,7 +11,6 @@ import {
   MapPin,
   BookOpen,
   HelpCircle,
-  X,
 } from "lucide-react";
 
 export default function TopNav({ sidebarOpen, setSidebarOpen }) {
@@ -75,9 +74,9 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
             type="button"
             onClick={() => setSearchOpen(true)}
             aria-expanded={searchOpen}
-            className="relative w-[min(32rem,46vw)] text-left"
+            className="relative w-[min(32rem,46vw)] text-left z-[90]"
           >
-            <span className="block w-full px-5 py-2.5 pr-12 rounded-full bg-zinc-900 border border-gold/50 text-gray-400 hover:border-gold transition">
+            <span className={`block w-full px-5 py-2.5 pr-12 rounded-full bg-zinc-900 border text-gray-400 transition ${searchOpen ? "border-gold shadow-[0_0_24px_rgba(212,175,55,0.16)]" : "border-gold/50 hover:border-gold"}`}>
               Search items, pricing, or cities...
             </span>
             <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gold" size={20} />
@@ -100,53 +99,38 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
               onClick={closeSearch}
             />
 
-            {/* Large dropdown centered on the same physical screen axis */}
+            {/* Floating suggestions — no second search bar or enclosing panel */}
             <motion.div
-              initial={{ opacity: 0, y: -12, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.98 }}
-              transition={{ duration: 0.22 }}
-              className="fixed top-[72px] z-[80] w-[min(720px,72vw)] rounded-2xl border border-gold/40 bg-zinc-950/95 shadow-2xl overflow-hidden"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="fixed top-[76px] z-[80] w-[min(560px,52vw)]"
               style={{ left: "50vw", transform: "translateX(-50%)" }}
             >
-              <div className="p-4 border-b border-gold/20">
-                <div className="relative">
-                  <input
-                    autoFocus
-                    type="search"
-                    placeholder="Search Junk Buddies..."
-                    className="w-full rounded-xl bg-zinc-900 border border-gold/40 px-4 py-3 pr-11 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold/40"
-                  />
-                  <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-gold" size={20} />
-                </div>
-              </div>
-
-              <div className="px-4 pt-4 pb-2 text-xs uppercase tracking-[0.18em] text-gold/70">
+              <div className="mb-2 px-3 text-[11px] uppercase tracking-[0.2em] text-gold/65">
                 Suggested
               </div>
-
-              <div className="grid grid-cols-2 gap-3 p-4 pt-2">
-                {suggestions.map(({ label, icon: Icon, action }) => (
-                  <button
+              <div className="flex flex-col gap-1.5">
+                {suggestions.map(({ label, icon: Icon, action }, index) => (
+                  <motion.button
                     key={label}
                     type="button"
                     onClick={action}
-                    className="flex items-center gap-3 rounded-xl border border-gold/20 bg-zinc-900/70 px-4 py-4 text-left text-gray-100 hover:border-gold/60 hover:bg-zinc-900 transition"
+                    initial={{ opacity: 0, y: -5 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.035 }}
+                    className="group flex items-center gap-4 rounded-xl px-4 py-3 text-left text-gray-100
+                               bg-black/35 border border-transparent backdrop-blur-md
+                               hover:bg-zinc-900/75 hover:border-gold/30 transition"
                   >
-                    <Icon className="text-gold shrink-0" size={22} />
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-black/35 border border-gold/15">
+                      <Icon className="text-gold/90 group-hover:text-gold" size={20} />
+                    </span>
                     <span className="font-medium">{label}</span>
-                  </button>
+                  </motion.button>
                 ))}
               </div>
-
-              <button
-                type="button"
-                onClick={closeSearch}
-                className="absolute right-6 top-7 text-gold/70 hover:text-gold sr-only"
-                aria-label="Close search panel"
-              >
-                <X size={20} />
-              </button>
             </motion.div>
           </>
         )}
