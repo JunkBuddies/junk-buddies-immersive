@@ -443,12 +443,13 @@ export default function ChatWidget() {
           </button>
 
           <button
+            id="jb-open-button"
             onClick={() => {
               setOpen(true);
               setShowTip(false);
               navigate("/itemized");
             }}
-            className="jb-pulse"
+            className="jb-pulse jb-chat-bubble chat-widget-trigger"
             style={{
               position: "fixed",
               right: 16,
