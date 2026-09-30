@@ -180,6 +180,59 @@ function LandingPage() {
   return (
     <div className="w-full bg-black text-white overflow-x-hidden overflow-y-auto relative">
 
+      {/* === FULL-VIEWPORT EDITORIAL INTRO === */}
+      <section className="relative isolate min-h-[calc(100svh-56px)] lg:min-h-[calc(100svh-64px)] w-full overflow-hidden bg-[#1b1b1a]">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(circle at 76% 45%, rgba(184,134,55,0.13), transparent 28%), radial-gradient(circle at 62% 72%, rgba(212,175,55,0.06), transparent 24%), linear-gradient(135deg, #20201f 0%, #181817 52%, #111110 100%)",
+          }}
+        />
+        <div aria-hidden="true" className="absolute inset-0 opacity-[0.16]" style={{ backgroundImage: "linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px)", backgroundSize: "42px 42px" }} />
+
+        <div className="relative z-20 mx-auto flex min-h-[calc(100svh-56px)] lg:min-h-[calc(100svh-64px)] w-full max-w-[1600px] items-center px-6 sm:px-10 lg:px-16 xl:px-20">
+          <div className="relative z-30 w-full max-w-[650px] pb-[42vh] sm:pb-[36vh] lg:pb-0 lg:w-[47%]">
+            <div className="mb-5 flex items-center gap-4 text-[10px] sm:text-xs font-medium uppercase tracking-[0.34em] text-[#c8a45a]">
+              <span className="h-px w-10 bg-[#b88a3b]" />
+              Junk Buddies
+            </div>
+            <h1 className="max-w-[620px] text-[clamp(2.65rem,7.2vw,6.8rem)] font-semibold leading-[0.91] tracking-[-0.055em] text-[#f3f1ec]">
+              Make space.
+              <span className="mt-2 block text-[#c9a35b]">For what matters.</span>
+            </h1>
+            <p className="mt-6 max-w-[520px] text-sm sm:text-base lg:text-lg leading-relaxed text-white/52">
+              Houston junk removal with upfront pricing, flexible scheduling, and no payment until the job is done.
+            </p>
+            <button
+              type="button"
+              onClick={() => document.getElementById("jb-open-button")?.click()}
+              className="group mt-8 inline-flex items-center gap-5 rounded-full border border-[#b88a3b]/75 bg-black/10 px-7 py-3.5 text-xs sm:text-sm font-medium uppercase tracking-[0.18em] text-[#d0ad67] backdrop-blur-sm transition duration-300 hover:border-[#d6b56f] hover:bg-[#b88a3b]/10 hover:text-[#efd38f]"
+            >
+              Get instant price
+              <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
+            </button>
+          </div>
+
+          {/* Art stage: independent layers so they read as objects in one scene */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[36%] sm:top-[31%] lg:inset-y-0 lg:left-[43%] lg:right-[-2%]">
+            <div className="absolute left-[47%] top-[49%] h-[52%] w-[42%] -translate-x-1/2 -translate-y-1/2 rotate-[-24deg] opacity-95 lg:left-[58%] lg:top-[48%] lg:h-[78%] lg:w-[34%]">
+              <img src="/images/jb-gold-shovel.webp" alt="" className="h-full w-full object-contain drop-shadow-[0_32px_50px_rgba(0,0,0,0.6)]" />
+            </div>
+            <div className="absolute bottom-[-2%] right-[1%] h-[94%] w-[96%] sm:right-[4%] sm:w-[88%] lg:bottom-[2%] lg:right-[2%] lg:h-[88%] lg:w-[82%]">
+              <img src="/images/jb-buddies-sculpture.webp" alt="Two sculptural Junk Buddies figures" className="h-full w-full object-contain object-bottom drop-shadow-[0_38px_60px_rgba(0,0,0,0.68)]" />
+            </div>
+            <div aria-hidden="true" className="absolute bottom-[4%] right-[8%] h-[18%] w-[68%] rounded-[50%] bg-[#b88a3b]/10 blur-3xl" />
+          </div>
+
+          <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 text-center text-[9px] uppercase tracking-[0.28em] text-white/30">
+            Scroll to explore
+            <div className="mx-auto mt-2 h-7 w-px bg-gradient-to-b from-[#c9a35b]/70 to-transparent" />
+          </div>
+        </div>
+      </section>
+
       {/* =========================
           STACK A: TOP (Hero + Rows)
           Isolated to prevent horizontal overflow affecting the rest
