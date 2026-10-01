@@ -242,6 +242,27 @@ function LandingPage() {
           {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
           <div className="pointer-events-none absolute bottom-14 top-[57%] sm:top-[52%] lg:inset-y-[12%]" style={{ left: "clamp(24px, 50.5vw, 1035px)", right: "clamp(24px, 8.5vw, 174px)" }}>
             <div className="relative h-full w-full overflow-visible">
+              {/* Receding exhibit frames create a subtle tunnel/depth plane behind the sculpture */}
+              <div aria-hidden="true" className="absolute inset-[1%] opacity-[0.16]">
+                <span className="absolute inset-0 border border-white/20" />
+              </div>
+              <div aria-hidden="true" className="absolute inset-[8%] opacity-[0.20]">
+                <span className="absolute inset-0 border border-[#c8b477]/25" />
+              </div>
+              <div aria-hidden="true" className="absolute inset-[16%] opacity-[0.24]">
+                <span className="absolute inset-0 border border-white/20" />
+              </div>
+              <div aria-hidden="true" className="absolute inset-[24%] opacity-[0.28]">
+                <span className="absolute inset-0 border border-[#c8b477]/25" />
+              </div>
+              <div aria-hidden="true" className="absolute inset-[32%] opacity-[0.20]">
+                <span className="absolute inset-0 border border-white/20" />
+              </div>
+              <div aria-hidden="true" className="absolute left-[1%] top-[1%] h-px w-[31%] origin-left rotate-[16deg] bg-gradient-to-r from-white/15 to-transparent" />
+              <div aria-hidden="true" className="absolute bottom-[1%] left-[1%] h-px w-[31%] origin-left -rotate-[16deg] bg-gradient-to-r from-white/12 to-transparent" />
+              <div aria-hidden="true" className="absolute right-[1%] top-[1%] h-px w-[31%] origin-right -rotate-[16deg] bg-gradient-to-l from-[#c8b477]/14 to-transparent" />
+              <div aria-hidden="true" className="absolute bottom-[1%] right-[1%] h-px w-[31%] origin-right rotate-[16deg] bg-gradient-to-l from-[#c8b477]/12 to-transparent" />
+
               {/* Sparse museum-display geometry: deliberately broken so it reads as space, not a card */}
               <div aria-hidden="true" className="absolute inset-[7%] opacity-45">
                 <span className="absolute left-0 top-0 h-px w-[38%] bg-gradient-to-r from-[#c8b477]/65 to-transparent" />
@@ -265,11 +286,11 @@ function LandingPage() {
                 <img
                   src="/images/jb-buddies-sculpture.png?v=20260930-2"
                   alt="Two sculptural Junk Buddies figures"
-                  className="block max-h-full max-w-full object-contain drop-shadow-[0_30px_48px_rgba(0,0,0,0.62)]"
+                  className="block max-h-[88%] max-w-[88%] object-contain drop-shadow-[0_30px_48px_rgba(0,0,0,0.62)]"
                   style={{ width: "auto", height: "auto" }}
                 />
               </div>
-              <div className="absolute left-[4%] top-[31%] z-[3] h-[32%] w-[43%] -rotate-[52deg] sm:left-[5%] sm:top-[30%] lg:left-[2%] lg:top-[29%] lg:h-[36%] lg:w-[45%] lg:-rotate-[50deg]">
+              <div className="absolute left-[8%] top-[34%] z-[3] h-[28%] w-[38%] -rotate-[52deg] sm:left-[9%] sm:top-[33%] lg:left-[7%] lg:top-[32%] lg:h-[31%] lg:w-[39%] lg:-rotate-[50deg]">
                 <img
                   src="/images/jb-gold-shovel.png"
                   alt=""
