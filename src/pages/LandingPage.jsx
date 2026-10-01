@@ -241,7 +241,8 @@ function LandingPage() {
 
           {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
           <div
-            className="pointer-events-none absolute bottom-14 left-1/2 top-[58%] w-[min(88vw,430px)] -translate-x-1/2 sm:top-[54%] sm:w-[min(78vw,520px)] lg:inset-y-[12%] lg:left-[49vw] lg:right-[11vw] lg:w-auto lg:translate-x-0 xl:left-[50vw] xl:right-[12vw]"
+            className="pointer-events-none absolute bottom-14 top-[58%] sm:top-[54%] lg:inset-y-[12%] lg:right-[11vw] xl:right-[12vw]"
+            style={{ left: "50vw", width: "100vw", transform: "translateX(-50%)" }}
           >
             <div className="relative h-full w-full overflow-visible">
               {/* Receding exhibit frames create a subtle tunnel/depth plane behind the sculpture */}
@@ -280,23 +281,29 @@ function LandingPage() {
                 <span className="h-1 w-1 rounded-full bg-[#e0cf91]" />
                 <span className="h-px w-5 bg-[#c8b477]" />
               </div>
-              {/* Deep contact shadow + receding void wedge beneath the floating sculpture */}
+              {/* Air gap, irregular smoke shadow, then a visible receding point into the void */}
               <div
                 aria-hidden="true"
-                className="absolute bottom-[4%] left-[10%] h-[43%] w-[80%] opacity-90 blur-[10px]"
+                className="absolute bottom-[1%] left-[18%] h-[37%] w-[64%] opacity-60 blur-[13px]"
                 style={{
-                  clipPath: "polygon(18% 100%, 82% 100%, 61% 0%, 43% 0%)",
+                  clipPath: "polygon(49% 100%, 51% 100%, 67% 18%, 33% 18%)",
                   background:
-                    "linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.90) 30%, rgba(0,0,0,0.58) 66%, rgba(0,0,0,0) 100%)",
+                    "linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.34) 38%, rgba(0,0,0,0.70) 100%)",
                 }}
               />
               <div
                 aria-hidden="true"
-                className="absolute bottom-[7%] left-[20%] h-[10%] w-[62%] rounded-[50%] bg-black/95 blur-[9px] shadow-[0_18px_46px_rgba(0,0,0,0.96)]"
+                className="absolute bottom-[7%] left-[23%] h-[9%] w-[55%] opacity-70 blur-[11px]"
+                style={{
+                  borderRadius: "44% 56% 39% 61% / 58% 43% 57% 42%",
+                  background:
+                    "radial-gradient(ellipse at 18% 58%, rgba(0,0,0,.52) 0 19%, transparent 45%), radial-gradient(ellipse at 43% 42%, rgba(0,0,0,.72) 0 27%, transparent 56%), radial-gradient(ellipse at 72% 60%, rgba(0,0,0,.58) 0 23%, transparent 52%), radial-gradient(ellipse at 88% 40%, rgba(0,0,0,.38) 0 16%, transparent 43%)",
+                }}
               />
               <div
                 aria-hidden="true"
-                className="absolute bottom-[11%] left-[29%] h-[4%] w-[44%] rounded-[50%] bg-black blur-[5px]"
+                className="absolute bottom-[15%] left-[31%] h-[3%] w-[39%] opacity-35 blur-[7px]"
+                style={{ background: "radial-gradient(ellipse, rgba(0,0,0,.58), transparent 70%)" }}
               />
               <div aria-hidden="true" className="absolute bottom-[17%] left-[54%] h-[12%] w-px bg-gradient-to-b from-[#c8b477]/20 to-transparent" />
               <div aria-hidden="true" className="absolute bottom-[16%] left-[calc(54%-5px)] h-px w-[11px] bg-[#c8b477]/25" />
