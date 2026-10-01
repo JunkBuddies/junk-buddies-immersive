@@ -241,7 +241,11 @@ function LandingPage() {
 
           {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
           <div
-            className="pointer-events-none absolute bottom-14 left-1/2 top-[55%] w-[min(88vw,430px)] -translate-x-1/2 sm:top-[52%] sm:w-[min(78vw,520px)] lg:inset-y-[12%] lg:left-[49vw] lg:right-[11vw] lg:w-auto lg:translate-x-0 xl:left-[50vw] xl:right-[12vw]"
+            className="pointer-events-none absolute bottom-14 top-[55%] w-screen sm:top-[52%] lg:inset-y-[12%] lg:!left-[49vw] lg:right-[11vw] lg:w-auto lg:!translate-x-0 xl:!left-[50vw] xl:right-[12vw]"
+            style={{
+              left: "50vw",
+              transform: "translateX(-50%)",
+            }}
           >
             <div className="relative h-full w-full overflow-visible">
               {/* Receding exhibit frames create a subtle tunnel/depth plane behind the sculpture */}
