@@ -280,7 +280,24 @@ function LandingPage() {
                 <span className="h-1 w-1 rounded-full bg-[#e0cf91]" />
                 <span className="h-px w-5 bg-[#c8b477]" />
               </div>
-              <div aria-hidden="true" className="absolute bottom-[8%] left-[23%] h-[7%] w-[58%] rounded-[50%] border border-white/[0.06] bg-black/15 blur-[1px] shadow-[0_18px_34px_rgba(0,0,0,0.38)]" />
+              {/* Deep contact shadow + receding void wedge beneath the floating sculpture */}
+              <div
+                aria-hidden="true"
+                className="absolute bottom-[4%] left-[10%] h-[43%] w-[80%] opacity-90 blur-[10px]"
+                style={{
+                  clipPath: "polygon(18% 100%, 82% 100%, 61% 0%, 43% 0%)",
+                  background:
+                    "linear-gradient(to top, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.90) 30%, rgba(0,0,0,0.58) 66%, rgba(0,0,0,0) 100%)",
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute bottom-[7%] left-[20%] h-[10%] w-[62%] rounded-[50%] bg-black/95 blur-[9px] shadow-[0_18px_46px_rgba(0,0,0,0.96)]"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute bottom-[11%] left-[29%] h-[4%] w-[44%] rounded-[50%] bg-black blur-[5px]"
+              />
               <div aria-hidden="true" className="absolute bottom-[17%] left-[54%] h-[12%] w-px bg-gradient-to-b from-[#c8b477]/20 to-transparent" />
               <div aria-hidden="true" className="absolute bottom-[16%] left-[calc(54%-5px)] h-px w-[11px] bg-[#c8b477]/25" />
 
