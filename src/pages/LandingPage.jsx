@@ -239,15 +239,26 @@ function LandingPage() {
             </button>
           </div>
 
-          {/* Art stage: independent layers so they read as objects in one scene */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 top-[36%] sm:top-[31%] lg:inset-y-0 lg:left-[43%] lg:right-[-2%]">
-            <div className="absolute left-[47%] top-[49%] h-[26%] w-[21%] -translate-x-1/2 -translate-y-1/2 rotate-[-24deg] opacity-95 lg:left-[58%] lg:top-[48%] lg:h-[39%] lg:w-[17%]">
-              <img src="/images/jb-gold-shovel.png" alt="" className="h-full w-full object-contain drop-shadow-[0_32px_50px_rgba(0,0,0,0.6)]" />
+          {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
+          <div className="pointer-events-none absolute inset-x-4 bottom-12 top-[55%] sm:inset-x-8 sm:top-[50%] lg:inset-y-[9%] lg:left-[52%] lg:right-[3%] xl:left-[54%] xl:right-[5%]">
+            <div className="relative h-full w-full overflow-visible">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <img
+                  src="/images/jb-buddies-sculpture.png?v=20260930-2"
+                  alt="Two sculptural Junk Buddies figures"
+                  className="block max-h-full max-w-full object-contain drop-shadow-[0_30px_48px_rgba(0,0,0,0.62)]"
+                  style={{ width: "auto", height: "auto" }}
+                />
+              </div>
+              <div className="absolute left-[8%] top-[9%] h-[44%] w-[24%] rotate-[-24deg] lg:left-[2%] lg:top-[12%] lg:h-[54%] lg:w-[24%]">
+                <img
+                  src="/images/jb-gold-shovel.png"
+                  alt=""
+                  className="h-full w-full object-contain drop-shadow-[0_24px_38px_rgba(0,0,0,0.55)]"
+                />
+              </div>
+              <div aria-hidden="true" className="absolute bottom-[5%] left-[18%] h-[16%] w-[64%] rounded-[50%] bg-[#aa9257]/8 blur-3xl" />
             </div>
-            <div className="absolute bottom-[10%] right-[5%] h-[47%] w-[48%] sm:right-[8%] sm:w-[44%] lg:bottom-[18%] lg:right-[10%] lg:h-[44%] lg:w-[41%]">
-              <img src="/images/jb-buddies-sculpture.png?v=20260930-2" alt="Two sculptural Junk Buddies figures" className="h-full w-full object-contain object-bottom drop-shadow-[0_38px_60px_rgba(0,0,0,0.68)]" />
-            </div>
-            <div aria-hidden="true" className="absolute bottom-[4%] right-[8%] h-[18%] w-[68%] rounded-[50%] bg-[#aa9257]/10 blur-3xl" />
           </div>
 
           <div className="absolute bottom-5 left-1/2 z-30 -translate-x-1/2 text-center text-[9px] uppercase tracking-[0.28em] text-white/30">
