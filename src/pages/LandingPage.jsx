@@ -240,7 +240,7 @@ function LandingPage() {
           </div>
 
           {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
-          <div className="pointer-events-none absolute inset-x-6 bottom-14 top-[57%] sm:inset-x-10 sm:top-[52%] lg:inset-y-[12%] lg:left-[54%] lg:right-[5%] xl:left-[56%] xl:right-[7%]">
+          <div className="pointer-events-none absolute bottom-14 top-[57%] sm:top-[52%] lg:inset-y-[12%]" style={{ left: "clamp(24px, 50.5vw, 1035px)", right: "clamp(24px, 8.5vw, 174px)" }}>
             <div className="relative h-full w-full overflow-visible">
               {/* Sparse museum-display geometry: deliberately broken so it reads as space, not a card */}
               <div aria-hidden="true" className="absolute inset-[7%] opacity-45">
@@ -269,7 +269,7 @@ function LandingPage() {
                   style={{ width: "auto", height: "auto" }}
                 />
               </div>
-              <div className="absolute left-[18%] top-[45%] z-[1] h-[24%] w-[38%] -rotate-[68deg] sm:left-[20%] sm:top-[44%] sm:h-[25%] sm:w-[36%] lg:left-[15%] lg:top-[43%] lg:h-[28%] lg:w-[40%] lg:-rotate-[66deg]">
+              <div className="absolute left-[4%] top-[31%] z-[3] h-[32%] w-[43%] -rotate-[52deg] sm:left-[5%] sm:top-[30%] lg:left-[2%] lg:top-[29%] lg:h-[36%] lg:w-[45%] lg:-rotate-[50deg]">
                 <img
                   src="/images/jb-gold-shovel.png"
                   alt=""
