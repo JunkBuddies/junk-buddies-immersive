@@ -261,7 +261,7 @@ function LandingPage() {
               <div aria-hidden="true" className="absolute bottom-[17%] left-[54%] h-[12%] w-px bg-gradient-to-b from-[#c8b477]/20 to-transparent" />
               <div aria-hidden="true" className="absolute bottom-[16%] left-[calc(54%-5px)] h-px w-[11px] bg-[#c8b477]/25" />
 
-              <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out hover:-translate-y-1">
+              <div className="absolute inset-0 z-[2] flex items-center justify-center transition-transform duration-500 ease-out hover:-translate-y-1">
                 <img
                   src="/images/jb-buddies-sculpture.png?v=20260930-2"
                   alt="Two sculptural Junk Buddies figures"
@@ -269,7 +269,7 @@ function LandingPage() {
                   style={{ width: "auto", height: "auto" }}
                 />
               </div>
-              <div className="absolute left-[11%] top-[16%] h-[40%] w-[22%] rotate-[31deg] lg:left-[5%] lg:top-[18%] lg:h-[48%] lg:w-[21%]">
+              <div className="absolute left-[18%] top-[45%] z-[1] h-[24%] w-[38%] -rotate-[68deg] sm:left-[20%] sm:top-[44%] sm:h-[25%] sm:w-[36%] lg:left-[15%] lg:top-[43%] lg:h-[28%] lg:w-[40%] lg:-rotate-[66deg]">
                 <img
                   src="/images/jb-gold-shovel.png"
                   alt=""
