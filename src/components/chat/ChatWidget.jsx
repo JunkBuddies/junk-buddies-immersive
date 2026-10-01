@@ -449,7 +449,7 @@ export default function ChatWidget() {
               setShowTip(false);
               navigate("/itemized");
             }}
-            className="jb-pulse jb-chat-bubble chat-widget-trigger"
+            className="jb-pulse jb-chat-bubble chat-widget-trigger max-lg:!hidden"
             style={{
               position: "fixed",
               right: 16,
