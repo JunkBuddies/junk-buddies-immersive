@@ -242,7 +242,26 @@ function LandingPage() {
           {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
           <div className="pointer-events-none absolute inset-x-6 bottom-14 top-[57%] sm:inset-x-10 sm:top-[52%] lg:inset-y-[12%] lg:left-[54%] lg:right-[5%] xl:left-[56%] xl:right-[7%]">
             <div className="relative h-full w-full overflow-visible">
-              <div className="absolute inset-0 flex items-center justify-center">
+              {/* Sparse museum-display geometry: deliberately broken so it reads as space, not a card */}
+              <div aria-hidden="true" className="absolute inset-[7%] opacity-45">
+                <span className="absolute left-0 top-0 h-px w-[38%] bg-gradient-to-r from-[#c8b477]/65 to-transparent" />
+                <span className="absolute left-0 top-0 h-[30%] w-px bg-gradient-to-b from-[#c8b477]/55 to-transparent" />
+                <span className="absolute bottom-0 right-0 h-px w-[34%] bg-gradient-to-l from-white/25 to-transparent" />
+                <span className="absolute bottom-0 right-0 h-[26%] w-px bg-gradient-to-t from-white/20 to-transparent" />
+              </div>
+              <div aria-hidden="true" className="absolute left-[4%] right-[3%] top-[48%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+              <div aria-hidden="true" className="absolute left-[54%] top-[10%] h-[70%] w-px bg-gradient-to-b from-transparent via-[#c8b477]/12 to-transparent" />
+              <div aria-hidden="true" className="absolute left-[17%] top-[31%] h-px w-[16%] rotate-[-8deg] bg-white/10" />
+              <div aria-hidden="true" className="absolute right-[9%] top-[29%] h-px w-[11%] rotate-[7deg] bg-[#c8b477]/18" />
+              <div aria-hidden="true" className="absolute left-[8%] top-[47%] flex items-center gap-2 opacity-35">
+                <span className="h-1 w-1 rounded-full bg-[#e0cf91]" />
+                <span className="h-px w-5 bg-[#c8b477]" />
+              </div>
+              <div aria-hidden="true" className="absolute bottom-[8%] left-[23%] h-[7%] w-[58%] rounded-[50%] border border-white/[0.06] bg-black/15 blur-[1px] shadow-[0_18px_34px_rgba(0,0,0,0.38)]" />
+              <div aria-hidden="true" className="absolute bottom-[17%] left-[54%] h-[12%] w-px bg-gradient-to-b from-[#c8b477]/20 to-transparent" />
+              <div aria-hidden="true" className="absolute bottom-[16%] left-[calc(54%-5px)] h-px w-[11px] bg-[#c8b477]/25" />
+
+              <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out hover:-translate-y-1">
                 <img
                   src="/images/jb-buddies-sculpture.png?v=20260930-2"
                   alt="Two sculptural Junk Buddies figures"
