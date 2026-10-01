@@ -240,7 +240,7 @@ function LandingPage() {
           </div>
 
           {/* Viewport-safe art stage: never lets the artwork escape the physical screen */}
-          <div className="pointer-events-none absolute inset-x-4 bottom-12 top-[55%] sm:inset-x-8 sm:top-[50%] lg:inset-y-[9%] lg:left-[52%] lg:right-[3%] xl:left-[54%] xl:right-[5%]">
+          <div className="pointer-events-none absolute inset-x-6 bottom-14 top-[57%] sm:inset-x-10 sm:top-[52%] lg:inset-y-[12%] lg:left-[54%] lg:right-[5%] xl:left-[56%] xl:right-[7%]">
             <div className="relative h-full w-full overflow-visible">
               <div className="absolute inset-0 flex items-center justify-center">
                 <img
@@ -250,7 +250,7 @@ function LandingPage() {
                   style={{ width: "auto", height: "auto" }}
                 />
               </div>
-              <div className="absolute left-[8%] top-[9%] h-[44%] w-[24%] rotate-[-24deg] lg:left-[2%] lg:top-[12%] lg:h-[54%] lg:w-[24%]">
+              <div className="absolute left-[11%] top-[16%] h-[40%] w-[22%] rotate-[31deg] lg:left-[5%] lg:top-[18%] lg:h-[48%] lg:w-[21%]">
                 <img
                   src="/images/jb-gold-shovel.png"
                   alt=""
