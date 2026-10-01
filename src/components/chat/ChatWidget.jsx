@@ -421,6 +421,7 @@ export default function ChatWidget() {
               setShowTip(false);
               navigate("/itemized");
             }}
+            className="max-lg:!hidden"
             style={{
               position: "fixed",
               right: 90,
