@@ -40,7 +40,10 @@ export default function LayoutShell() {
         {/* === PAGE CONTENT === */}
         <main
           className="flex-1 overflow-y-auto"
-          style={{ marginTop: isDesktop ? 64 : 56 }}
+          style={{
+            marginTop: isDesktop ? 64 : 56,
+            paddingBottom: isDesktop ? 0 : "calc(66px + env(safe-area-inset-bottom))",
+          }}
           onClick={() => {
             if (isDesktop && sidebarOpen) setSidebarOpen(false);
           }}
