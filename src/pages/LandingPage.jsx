@@ -226,7 +226,7 @@ function LandingPage() {
                 For what matters.
               </span>
             </h1>
-            <p className="mt-6 max-w-[520px] text-sm sm:text-base lg:text-lg leading-relaxed text-white/52">
+            <p className="mt-5 w-full max-w-[calc(100vw-32px)] break-words pr-2 text-[13px] leading-5 text-white/52 sm:mt-6 sm:max-w-[520px] sm:pr-0 sm:text-base sm:leading-relaxed lg:text-lg">
               Houston junk removal with upfront pricing, flexible scheduling, and no payment until the job is done.
             </p>
             <button
