@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import MagicPriceMirror from "../components/MagicPriceMirror";
 
 function LandingPage() {
   const navigate = useNavigate();
@@ -413,6 +414,9 @@ function LandingPage() {
     </button>
   </div>
 </section>
+
+{/* === MAGIC MIRROR: full-viewport invisible pricing conversation === */}
+<MagicPriceMirror />
 
 
 {/* === MAIN SERVICES === */}
