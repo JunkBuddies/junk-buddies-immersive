@@ -1,0 +1,115 @@
+import React, { useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../lib/firebase";
+import { useCart } from "../context/CartContext";
+import { calculatePrice } from "../utils/pricing";
+import itemData from "../data/itemData";
+
+const allItems = itemData.flatMap((section) => section.items);
+const aliases = { couch:"Couch / Loveseat", sofa:"Sofa", loveseat:"Couch / Loveseat", mattress:"Mattress", fridge:"Refrigerator", refrigerator:"Refrigerator", washer:"Washer", dryer:"Dryer", desk:"Desk", recliner:"Recliner", trampoline:"Trampoline", dresser:"Dresser", table:"Table", chair:"Chair", microwave:"Microwave", freezer:"Freezer", treadmill:"Treadmill" };
+
+function getSessionId() {
+  const key = "jb_chat_session";
+  let id = localStorage.getItem(key);
+  if (!id) { id = "sess_" + Math.random().toString(36).slice(2); localStorage.setItem(key, id); }
+  return id;
+}
+function parseItems(text) {
+  const lower = text.toLowerCase(), found = [], used = new Set();
+  Object.entries(aliases).forEach(([word, exact]) => {
+    if (lower.includes(word) && !used.has(exact)) {
+      const item = allItems.find((x) => x.name === exact);
+      if (item) { found.push(item); used.add(exact); }
+    }
+  });
+  allItems.forEach((item) => {
+    const base = item.name.toLowerCase().split(" - ")[0].replace(/[/"']/g, "").trim();
+    if (base.length > 4 && lower.includes(base) && !used.has(item.name)) { found.push(item); used.add(item.name); }
+  });
+  return found;
+}
+
+export default function MagicPriceMirror() {
+  const navigate = useNavigate();
+  const { setCart } = useCart();
+  const sessionId = useMemo(getSessionId, []);
+  const [stage, setStage] = useState("items");
+  const [prompt, setPrompt] = useState("Want a guaranteed price now?");
+  const [subPrompt, setSubPrompt] = useState("List what you need removed. One line is enough.");
+  const [value, setValue] = useState("");
+  const [items, setItems] = useState([]);
+  const [price, setPrice] = useState(0);
+  const [discounted, setDiscounted] = useState(false);
+  const [fading, setFading] = useState(false);
+  const inputRef = useRef(null);
+
+  const transition = (nextPrompt, nextSub, nextStage, delay = 360) => {
+    setFading(true);
+    setTimeout(() => {
+      setPrompt(nextPrompt); setSubPrompt(nextSub); setStage(nextStage); setValue(""); setFading(false);
+      setTimeout(() => inputRef.current?.focus(), 80);
+    }, delay);
+  };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    const clean = value.trim();
+    if (!clean) return;
+    if (stage === "items" || stage === "more") {
+      const parsed = parseItems(clean);
+      if (!parsed.length) { transition("I want to price that correctly.", "Try simple item names — couch, mattress, dresser, refrigerator.", stage); return; }
+      const nextItems = stage === "more" ? [...items, ...parsed] : parsed;
+      const result = calculatePrice(nextItems);
+      setItems(nextItems); setPrice(result.finalPrice); setCart(nextItems);
+      transition("Getting your price…", "Matching your items to Junk Buddies pricing.", "loading", 220);
+      setTimeout(() => transition("Your price is ready.", "Want 10% off before I show you the total? Type yes or no.", "discount", 520), 850);
+      return;
+    }
+    if (stage === "discount") {
+      const yes = /^(y|yes|sure|ok|okay|yeah|yep)/i.test(clean);
+      setDiscounted(yes); localStorage.setItem("jb_disc_on_" + sessionId, yes ? "1" : "0");
+      transition(yes ? "Done. 10% is yours." : "No problem.", yes ? "Enter the best phone number for this quote. No payment required." : "Enter a phone number so this quote stays attached to you.", "phone");
+      return;
+    }
+    if (stage === "phone") {
+      const digits = clean.replace(/\D/g, "");
+      if (digits.length < 10) { transition("That number looks a little short.", "Enter a 10-digit phone number.", "phone"); return; }
+      localStorage.setItem("jb_lead_phone_" + sessionId, clean); localStorage.setItem("jb_lead_" + sessionId, "1");
+      try { await addDoc(collection(db, "leadCaptures"), { phone: clean, sessionId, source:"landing_magic_mirror", enteredAt:serverTimestamp() }); } catch (err) { console.error("Magic Mirror lead capture:", err); }
+      const total = discounted ? Math.round(price * 0.9 * 100) / 100 : price;
+      transition("$" + total.toFixed(2), items.map((x) => x.name).join(" · ") + (discounted ? " · 10% discount applied" : ""), "result");
+      return;
+    }
+    if (stage === "result") {
+      if (/add|more|another|yes/i.test(clean)) transition("What else should we take?", "List the additional item or items.", "more");
+      else if (/schedule|book|date|pickup/i.test(clean)) navigate("/schedule");
+      else transition("No pressure.", "Type “add” for more items or “schedule” for a no-commitment pickup date. Free cancellation.", "result");
+    }
+  };
+
+  const resultStage = stage === "result";
+  return (
+    <section className="relative h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full snap-start snap-always overflow-hidden bg-[#111110] text-white">
+      <div aria-hidden="true" className="absolute inset-0" style={{background:"radial-gradient(circle at 50% 45%, rgba(184,134,55,.09), transparent 25%), linear-gradient(145deg,#171716,#0c0c0b 62%,#050505)"}} />
+      <div aria-hidden="true" className="absolute inset-[7vw] border border-[#c8b477]/10" />
+      <div aria-hidden="true" className="absolute inset-[14vw] border border-white/[0.035]" />
+      <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
+      <div className="relative z-10 mx-auto flex h-full max-w-[1500px] flex-col justify-between px-6 pb-24 pt-14 sm:px-10 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:gap-20 lg:px-20 lg:py-16">
+        <div className={"transition-all duration-500 " + (fading ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100")}>
+          <div className="mb-5 flex items-center gap-3 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
+          <h2 className={(resultStage ? "text-[clamp(4rem,11vw,9rem)] " : "text-[clamp(2.7rem,6.5vw,6.5rem)] ") + "max-w-[850px] font-semibold leading-[.94] tracking-[-.055em]"}>{prompt}</h2>
+          <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/45 sm:text-base lg:text-lg">{subPrompt}</p>
+        </div>
+        <form onSubmit={submit} className="mb-5 w-full lg:mb-0 lg:self-end lg:pb-[12vh]">
+          <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
+          <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80">
+            <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
+            <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
+          </div>
+          <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>
+        </form>
+      </div>
+    </section>
+  );
+}
