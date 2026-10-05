@@ -44,93 +44,53 @@ export default function MagicPriceMirror() {
   const [fading, setFading] = useState(false);
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
-  const snapLockRef = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
-
     const scroller = section.closest("main");
-    if (!scroller) return;
+    if (!scroller || typeof IntersectionObserver === "undefined") return;
 
-    let captured = false;
+    let hasSnapped = false;
     let released = false;
     let settling = false;
-    let lastScrollTop = scroller.scrollTop;
-    let releaseTimer = null;
 
-    const sectionTopInScroller = () => {
+    const getTarget = () => {
       const sectionRect = section.getBoundingClientRect();
       const scrollerRect = scroller.getBoundingClientRect();
-      return scroller.scrollTop + (sectionRect.top - scrollerRect.top);
+      return scroller.scrollTop + sectionRect.top - scrollerRect.top;
     };
 
-    const releaseCapture = () => {
-      if (!captured || settling) return;
-      captured = false;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.1) {
+        hasSnapped = false;
+        released = false;
+        settling = false;
+        return;
+      }
+      if (entry.intersectionRatio >= 0.5 && !hasSnapped && !released && !settling) {
+        hasSnapped = true;
+        settling = true;
+        scroller.scrollTo({ top: getTarget(), behavior: "smooth" });
+        window.setTimeout(() => { settling = false; }, 500);
+      }
+    }, { root: scroller, threshold: [0.1, 0.5, 1] });
+
+    const release = (event) => {
+      if (!hasSnapped || settling || released) return;
+      if (event.type === "wheel" && Math.abs(event.deltaY || 0) < 4) return;
       released = true;
-      section.style.scrollSnapAlign = "none";
-      section.style.scrollSnapStop = "normal";
-      if (releaseTimer) window.clearTimeout(releaseTimer);
-      releaseTimer = window.setTimeout(() => {
-        section.style.scrollSnapAlign = "";
-        section.style.scrollSnapStop = "";
-      }, 700);
-    };
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.intersectionRatio < 0.12) {
-          captured = false;
-          released = false;
-          settling = false;
-          section.style.scrollSnapAlign = "";
-          section.style.scrollSnapStop = "";
-          return;
-        }
-
-        if (entry.intersectionRatio >= 0.5 && !captured && !released && !settling) {
-          settling = true;
-          captured = true;
-          const target = sectionTopInScroller();
-          scroller.scrollTo({ top: target, behavior: "smooth" });
-          window.setTimeout(() => {
-            settling = false;
-            lastScrollTop = scroller.scrollTop;
-          }, 520);
-        }
-      },
-      { root: scroller, threshold: [0, 0.12, 0.49, 0.5, 0.75, 1] }
-    );
-
-    const onWheel = (event) => {
-      if (!captured || settling || Math.abs(event.deltaY) < 4) return;
-      releaseCapture();
-    };
-
-    const onTouchStart = () => {
-      if (captured && !settling) releaseCapture();
-    };
-
-    const onScroll = () => {
-      const now = scroller.scrollTop;
-      if (captured && !settling && Math.abs(now - lastScrollTop) > 8) releaseCapture();
-      lastScrollTop = now;
+      hasSnapped = false;
     };
 
     observer.observe(section);
-    scroller.addEventListener("wheel", onWheel, { passive: true });
-    scroller.addEventListener("touchstart", onTouchStart, { passive: true });
-    scroller.addEventListener("scroll", onScroll, { passive: true });
+    scroller.addEventListener("wheel", release, { passive: true });
+    scroller.addEventListener("touchstart", release, { passive: true });
 
     return () => {
       observer.disconnect();
-      scroller.removeEventListener("wheel", onWheel);
-      scroller.removeEventListener("touchstart", onTouchStart);
-      scroller.removeEventListener("scroll", onScroll);
-      if (releaseTimer) window.clearTimeout(releaseTimer);
-      section.style.scrollSnapAlign = "";
-      section.style.scrollSnapStop = "";
+      scroller.removeEventListener("wheel", release);
+      scroller.removeEventListener("touchstart", release);
     };
   }, []);
 
