@@ -90,18 +90,18 @@ export default function MagicPriceMirror() {
 
   const resultStage = stage === "result";
   return (
-    <section className="relative h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full snap-start snap-always overflow-hidden bg-[#111110] text-white">
+    <section className="relative h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full max-w-full snap-start snap-always overflow-hidden bg-[#111110] text-white">
       <div aria-hidden="true" className="absolute inset-0" style={{background:"radial-gradient(circle at 50% 45%, rgba(184,134,55,.09), transparent 25%), linear-gradient(145deg,#171716,#0c0c0b 62%,#050505)"}} />
-      <div aria-hidden="true" className="absolute inset-[7vw] border border-[#c8b477]/10" />
-      <div aria-hidden="true" className="absolute inset-[14vw] border border-white/[0.035]" />
+      <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
+      <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
       <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
-      <div className="relative z-10 mx-auto flex h-full max-w-[1500px] flex-col justify-between px-6 pb-24 pt-14 sm:px-10 lg:grid lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:gap-20 lg:px-20 lg:py-16">
-        <div className={"transition-all duration-500 " + (fading ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100")}>
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1500px] min-w-0 flex-col justify-between px-5 pb-24 pt-12 sm:px-8 lg:grid lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] lg:items-center lg:gap-[clamp(32px,5vw,80px)] lg:px-[clamp(40px,5vw,80px)] lg:py-16">
+        <div className={"min-w-0 max-w-full transition-all duration-500 " + (fading ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100")}>
           <div className="mb-5 flex items-center gap-3 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
-          <h2 className={(resultStage ? "text-[clamp(4rem,11vw,9rem)] " : "text-[clamp(2.7rem,6.5vw,6.5rem)] ") + "max-w-[850px] font-semibold leading-[.94] tracking-[-.055em]"}>{prompt}</h2>
+          <h2 className={(resultStage ? "text-[clamp(3.25rem,10vw,8rem)] " : "text-[clamp(2.35rem,6vw,6rem)] ") + "max-w-full break-words font-semibold leading-[.94] tracking-[-.045em]"}>{prompt}</h2>
           <p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/45 sm:text-base lg:text-lg">{subPrompt}</p>
         </div>
-        <form onSubmit={submit} className="mb-5 w-full lg:mb-0 lg:self-end lg:pb-[12vh]">
+        <form onSubmit={submit} className="mb-5 w-full min-w-0 max-w-full lg:mb-0 lg:self-end lg:pb-[12vh]">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
           <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80">
             <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
