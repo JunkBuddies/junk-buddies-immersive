@@ -53,23 +53,85 @@ export default function MagicPriceMirror() {
     const scroller = section.closest("main");
     if (!scroller) return;
 
+    let captured = false;
+    let released = false;
+    let settling = false;
+    let lastScrollTop = scroller.scrollTop;
+    let releaseTimer = null;
+
+    const sectionTopInScroller = () => {
+      const sectionRect = section.getBoundingClientRect();
+      const scrollerRect = scroller.getBoundingClientRect();
+      return scroller.scrollTop + (sectionRect.top - scrollerRect.top);
+    };
+
+    const releaseCapture = () => {
+      if (!captured || settling) return;
+      captured = false;
+      released = true;
+      section.style.scrollSnapAlign = "none";
+      section.style.scrollSnapStop = "normal";
+      if (releaseTimer) window.clearTimeout(releaseTimer);
+      releaseTimer = window.setTimeout(() => {
+        section.style.scrollSnapAlign = "";
+        section.style.scrollSnapStop = "";
+      }, 700);
+    };
+
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.intersectionRatio < 0.5 || snapLockRef.current) return;
+        if (entry.intersectionRatio < 0.12) {
+          captured = false;
+          released = false;
+          settling = false;
+          section.style.scrollSnapAlign = "";
+          section.style.scrollSnapStop = "";
+          return;
+        }
 
-        const sectionTop = section.offsetTop;
-        const distance = Math.abs(scroller.scrollTop - sectionTop);
-        if (distance < 2) return;
-
-        snapLockRef.current = true;
-        scroller.scrollTo({ top: sectionTop, behavior: "smooth" });
-        window.setTimeout(() => { snapLockRef.current = false; }, 650);
+        if (entry.intersectionRatio >= 0.5 && !captured && !released && !settling) {
+          settling = true;
+          captured = true;
+          const target = sectionTopInScroller();
+          scroller.scrollTo({ top: target, behavior: "smooth" });
+          window.setTimeout(() => {
+            settling = false;
+            lastScrollTop = scroller.scrollTop;
+          }, 520);
+        }
       },
-      { root: scroller, threshold: [0, 0.49, 0.5, 0.75, 1] }
+      { root: scroller, threshold: [0, 0.12, 0.49, 0.5, 0.75, 1] }
     );
 
+    const onWheel = (event) => {
+      if (!captured || settling || Math.abs(event.deltaY) < 4) return;
+      releaseCapture();
+    };
+
+    const onTouchStart = () => {
+      if (captured && !settling) releaseCapture();
+    };
+
+    const onScroll = () => {
+      const now = scroller.scrollTop;
+      if (captured && !settling && Math.abs(now - lastScrollTop) > 8) releaseCapture();
+      lastScrollTop = now;
+    };
+
     observer.observe(section);
-    return () => observer.disconnect();
+    scroller.addEventListener("wheel", onWheel, { passive: true });
+    scroller.addEventListener("touchstart", onTouchStart, { passive: true });
+    scroller.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      observer.disconnect();
+      scroller.removeEventListener("wheel", onWheel);
+      scroller.removeEventListener("touchstart", onTouchStart);
+      scroller.removeEventListener("scroll", onScroll);
+      if (releaseTimer) window.clearTimeout(releaseTimer);
+      section.style.scrollSnapAlign = "";
+      section.style.scrollSnapStop = "";
+    };
   }, []);
 
   const transition = (nextPrompt, nextSub, nextStage, delay = 360) => {
