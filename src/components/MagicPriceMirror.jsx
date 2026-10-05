@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
@@ -43,6 +43,34 @@ export default function MagicPriceMirror() {
   const [discounted, setDiscounted] = useState(false);
   const [fading, setFading] = useState(false);
   const inputRef = useRef(null);
+  const sectionRef = useRef(null);
+  const snapLockRef = useRef(false);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const scroller = section.closest("main");
+    if (!scroller) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.intersectionRatio < 0.5 || snapLockRef.current) return;
+
+        const sectionTop = section.offsetTop;
+        const distance = Math.abs(scroller.scrollTop - sectionTop);
+        if (distance < 2) return;
+
+        snapLockRef.current = true;
+        scroller.scrollTo({ top: sectionTop, behavior: "smooth" });
+        window.setTimeout(() => { snapLockRef.current = false; }, 650);
+      },
+      { root: scroller, threshold: [0, 0.49, 0.5, 0.75, 1] }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
 
   const transition = (nextPrompt, nextSub, nextStage, delay = 360) => {
     setFading(true);
@@ -90,7 +118,7 @@ export default function MagicPriceMirror() {
 
   const resultStage = stage === "result";
   return (
-    <section className="relative h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full max-w-full snap-start snap-always overflow-hidden bg-[#111110] text-white">
+    <section ref={sectionRef} className="relative h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full max-w-full snap-start snap-always scroll-mt-0 overflow-hidden bg-[#111110] text-white">
       <div aria-hidden="true" className="absolute inset-0" style={{background:"radial-gradient(circle at 50% 45%, rgba(184,134,55,.09), transparent 25%), linear-gradient(145deg,#171716,#0c0c0b 62%,#050505)"}} />
       <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
