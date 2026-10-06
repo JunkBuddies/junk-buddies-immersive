@@ -93,12 +93,13 @@ export default function MagicPriceMirror() {
 
     let captured = false;
     let released = false;
-    let settling = false;
+    let arriving = false;
+    let holding = false;
     let targetTop = 0;
-    let pinFrame = 0;
-    let settleTimer = 0;
-    let gestureQuietTimer = 0;
-    let gestureConsumed = false;
+    let animationFrame = 0;
+    let holdTimer = 0;
+    let quietTimer = 0;
+    let momentumActive = false;
 
     const getTarget = () => {
       const sectionRect = section.getBoundingClientRect();
@@ -106,51 +107,58 @@ export default function MagicPriceMirror() {
       return scroller.scrollTop + sectionRect.top - scrollerRect.top;
     };
 
-    const pin = () => {
-      if (!settling) return;
+    const pinExact = () => {
+      if (!holding) return;
       scroller.scrollTop = targetTop;
-      pinFrame = window.requestAnimationFrame(pin);
+      animationFrame = window.requestAnimationFrame(pinExact);
     };
 
     const capture = () => {
-      if (captured || released || settling) return;
+      if (captured || released || arriving || holding) return;
       captured = true;
-      settling = true;
+      arriving = true;
       setMirrorActive(false);
       targetTop = getTarget();
 
-      // Jump first to kill carried wheel/touch momentum, then pin briefly.
-      scroller.scrollTo({ top: targetTop, behavior: "auto" });
-      window.cancelAnimationFrame(pinFrame);
-      pinFrame = window.requestAnimationFrame(pin);
+      // Smooth scene arrival. Continued wheel/touch input is consumed while arriving.
+      scroller.scrollTo({ top: targetTop, behavior: "smooth" });
 
-      settleTimer = window.setTimeout(() => {
-        settling = false;
-        window.cancelAnimationFrame(pinFrame);
+      window.setTimeout(() => {
+        arriving = false;
+        holding = true;
         scroller.scrollTop = targetTop;
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = window.requestAnimationFrame(pinExact);
         setMirrorActive(true);
-        gestureConsumed = true;
-        window.clearTimeout(gestureQuietTimer);
-        gestureQuietTimer = window.setTimeout(() => { gestureConsumed = false; }, 220);
-      }, 420);
+
+        // Keep the scene physically pinned long enough for the triggering gesture to die.
+        holdTimer = window.setTimeout(() => {
+          holding = false;
+          window.cancelAnimationFrame(animationFrame);
+          scroller.scrollTop = targetTop;
+          momentumActive = true;
+          window.clearTimeout(quietTimer);
+          quietTimer = window.setTimeout(() => { momentumActive = false; }, 260);
+        }, 1600);
+      }, 720);
     };
 
-    const release = (event) => {
-      const meaningfulWheel = event.type !== "wheel" || Math.abs(event.deltaY || 0) >= 6;
+    const consumeOrRelease = (event) => {
+      const meaningful = event.type !== "wheel" || Math.abs(event.deltaY || 0) >= 5;
 
-      if (settling || gestureConsumed) {
+      if (arriving || holding || momentumActive) {
         if (event.cancelable) event.preventDefault();
-        if (meaningfulWheel) {
-          gestureConsumed = true;
-          window.clearTimeout(gestureQuietTimer);
-          gestureQuietTimer = window.setTimeout(() => { gestureConsumed = false; }, 220);
+        if (meaningful && !holding && !arriving) {
+          momentumActive = true;
+          window.clearTimeout(quietTimer);
+          quietTimer = window.setTimeout(() => { momentumActive = false; }, 260);
         }
         return;
       }
 
-      if (!captured || released || !meaningfulWheel) return;
+      if (!captured || released || !meaningful) return;
 
-      // A new gesture after the momentum quiet period is the intentional unlock.
+      // Only a fresh gesture after arrival + hold + momentum silence unlocks the scene.
       released = true;
       captured = false;
     };
@@ -159,29 +167,31 @@ export default function MagicPriceMirror() {
       if (entry.intersectionRatio < 0.08) {
         captured = false;
         released = false;
-        settling = false;
-        window.cancelAnimationFrame(pinFrame);
-        window.clearTimeout(settleTimer);
+        arriving = false;
+        holding = false;
+        momentumActive = false;
+        window.cancelAnimationFrame(animationFrame);
+        window.clearTimeout(holdTimer);
+        window.clearTimeout(quietTimer);
         setMirrorActive(false);
         return;
       }
-      if (entry.intersectionRatio >= 0.5) capture();
-    }, { root: scroller, threshold: [0.08, 0.49, 0.5, 0.75, 1] });
+      if (entry.intersectionRatio >= 0.85) capture();
+    }, { root: scroller, threshold: [0.08, 0.5, 0.84, 0.85, 0.95, 1] });
 
     observer.observe(section);
-    scroller.addEventListener("wheel", release, { passive: false });
-    scroller.addEventListener("touchmove", release, { passive: false });
+    scroller.addEventListener("wheel", consumeOrRelease, { passive: false });
+    scroller.addEventListener("touchmove", consumeOrRelease, { passive: false });
 
     return () => {
       observer.disconnect();
-      scroller.removeEventListener("wheel", release);
-      scroller.removeEventListener("touchmove", release);
-      window.cancelAnimationFrame(pinFrame);
-      window.clearTimeout(settleTimer);
-      window.clearTimeout(gestureQuietTimer);
+      scroller.removeEventListener("wheel", consumeOrRelease);
+      scroller.removeEventListener("touchmove", consumeOrRelease);
+      window.cancelAnimationFrame(animationFrame);
+      window.clearTimeout(holdTimer);
+      window.clearTimeout(quietTimer);
     };
   }, []);
-
 
   const transition = (nextPrompt, nextSub, nextStage, delay = 360) => {
     setFading(true);
@@ -234,8 +244,8 @@ export default function MagicPriceMirror() {
       <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
       <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
-      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-24px)] min-w-0 max-w-[calc(100%-24px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-36px)] sm:max-w-[calc(100%-36px)] lg:grid lg:w-[calc(100%-48px)] lg:max-w-none lg:grid-cols-[minmax(0,1.18fr)_minmax(280px,.82fr)] lg:items-center lg:gap-[clamp(20px,3vw,48px)] lg:px-[clamp(20px,2.2vw,36px)] lg:py-16">
-        <div className={"w-full min-w-0 max-w-full overflow-hidden transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
+      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-24px)] min-w-0 max-w-[calc(100%-24px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-36px)] sm:max-w-[calc(100%-36px)] lg:grid lg:w-[calc(100%-64px)] lg:max-w-[calc(100%-64px)] lg:grid-cols-[minmax(0,56%)_minmax(0,44%)] lg:items-center lg:gap-0 lg:px-0 lg:py-16">
+        <div className={"box-border w-full min-w-0 max-w-full overflow-hidden pr-4 lg:pr-[clamp(24px,3vw,52px)] transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-2.5 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
           <div className="w-full min-w-0 max-w-full">
             <div
@@ -256,7 +266,7 @@ export default function MagicPriceMirror() {
             </div>
           </div>
         </div>
-        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-end lg:w-[min(100%,520px)] lg:pr-2 lg:pb-[12vh]">
+        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-end lg:w-[min(100%,500px)] lg:pl-[clamp(18px,2vw,32px)] lg:pr-0 lg:pb-[12vh]">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
           <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80">
             <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
