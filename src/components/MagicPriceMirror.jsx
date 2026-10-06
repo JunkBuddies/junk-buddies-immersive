@@ -44,34 +44,46 @@ export default function MagicPriceMirror() {
   const [fading, setFading] = useState(false);
   const [typedPrompt, setTypedPrompt] = useState("");
   const [typedSubPrompt, setTypedSubPrompt] = useState("");
+  const [mirrorActive, setMirrorActive] = useState(false);
+  const [hierarchyFlipped, setHierarchyFlipped] = useState(false);
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
 
   useEffect(() => {
     setTypedPrompt("");
     setTypedSubPrompt("");
+    setHierarchyFlipped(false);
+    if (!mirrorActive) return;
+
     let promptIndex = 0;
     let subIndex = 0;
+    let promptTimer;
     let subTimer;
+    let flipTimer;
 
-    const promptTimer = window.setInterval(() => {
+    promptTimer = window.setInterval(() => {
       promptIndex += 1;
       setTypedPrompt(prompt.slice(0, promptIndex));
       if (promptIndex >= prompt.length) {
         window.clearInterval(promptTimer);
-        subTimer = window.setInterval(() => {
-          subIndex += 1;
-          setTypedSubPrompt(subPrompt.slice(0, subIndex));
-          if (subIndex >= subPrompt.length) window.clearInterval(subTimer);
-        }, 24);
+        flipTimer = window.setTimeout(() => {
+          setHierarchyFlipped(true);
+          subTimer = window.setInterval(() => {
+            subIndex += 1;
+            setTypedSubPrompt(subPrompt.slice(0, subIndex));
+            if (subIndex >= subPrompt.length) window.clearInterval(subTimer);
+          }, 38);
+        }, 180);
       }
-    }, 32);
+    }, 42);
 
     return () => {
       window.clearInterval(promptTimer);
-      if (subTimer) window.clearInterval(subTimer);
+      window.clearInterval(subTimer);
+      window.clearTimeout(flipTimer);
     };
-  }, [prompt, subPrompt]);
+  }, [prompt, subPrompt, mirrorActive]);
+
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -79,9 +91,12 @@ export default function MagicPriceMirror() {
     const scroller = section.closest("main");
     if (!scroller || typeof IntersectionObserver === "undefined") return;
 
-    let hasSnapped = false;
+    let captured = false;
     let released = false;
     let settling = false;
+    let targetTop = 0;
+    let pinFrame = 0;
+    let settleTimer = 0;
 
     const getTarget = () => {
       const sectionRect = section.getBoundingClientRect();
@@ -89,38 +104,68 @@ export default function MagicPriceMirror() {
       return scroller.scrollTop + sectionRect.top - scrollerRect.top;
     };
 
-    const observer = new IntersectionObserver(([entry]) => {
-      if (entry.intersectionRatio < 0.1) {
-        hasSnapped = false;
-        released = false;
-        settling = false;
-        return;
-      }
-      if (entry.intersectionRatio >= 0.5 && !hasSnapped && !released && !settling) {
-        hasSnapped = true;
-        settling = true;
-        scroller.scrollTo({ top: getTarget(), behavior: "smooth" });
-        window.setTimeout(() => { settling = false; }, 500);
-      }
-    }, { root: scroller, threshold: [0.1, 0.5, 1] });
-
-    const release = (event) => {
-      if (!hasSnapped || settling || released) return;
-      if (event.type === "wheel" && Math.abs(event.deltaY || 0) < 4) return;
-      released = true;
-      hasSnapped = false;
+    const pin = () => {
+      if (!settling) return;
+      scroller.scrollTop = targetTop;
+      pinFrame = window.requestAnimationFrame(pin);
     };
 
+    const capture = () => {
+      if (captured || released || settling) return;
+      captured = true;
+      settling = true;
+      setMirrorActive(false);
+      targetTop = getTarget();
+
+      // Jump first to kill carried wheel/touch momentum, then pin briefly.
+      scroller.scrollTo({ top: targetTop, behavior: "auto" });
+      window.cancelAnimationFrame(pinFrame);
+      pinFrame = window.requestAnimationFrame(pin);
+
+      settleTimer = window.setTimeout(() => {
+        settling = false;
+        window.cancelAnimationFrame(pinFrame);
+        scroller.scrollTop = targetTop;
+        setMirrorActive(true);
+      }, 420);
+    };
+
+    const release = (event) => {
+      if (!captured || settling || released) {
+        if (settling && event.cancelable) event.preventDefault();
+        return;
+      }
+      if (event.type === "wheel" && Math.abs(event.deltaY || 0) < 6) return;
+      released = true;
+      captured = false;
+    };
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.intersectionRatio < 0.08) {
+        captured = false;
+        released = false;
+        settling = false;
+        window.cancelAnimationFrame(pinFrame);
+        window.clearTimeout(settleTimer);
+        setMirrorActive(false);
+        return;
+      }
+      if (entry.intersectionRatio >= 0.5) capture();
+    }, { root: scroller, threshold: [0.08, 0.49, 0.5, 0.75, 1] });
+
     observer.observe(section);
-    scroller.addEventListener("wheel", release, { passive: true });
-    scroller.addEventListener("touchstart", release, { passive: true });
+    scroller.addEventListener("wheel", release, { passive: false });
+    scroller.addEventListener("touchmove", release, { passive: false });
 
     return () => {
       observer.disconnect();
       scroller.removeEventListener("wheel", release);
-      scroller.removeEventListener("touchstart", release);
+      scroller.removeEventListener("touchmove", release);
+      window.cancelAnimationFrame(pinFrame);
+      window.clearTimeout(settleTimer);
     };
   }, []);
+
 
   const transition = (nextPrompt, nextSub, nextStage, delay = 360) => {
     setFading(true);
@@ -176,8 +221,24 @@ export default function MagicPriceMirror() {
       <div className="relative z-10 mx-auto flex h-full w-[calc(100%-32px)] min-w-0 max-w-[calc(100%-32px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-48px)] sm:max-w-[calc(100%-48px)] lg:grid lg:w-[calc(100%-80px)] lg:max-w-[1440px] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] lg:items-center lg:gap-[clamp(24px,4vw,64px)] lg:py-16">
         <div className={"w-full min-w-0 max-w-full overflow-hidden transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-3 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
-          <h2 className={(resultStage ? "text-[clamp(3rem,9vw,8rem)] " : "text-[clamp(2.25rem,5.6vw,6rem)] ") + "w-full min-w-0 max-w-full whitespace-normal font-semibold leading-[.98] tracking-[-.035em]"} style={{ overflowWrap: "anywhere", wordBreak: "normal" }}>{typedPrompt}</h2>
-          <p className="mt-5 w-full max-w-2xl break-words text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl">{typedSubPrompt}</p>
+          <div className="w-full min-w-0 max-w-full">
+            <div
+              className={(hierarchyFlipped ? "text-[17px] sm:text-lg lg:text-xl text-white/55 leading-[1.55] " : (resultStage ? "text-[clamp(3rem,9vw,8rem)] " : "text-[clamp(2.25rem,5.6vw,6rem)] ") + "text-white leading-[.98] tracking-[-.035em] ") + "w-full min-w-0 max-w-full whitespace-normal font-semibold transition-all duration-500"}
+              style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
+            >
+              {typedPrompt.split("").map((char, index) => (
+                <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
+              ))}
+            </div>
+            <div
+              className={(hierarchyFlipped ? "mt-4 text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1] tracking-[-.035em] text-white " : "mt-5 text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl ") + "w-full min-w-0 max-w-full transition-all duration-500"}
+              style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
+            >
+              {typedSubPrompt.split("").map((char, index) => (
+                <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
+              ))}
+            </div>
+          </div>
         </div>
         <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:pb-[12vh]">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
@@ -188,6 +249,12 @@ export default function MagicPriceMirror() {
           <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>
         </form>
       </div>
+      <style>{`
+        @keyframes jbMirrorLetterIn {
+          from { opacity: 0; filter: blur(2px); }
+          to { opacity: 1; filter: blur(0); }
+        }
+      `}</style>
     </section>
   );
 }
