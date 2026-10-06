@@ -234,7 +234,7 @@ export default function MagicPriceMirror() {
       <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
       <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
-      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-20px)] min-w-0 max-w-[calc(100%-20px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-32px)] sm:max-w-[calc(100%-32px)] lg:grid lg:w-[calc(100%-80px)] lg:max-w-[1440px] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] lg:items-center lg:gap-[clamp(24px,4vw,64px)] lg:py-16">
+      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-32px)] min-w-0 max-w-[calc(100%-32px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-48px)] sm:max-w-[calc(100%-48px)] lg:grid lg:w-[calc(100%-80px)] lg:max-w-[1440px] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] lg:items-center lg:gap-[clamp(24px,4vw,64px)] lg:py-16">
         <div className={"w-full min-w-0 max-w-full overflow-hidden transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-3 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
           <div className="w-full min-w-0 max-w-full">
@@ -247,7 +247,7 @@ export default function MagicPriceMirror() {
               ))}
             </div>
             <div
-              className={(hierarchyFlipped ? "mt-4 text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1] tracking-[-.035em] text-white " : "mt-5 text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl ") + "w-full min-w-0 max-w-full transition-all duration-500"}
+              className={(hierarchyFlipped ? "mt-4 pb-[0.14em] text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1.12] tracking-[-.035em] text-white " : "mt-5 text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl ") + "w-full min-w-0 max-w-full transition-all duration-500"}
               style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
             >
               {typedSubPrompt.split("").map((char, index) => (
