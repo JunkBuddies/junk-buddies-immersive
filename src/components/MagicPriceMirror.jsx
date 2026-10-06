@@ -97,6 +97,8 @@ export default function MagicPriceMirror() {
     let targetTop = 0;
     let pinFrame = 0;
     let settleTimer = 0;
+    let gestureQuietTimer = 0;
+    let gestureConsumed = false;
 
     const getTarget = () => {
       const sectionRect = section.getBoundingClientRect();
@@ -127,15 +129,28 @@ export default function MagicPriceMirror() {
         window.cancelAnimationFrame(pinFrame);
         scroller.scrollTop = targetTop;
         setMirrorActive(true);
+        gestureConsumed = true;
+        window.clearTimeout(gestureQuietTimer);
+        gestureQuietTimer = window.setTimeout(() => { gestureConsumed = false; }, 220);
       }, 420);
     };
 
     const release = (event) => {
-      if (!captured || settling || released) {
-        if (settling && event.cancelable) event.preventDefault();
+      const meaningfulWheel = event.type !== "wheel" || Math.abs(event.deltaY || 0) >= 6;
+
+      if (settling || gestureConsumed) {
+        if (event.cancelable) event.preventDefault();
+        if (meaningfulWheel) {
+          gestureConsumed = true;
+          window.clearTimeout(gestureQuietTimer);
+          gestureQuietTimer = window.setTimeout(() => { gestureConsumed = false; }, 220);
+        }
         return;
       }
-      if (event.type === "wheel" && Math.abs(event.deltaY || 0) < 6) return;
+
+      if (!captured || released || !meaningfulWheel) return;
+
+      // A new gesture after the momentum quiet period is the intentional unlock.
       released = true;
       captured = false;
     };
@@ -163,6 +178,7 @@ export default function MagicPriceMirror() {
       scroller.removeEventListener("touchmove", release);
       window.cancelAnimationFrame(pinFrame);
       window.clearTimeout(settleTimer);
+      window.clearTimeout(gestureQuietTimer);
     };
   }, []);
 
@@ -218,7 +234,7 @@ export default function MagicPriceMirror() {
       <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
       <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
-      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-32px)] min-w-0 max-w-[calc(100%-32px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-48px)] sm:max-w-[calc(100%-48px)] lg:grid lg:w-[calc(100%-80px)] lg:max-w-[1440px] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] lg:items-center lg:gap-[clamp(24px,4vw,64px)] lg:py-16">
+      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-20px)] min-w-0 max-w-[calc(100%-20px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-32px)] sm:max-w-[calc(100%-32px)] lg:grid lg:w-[calc(100%-80px)] lg:max-w-[1440px] lg:grid-cols-[minmax(0,1.05fr)_minmax(0,.95fr)] lg:items-center lg:gap-[clamp(24px,4vw,64px)] lg:py-16">
         <div className={"w-full min-w-0 max-w-full overflow-hidden transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-3 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
           <div className="w-full min-w-0 max-w-full">
