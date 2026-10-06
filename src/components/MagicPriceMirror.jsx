@@ -266,7 +266,7 @@ export default function MagicPriceMirror() {
             </div>
           </div>
         </div>
-        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-end lg:w-[min(100%,500px)] lg:pl-[clamp(18px,2vw,32px)] lg:pr-0 lg:pb-[12vh]">
+        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-start lg:w-[min(100%,500px)] lg:pl-[clamp(10px,1vw,16px)] lg:pr-0 lg:pb-[12vh]">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
           <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80">
             <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
