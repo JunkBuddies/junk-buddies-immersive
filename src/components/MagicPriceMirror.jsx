@@ -245,7 +245,7 @@ export default function MagicPriceMirror() {
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
       <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
       <div className="relative z-10 mx-auto flex h-full w-[calc(100%-24px)] min-w-0 max-w-[calc(100%-24px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-36px)] sm:max-w-[calc(100%-36px)] lg:grid lg:w-[calc(100%-64px)] lg:max-w-[calc(100%-64px)] lg:grid-cols-[minmax(0,56%)_minmax(0,44%)] lg:items-center lg:gap-0 lg:px-0 lg:py-16">
-        <div className={"box-border w-full min-w-0 max-w-full overflow-hidden pr-4 lg:pr-[clamp(24px,3vw,52px)] transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
+        <div className={"box-border w-full min-w-0 max-w-full overflow-hidden pr-4 lg:pl-[clamp(18px,2vw,34px)] lg:pr-[clamp(8px,1vw,16px)] transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-2.5 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
           <div className="w-full min-w-0 max-w-full">
             <div
@@ -266,7 +266,7 @@ export default function MagicPriceMirror() {
             </div>
           </div>
         </div>
-        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-start lg:w-[min(100%,500px)] lg:pl-[clamp(10px,1vw,16px)] lg:pr-0 lg:pb-[12vh]">
+        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-start lg:w-[min(100%,500px)] lg:-translate-x-[clamp(8px,1vw,16px)] lg:pl-0 lg:pr-0 lg:pb-[12vh]">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
           <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80">
             <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
