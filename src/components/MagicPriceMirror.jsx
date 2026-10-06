@@ -46,6 +46,7 @@ export default function MagicPriceMirror() {
   const [typedSubPrompt, setTypedSubPrompt] = useState("");
   const [mirrorActive, setMirrorActive] = useState(false);
   const [hierarchyFlipped, setHierarchyFlipped] = useState(false);
+  const [inputPulseKey, setInputPulseKey] = useState(0);
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -71,7 +72,10 @@ export default function MagicPriceMirror() {
           subTimer = window.setInterval(() => {
             subIndex += 1;
             setTypedSubPrompt(subPrompt.slice(0, subIndex));
-            if (subIndex >= subPrompt.length) window.clearInterval(subTimer);
+            if (subIndex >= subPrompt.length) {
+              window.clearInterval(subTimer);
+              setInputPulseKey((k) => k + 1);
+            }
           }, 38);
         }, 180);
       }
@@ -266,11 +270,15 @@ export default function MagicPriceMirror() {
             </div>
           </div>
         </div>
-        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-hidden lg:mb-0 lg:self-end lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0 lg:pb-[12vh]">
+        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
-          <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80">
-            <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
-            <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
+          <div key={inputPulseKey} className="relative">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-1/2 h-12 -translate-y-1/2 rounded-full border border-[#d8c47c]/35 opacity-0 [animation:jbMirrorRadar_900ms_ease-out_0ms_3]" />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-1/2 h-12 -translate-y-1/2 rounded-full border border-[#d8c47c]/25 opacity-0 [animation:jbMirrorRadar_900ms_ease-out_180ms_3]" />
+            <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_900ms_ease-in-out_0ms_3]">
+              <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
+              <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
+            </div>
           </div>
           <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>
         </form>
@@ -279,6 +287,14 @@ export default function MagicPriceMirror() {
         @keyframes jbMirrorLetterIn {
           from { opacity: 0; filter: blur(2px); }
           to { opacity: 1; filter: blur(0); }
+        }
+        @keyframes jbMirrorBarPulse {
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(216,196,124,0)); }
+          50% { transform: scale(1.018); filter: drop-shadow(0 0 10px rgba(216,196,124,.22)); }
+        }
+        @keyframes jbMirrorRadar {
+          0% { opacity: .5; transform: translateY(-50%) scaleX(.98) scaleY(.7); }
+          100% { opacity: 0; transform: translateY(-50%) scaleX(1.08) scaleY(1.8); }
         }
       `}</style>
     </section>
