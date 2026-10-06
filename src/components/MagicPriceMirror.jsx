@@ -76,10 +76,10 @@ export default function MagicPriceMirror() {
               window.clearInterval(subTimer);
               setInputPulseKey((k) => k + 1);
             }
-          }, 38);
+          }, 46);
         }, 180);
       }
-    }, 42);
+    }, 50);
 
     return () => {
       window.clearInterval(promptTimer);
@@ -227,8 +227,17 @@ export default function MagicPriceMirror() {
     }
     if (stage === "phone") {
       const digits = clean.replace(/\D/g, "");
-      if (digits.length < 10) { transition("That number looks a little short.", "Enter a 10-digit phone number.", "phone"); return; }
-      localStorage.setItem("jb_lead_phone_" + sessionId, clean); localStorage.setItem("jb_lead_" + sessionId, "1");
+      const normalizedPhone = clean.trim();
+      const validPhone = digits.length >= 10 && digits.length <= 15;
+      if (!validPhone) {
+        transition(
+          "That number doesn't look complete yet.",
+          "Use any normal format — for example (346) 555-0123, +1 346 555 0123, or an international number with country code.",
+          "phone"
+        );
+        return;
+      }
+      localStorage.setItem("jb_lead_phone_" + sessionId, normalizedPhone); localStorage.setItem("jb_lead_" + sessionId, "1");
       try { await addDoc(collection(db, "leadCaptures"), { phone: clean, sessionId, source:"landing_magic_mirror", enteredAt:serverTimestamp() }); } catch (err) { console.error("Magic Mirror lead capture:", err); }
       const total = discounted ? Math.round(price * 0.9 * 100) / 100 : price;
       transition("$" + total.toFixed(2), items.map((x) => x.name).join(" · ") + (discounted ? " · 10% discount applied" : ""), "result");
@@ -273,9 +282,9 @@ export default function MagicPriceMirror() {
         <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
           <div key={inputPulseKey} className="relative">
-            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-1/2 h-12 -translate-y-1/2 rounded-full border border-[#d8c47c]/35 opacity-0 [animation:jbMirrorRadar_900ms_ease-out_0ms_3]" />
-            <span aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-1/2 h-12 -translate-y-1/2 rounded-full border border-[#d8c47c]/25 opacity-0 [animation:jbMirrorRadar_900ms_ease-out_180ms_3]" />
-            <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_900ms_ease-in-out_0ms_3]">
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-4%] top-1/2 h-14 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_0ms_3]" style={{ border: "1px solid rgba(255,239,158,.78)", boxShadow: "0 0 18px rgba(246,223,134,.28), inset 0 0 10px rgba(184,135,34,.12)" }} />
+            <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-7%] top-1/2 h-16 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_320ms_3]" style={{ border: "1px solid rgba(212,166,62,.62)", boxShadow: "0 0 24px rgba(246,223,134,.20)" }} />
+            <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
               <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
               <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
             </div>
@@ -289,12 +298,14 @@ export default function MagicPriceMirror() {
           to { opacity: 1; filter: blur(0); }
         }
         @keyframes jbMirrorBarPulse {
-          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(216,196,124,0)); }
-          50% { transform: scale(1.018); filter: drop-shadow(0 0 10px rgba(216,196,124,.22)); }
+          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255,243,173,0)); }
+          42% { transform: scale(1.022); filter: drop-shadow(0 0 14px rgba(255,243,173,.38)); }
+          58% { transform: scale(1.014); filter: drop-shadow(0 0 8px rgba(193,139,32,.26)); }
         }
         @keyframes jbMirrorRadar {
-          0% { opacity: .5; transform: translateY(-50%) scaleX(.98) scaleY(.7); }
-          100% { opacity: 0; transform: translateY(-50%) scaleX(1.08) scaleY(1.8); }
+          0% { opacity: .76; transform: translateY(-50%) scaleX(.96) scaleY(.72); }
+          55% { opacity: .34; }
+          100% { opacity: 0; transform: translateY(-50%) scaleX(1.18) scaleY(2.35); }
         }
       `}</style>
     </section>
