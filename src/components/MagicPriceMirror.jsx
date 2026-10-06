@@ -244,8 +244,8 @@ export default function MagicPriceMirror() {
       <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
       <div aria-hidden="true" className="absolute left-1/2 top-0 h-full w-px bg-gradient-to-b from-transparent via-[#c8b477]/10 to-transparent" />
-      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-24px)] min-w-0 max-w-[calc(100%-24px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-36px)] sm:max-w-[calc(100%-36px)] lg:fixed lg:left-[50vw] lg:top-16 lg:grid lg:h-[calc(100svh-64px)] lg:w-[calc(100vw-64px)] lg:max-w-none lg:-translate-x-1/2 lg:grid-cols-[minmax(0,50%)_minmax(0,50%)] lg:items-center lg:gap-0 lg:px-0 lg:py-16">
-        <div className={"box-border w-full min-w-0 max-w-full overflow-hidden pr-4 lg:justify-self-end lg:w-[min(100%,680px)] lg:pl-0 lg:pr-[clamp(14px,1.5vw,24px)] transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
+      <div className="relative z-10 mx-auto flex h-full w-[calc(100%-24px)] min-w-0 max-w-[calc(100%-24px)] box-border flex-col justify-between overflow-hidden pb-24 pt-12 sm:w-[calc(100%-36px)] sm:max-w-[calc(100%-36px)] lg:absolute lg:inset-y-0 lg:left-[50vw] lg:grid lg:h-full lg:w-[calc(100vw-64px)] lg:max-w-[calc(100vw-64px)] lg:-translate-x-1/2 lg:grid-cols-[minmax(0,50%)_minmax(0,50%)] lg:items-center lg:gap-0 lg:px-0 lg:py-0">
+        <div className={"box-border w-full min-w-0 max-w-full overflow-hidden pr-4 lg:self-center lg:justify-self-end lg:w-[min(100%,680px)] lg:pl-0 lg:pr-[clamp(14px,1.5vw,24px)] transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-2.5 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
           <div className="w-full min-w-0 max-w-full">
             <div
