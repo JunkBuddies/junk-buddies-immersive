@@ -290,14 +290,10 @@ export default function MagicPriceMirror() {
       localStorage.setItem("jb_lead_phone_" + sessionId, normalizedPhone); localStorage.setItem("jb_lead_" + sessionId, "1");
       try { await addDoc(collection(db, "leadCaptures"), { phone: clean, sessionId, source:"landing_magic_mirror", enteredAt:serverTimestamp() }); } catch (err) { console.error("Magic Mirror lead capture:", err); }
       const total = discounted ? Math.round(price * 0.9 * 100) / 100 : price;
-      transition("$" + total.toFixed(2), items.map((x) => x.name).join(" · ") + (discounted ? " · 10% discount applied" : ""), "result");
+      transition("$" + total.toFixed(2), "Anything else before you go?", "result");
       return;
     }
-    if (stage === "result") {
-      if (/add|more|another|yes/i.test(clean)) transition("What else should we take?", "List the additional item or items.", "more");
-      else if (/schedule|book|date|pickup/i.test(clean)) navigate("/schedule");
-      else transition("No pressure.", "Type “add” for more items or “schedule” for a no-commitment pickup date. Free cancellation.", "result");
-    }
+    if (stage === "result") return;
   };
 
   const resultStage = stage === "result";
@@ -360,7 +356,7 @@ export default function MagicPriceMirror() {
           </div>
         </div>
         <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
-          <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : stage === "discount" ? "Choose one" : "Your response"}</label>
+          <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : stage === "discount" || stage === "result" ? "Choose one" : "Your response"}</label>
           {stage === "loading" && (
             <div className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[.22em] text-[#d8c47c]/70">
               <span className={"h-1.5 w-1.5 rounded-full " + (thinkingStep >= 1 ? "bg-[#fff3ad] shadow-[0_0_10px_rgba(255,243,173,.55)]" : "bg-white/15")} />
@@ -390,6 +386,23 @@ export default function MagicPriceMirror() {
                   No
                 </button>
               </div>
+            ) : stage === "result" ? (
+              <div className="grid min-h-[60px] grid-cols-2 gap-3 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
+                <button
+                  type="button"
+                  onClick={() => transition("What else should we take?", "List the additional item or items.", "more", 520)}
+                  className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
+                >
+                  Add more items
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/schedule")}
+                  className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
+                >
+                  See availability
+                </button>
+              </div>
             ) : (
               <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
                 <input
@@ -414,7 +427,7 @@ export default function MagicPriceMirror() {
               </div>
             )}
           </div>
-          {stage !== "discount" && <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>}
+          {stage !== "discount" && stage !== "result" && <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>}
         </form>
       </div>
       <style>{`
