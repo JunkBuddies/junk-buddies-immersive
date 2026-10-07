@@ -48,6 +48,9 @@ export default function MagicPriceMirror() {
   const [hierarchyFlipped, setHierarchyFlipped] = useState(false);
   const [inputPulseKey, setInputPulseKey] = useState(0);
   const [thinkingStep, setThinkingStep] = useState(0);
+  const [thinkingPhrase, setThinkingPhrase] = useState("");
+  const [thinkingWordCount, setThinkingWordCount] = useState(0);
+  const [thinkingFadeOut, setThinkingFadeOut] = useState(false);
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -55,7 +58,7 @@ export default function MagicPriceMirror() {
     setTypedPrompt("");
     setTypedSubPrompt("");
     setHierarchyFlipped(false);
-    if (!mirrorActive) return;
+    if (!mirrorActive || stage === "loading") return;
 
     let promptIndex = 0;
     let subIndex = 0;
@@ -87,7 +90,7 @@ export default function MagicPriceMirror() {
       window.clearInterval(subTimer);
       window.clearTimeout(flipTimer);
     };
-  }, [prompt, subPrompt, mirrorActive]);
+  }, [prompt, subPrompt, mirrorActive, stage]);
 
 
   useEffect(() => {
@@ -206,6 +209,32 @@ export default function MagicPriceMirror() {
     }, delay);
   };
 
+  const playThinkingPhrase = (text, step, onDone) => {
+    const words = text.split(" ");
+    setThinkingStep(step);
+    setThinkingPhrase(text);
+    setThinkingWordCount(0);
+    setThinkingFadeOut(false);
+
+    let count = 0;
+    const inTimer = window.setInterval(() => {
+      count += 1;
+      setThinkingWordCount(count);
+      if (count >= words.length) {
+        window.clearInterval(inTimer);
+        window.setTimeout(() => {
+          setThinkingFadeOut(true);
+          window.setTimeout(() => {
+            setThinkingPhrase("");
+            setThinkingWordCount(0);
+            setThinkingFadeOut(false);
+            onDone?.();
+          }, 520);
+        }, 760);
+      }
+    }, 250);
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     const clean = value.trim();
@@ -216,20 +245,18 @@ export default function MagicPriceMirror() {
       const nextItems = stage === "more" ? [...items, ...parsed] : parsed;
       const result = calculatePrice(nextItems);
       setItems(nextItems); setPrice(result.finalPrice); setCart(nextItems);
-      setThinkingStep(1);
-      transition("Getting your price…", "Recognizing your items.", "loading", 220);
-      setTimeout(() => {
-        setThinkingStep(2);
-        transition("Getting your price…", "Checking load size and removal pricing.", "loading", 180);
-      }, 950);
-      setTimeout(() => {
-        setThinkingStep(3);
-        transition("Almost there…", "Finalizing your guaranteed quote.", "loading", 180);
-      }, 1850);
-      setTimeout(() => {
-        setThinkingStep(0);
-        transition("Your price is ready.", "Want 10% off before I show you the total? Type yes or no.", "discount", 220);
-      }, 2850);
+      setStage("loading");
+      setValue("");
+      setTypedPrompt("");
+      setTypedSubPrompt("");
+      playThinkingPhrase("Recognizing your items", 1, () => {
+        playThinkingPhrase("Checking load size and removal pricing", 2, () => {
+          playThinkingPhrase("Finalizing your guaranteed quote", 3, () => {
+            setThinkingStep(0);
+            transition("Your price is ready.", "Want 10% off before I show you the total? Type yes or no.", "discount", 180);
+          });
+        });
+      });
       return;
     }
     if (stage === "discount") {
@@ -274,22 +301,52 @@ export default function MagicPriceMirror() {
         <div className={"box-border w-full min-w-0 max-w-full overflow-hidden pr-4 lg:self-center lg:justify-self-end lg:w-[min(100%,680px)] lg:pl-0 lg:pr-[clamp(14px,1.5vw,24px)] transition-opacity duration-500 " + (fading ? "opacity-0" : "opacity-100")}>
           <div className="mb-5 flex items-center gap-2.5 text-[10px] uppercase tracking-[.34em] text-[#c8b477]"><span className="h-px w-8 bg-[#c8b477]/70"/>Instant price</div>
           <div className="w-full min-w-0 max-w-full">
-            <div
-              className={(hierarchyFlipped ? "text-[17px] sm:text-lg lg:text-xl text-white/55 leading-[1.55] " : (resultStage ? "text-[clamp(3rem,9vw,8rem)] " : "text-[clamp(2.25rem,5.6vw,6rem)] ") + "text-white leading-[.98] tracking-[-.035em] ") + "w-full min-w-0 max-w-full whitespace-normal font-semibold transition-all duration-500"}
-              style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
-            >
-              {typedPrompt.split("").map((char, index) => (
-                <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
-              ))}
-            </div>
-            <div
-              className={(hierarchyFlipped ? "mt-4 pb-[0.14em] text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1.12] tracking-[-.035em] text-white " : "mt-5 text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl ") + "w-full min-w-0 max-w-full transition-all duration-500"}
-              style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
-            >
-              {typedSubPrompt.split("").map((char, index) => (
-                <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
-              ))}
-            </div>
+            {stage === "loading" ? (
+              <div
+                className="w-full min-w-0 max-w-full text-[clamp(2.1rem,5.2vw,5.3rem)] font-semibold leading-[1.06] tracking-[-.035em]"
+                style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
+              >
+                {thinkingPhrase.split(" ").map((word, index) => {
+                  const visible = index < thinkingWordCount;
+                  return (
+                    <span
+                      key={index}
+                      className="mr-[0.28em] inline-block bg-clip-text text-transparent transition-all duration-500"
+                      style={{
+                        backgroundImage:
+                          "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)",
+                        WebkitBackgroundClip: "text",
+                        backgroundClip: "text",
+                        opacity: visible && !thinkingFadeOut ? 1 : 0,
+                        transform: visible && !thinkingFadeOut ? "translateY(0)" : thinkingFadeOut ? "translateY(-6px)" : "translateY(8px)",
+                        filter: visible && !thinkingFadeOut ? "blur(0)" : "blur(3px)",
+                      }}
+                    >
+                      {word}
+                    </span>
+                  );
+                })}
+              </div>
+            ) : (
+              <>
+                <div
+                  className={(hierarchyFlipped ? "text-[17px] sm:text-lg lg:text-xl text-white/55 leading-[1.55] " : (resultStage ? "text-[clamp(3rem,9vw,8rem)] " : "text-[clamp(2.25rem,5.6vw,6rem)] ") + "text-white leading-[.98] tracking-[-.035em] ") + "w-full min-w-0 max-w-full whitespace-normal font-semibold transition-all duration-500"}
+                  style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
+                >
+                  {typedPrompt.split("").map((char, index) => (
+                    <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
+                  ))}
+                </div>
+                <div
+                  className={(hierarchyFlipped ? "mt-4 pb-[0.14em] text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1.12] tracking-[-.035em] text-white " : "mt-5 text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl ") + "w-full min-w-0 max-w-full transition-all duration-500"}
+                  style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
+                >
+                  {typedSubPrompt.split("").map((char, index) => (
+                    <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
         <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
@@ -303,7 +360,7 @@ export default function MagicPriceMirror() {
               <span className={"h-1.5 w-1.5 rounded-full " + (thinkingStep >= 3 ? "bg-[#fff7c7] shadow-[0_0_12px_rgba(255,247,199,.5)]" : "bg-white/15")} />
             </div>
           )}
-          <div key={inputPulseKey} className="relative">
+          <div key={inputPulseKey} className={"relative " + (stage === "loading" ? "opacity-25" : "")}>
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-4%] top-1/2 h-14 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_0ms_3]" style={{ border: "1px solid rgba(255,239,158,.78)", boxShadow: "0 0 18px rgba(246,223,134,.28), inset 0 0 10px rgba(184,135,34,.12)" }} />
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-7%] top-1/2 h-16 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_320ms_3]" style={{ border: "1px solid rgba(212,166,62,.62)", boxShadow: "0 0 24px rgba(246,223,134,.20)" }} />
             <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
