@@ -47,6 +47,7 @@ export default function MagicPriceMirror() {
   const [mirrorActive, setMirrorActive] = useState(false);
   const [hierarchyFlipped, setHierarchyFlipped] = useState(false);
   const [inputPulseKey, setInputPulseKey] = useState(0);
+  const [thinkingStep, setThinkingStep] = useState(0);
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -215,8 +216,20 @@ export default function MagicPriceMirror() {
       const nextItems = stage === "more" ? [...items, ...parsed] : parsed;
       const result = calculatePrice(nextItems);
       setItems(nextItems); setPrice(result.finalPrice); setCart(nextItems);
-      transition("Getting your price…", "Matching your items to Junk Buddies pricing.", "loading", 220);
-      setTimeout(() => transition("Your price is ready.", "Want 10% off before I show you the total? Type yes or no.", "discount", 520), 850);
+      setThinkingStep(1);
+      transition("Getting your price…", "Recognizing your items.", "loading", 220);
+      setTimeout(() => {
+        setThinkingStep(2);
+        transition("Getting your price…", "Checking load size and removal pricing.", "loading", 180);
+      }, 950);
+      setTimeout(() => {
+        setThinkingStep(3);
+        transition("Almost there…", "Finalizing your guaranteed quote.", "loading", 180);
+      }, 1850);
+      setTimeout(() => {
+        setThinkingStep(0);
+        transition("Your price is ready.", "Want 10% off before I show you the total? Type yes or no.", "discount", 220);
+      }, 2850);
       return;
     }
     if (stage === "discount") {
@@ -281,11 +294,37 @@ export default function MagicPriceMirror() {
         </div>
         <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
+          {stage === "loading" && (
+            <div className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[.22em] text-[#d8c47c]/70">
+              <span className={"h-1.5 w-1.5 rounded-full " + (thinkingStep >= 1 ? "bg-[#fff3ad] shadow-[0_0_10px_rgba(255,243,173,.55)]" : "bg-white/15")} />
+              <span className={"h-px w-8 " + (thinkingStep >= 2 ? "bg-[#d4a63e]/70" : "bg-white/10")} />
+              <span className={"h-1.5 w-1.5 rounded-full " + (thinkingStep >= 2 ? "bg-[#f6df86] shadow-[0_0_10px_rgba(246,223,134,.45)]" : "bg-white/15")} />
+              <span className={"h-px w-8 " + (thinkingStep >= 3 ? "bg-[#d4a63e]/70" : "bg-white/10")} />
+              <span className={"h-1.5 w-1.5 rounded-full " + (thinkingStep >= 3 ? "bg-[#fff7c7] shadow-[0_0_12px_rgba(255,247,199,.5)]" : "bg-white/15")} />
+            </div>
+          )}
           <div key={inputPulseKey} className="relative">
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-4%] top-1/2 h-14 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_0ms_3]" style={{ border: "1px solid rgba(255,239,158,.78)", boxShadow: "0 0 18px rgba(246,223,134,.28), inset 0 0 10px rgba(184,135,34,.12)" }} />
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-7%] top-1/2 h-16 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_320ms_3]" style={{ border: "1px solid rgba(212,166,62,.62)", boxShadow: "0 0 24px rgba(246,223,134,.20)" }} />
             <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
-              <input ref={inputRef} value={value} onChange={(e)=>setValue(e.target.value)} disabled={stage === "loading"} inputMode={stage === "phone" ? "tel" : "text"} autoComplete={stage === "phone" ? "tel" : "off"} placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "result" ? "add more or schedule…" : "type here…"} className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl" />
+              <input
+                ref={inputRef}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+                onPaste={(e) => {
+                  if (stage !== "phone") return;
+                  const pasted = e.clipboardData?.getData("text") || "";
+                  if (!pasted) return;
+                  e.preventDefault();
+                  setValue(pasted.trim());
+                }}
+                disabled={stage === "loading"}
+                inputMode={stage === "phone" ? "tel" : "text"}
+                autoComplete={stage === "phone" ? "tel" : "off"}
+                enterKeyHint="done"
+                placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "phone" ? "+1 346 555 0123" : stage === "result" ? "add more or schedule…" : "type here…"}
+                className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl"
+              />
               <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
             </div>
           </div>
