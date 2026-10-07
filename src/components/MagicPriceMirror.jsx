@@ -80,10 +80,10 @@ export default function MagicPriceMirror() {
               window.clearInterval(subTimer);
               setInputPulseKey((k) => k + 1);
             }
-          }, 46);
-        }, 180);
+          }, 64);
+        }, 420);
       }
-    }, 50);
+    }, 72);
 
     return () => {
       window.clearInterval(promptTimer);
@@ -201,7 +201,7 @@ export default function MagicPriceMirror() {
     };
   }, []);
 
-  const transition = (nextPrompt, nextSub, nextStage, delay = 360) => {
+  const transition = (nextPrompt, nextSub, nextStage, delay = 520) => {
     setFading(true);
     setTimeout(() => {
       setPrompt(nextPrompt); setSubPrompt(nextSub); setStage(nextStage); setValue(""); setFading(false);
@@ -235,6 +235,17 @@ export default function MagicPriceMirror() {
     }, 250);
   };
 
+  const handleDiscountChoice = (yes) => {
+    setDiscounted(yes);
+    localStorage.setItem("jb_disc_on_" + sessionId, yes ? "1" : "0");
+    transition(
+      yes ? "Done. 10% is yours." : "No problem.",
+      yes ? "Enter the best phone number for this quote. No payment required." : "Enter a phone number so this quote stays attached to you.",
+      "phone",
+      520
+    );
+  };
+
   const submit = async (e) => {
     e.preventDefault();
     const clean = value.trim();
@@ -261,8 +272,7 @@ export default function MagicPriceMirror() {
     }
     if (stage === "discount") {
       const yes = /^(y|yes|sure|ok|okay|yeah|yep)/i.test(clean);
-      setDiscounted(yes); localStorage.setItem("jb_disc_on_" + sessionId, yes ? "1" : "0");
-      transition(yes ? "Done. 10% is yours." : "No problem.", yes ? "Enter the best phone number for this quote. No payment required." : "Enter a phone number so this quote stays attached to you.", "phone");
+      handleDiscountChoice(yes);
       return;
     }
     if (stage === "phone") {
@@ -350,7 +360,7 @@ export default function MagicPriceMirror() {
           </div>
         </div>
         <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
-          <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : "Your response"}</label>
+          <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : stage === "discount" ? "Choose one" : "Your response"}</label>
           {stage === "loading" && (
             <div className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[.22em] text-[#d8c47c]/70">
               <span className={"h-1.5 w-1.5 rounded-full " + (thinkingStep >= 1 ? "bg-[#fff3ad] shadow-[0_0_10px_rgba(255,243,173,.55)]" : "bg-white/15")} />
@@ -363,29 +373,48 @@ export default function MagicPriceMirror() {
           <div key={inputPulseKey} className={"relative " + (stage === "loading" ? "opacity-25" : "")}>
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-4%] top-1/2 h-14 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_0ms_3]" style={{ border: "1px solid rgba(255,239,158,.78)", boxShadow: "0 0 18px rgba(246,223,134,.28), inset 0 0 10px rgba(184,135,34,.12)" }} />
             <span aria-hidden="true" className="pointer-events-none absolute inset-x-[-7%] top-1/2 h-16 -translate-y-1/2 rounded-full opacity-0 [animation:jbMirrorRadar_1350ms_ease-out_320ms_3]" style={{ border: "1px solid rgba(212,166,62,.62)", boxShadow: "0 0 24px rgba(246,223,134,.20)" }} />
-            <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
-              <input
-                ref={inputRef}
-                value={value}
-                onChange={(e) => setValue(e.target.value)}
-                onPaste={(e) => {
-                  if (stage !== "phone") return;
-                  const pasted = e.clipboardData?.getData("text") || "";
-                  if (!pasted) return;
-                  e.preventDefault();
-                  setValue(pasted.trim());
-                }}
-                disabled={stage === "loading"}
-                inputMode={stage === "phone" ? "tel" : "text"}
-                autoComplete={stage === "phone" ? "tel" : "off"}
-                enterKeyHint="done"
-                placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "phone" ? "+1 346 555 0123" : stage === "result" ? "add more or schedule…" : "type here…"}
-                className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl"
-              />
-              <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
-            </div>
+            {stage === "discount" ? (
+              <div className="grid h-[60px] grid-cols-2 gap-3 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
+                <button
+                  type="button"
+                  onClick={() => handleDiscountChoice(true)}
+                  className="jb-gold-choice h-full rounded-xl border border-[#c8b477]/45 bg-black/10 text-sm font-semibold uppercase tracking-[.18em] text-[#e0cf91] transition-all duration-300"
+                >
+                  Yes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDiscountChoice(false)}
+                  className="jb-gold-choice h-full rounded-xl border border-[#c8b477]/45 bg-black/10 text-sm font-semibold uppercase tracking-[.18em] text-[#e0cf91] transition-all duration-300"
+                >
+                  No
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
+                <input
+                  ref={inputRef}
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                  onPaste={(e) => {
+                    if (stage !== "phone") return;
+                    const pasted = e.clipboardData?.getData("text") || "";
+                    if (!pasted) return;
+                    e.preventDefault();
+                    setValue(pasted.trim());
+                  }}
+                  disabled={stage === "loading"}
+                  inputMode={stage === "phone" ? "tel" : "text"}
+                  autoComplete={stage === "phone" ? "tel" : "off"}
+                  enterKeyHint="done"
+                  placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "phone" ? "+1 346 555 0123" : stage === "result" ? "add more or schedule…" : "type here…"}
+                  className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl"
+                />
+                <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
+              </div>
+            )}
           </div>
-          <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>
+          {stage !== "discount" && <p className="mt-3 text-[10px] leading-relaxed text-white/25">Press Enter. Your response disappears as the conversation moves forward.</p>}
         </form>
       </div>
       <style>{`
@@ -398,6 +427,15 @@ export default function MagicPriceMirror() {
           42% { transform: scale(1.022); filter: drop-shadow(0 0 14px rgba(255,243,173,.38)); }
           58% { transform: scale(1.014); filter: drop-shadow(0 0 8px rgba(193,139,32,.26)); }
         }
+        .jb-gold-choice:hover,
+        .jb-gold-choice:focus-visible,
+        .jb-gold-choice:active {
+          color: #17130a;
+          border-color: rgba(255,247,199,.9);
+          background-image: linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%);
+          box-shadow: 0 0 22px rgba(246,223,134,.24), inset 0 1px 0 rgba(255,255,220,.38);
+        }
+        .jb-gold-choice:active { transform: scale(.985); }
         @keyframes jbMirrorRadar {
           0% { opacity: .76; transform: translateY(-50%) scaleX(.96) scaleY(.72); }
           55% { opacity: .34; }
