@@ -36,7 +36,7 @@ export default function MagicPriceMirror() {
   const sessionId = useMemo(getSessionId, []);
   const [stage, setStage] = useState("items");
   const [prompt, setPrompt] = useState("Want a guaranteed price now?");
-  const [subPrompt, setSubPrompt] = useState("List what you need removed. One line is enough.");
+  const [subPrompt, setSubPrompt] = useState("List what you need removed. Be as specific as you can — size and type help.");
   const [value, setValue] = useState("");
   const [items, setItems] = useState([]);
   const [price, setPrice] = useState(0);
@@ -252,7 +252,7 @@ export default function MagicPriceMirror() {
     if (!clean) return;
     if (stage === "items" || stage === "more") {
       const parsed = parseItems(clean);
-      if (!parsed.length) { transition("I want to price that correctly.", "Try simple item names — couch, mattress, dresser, refrigerator.", stage); return; }
+      if (!parsed.length) { transition("I want to price that correctly.", "Try specific item names — queen mattress, sectional sofa, dresser, refrigerator.", stage); return; }
       const nextItems = stage === "more" ? [...items, ...parsed] : parsed;
       const result = calculatePrice(nextItems);
       setItems(nextItems); setPrice(result.finalPrice); setCart(nextItems);
@@ -264,7 +264,7 @@ export default function MagicPriceMirror() {
         playThinkingPhrase("Checking load size and removal pricing", 2, () => {
           playThinkingPhrase("Finalizing your guaranteed quote", 3, () => {
             setThinkingStep(0);
-            transition("Your price is ready.", "Want 10% off before I show you the total? Type yes or no.", "discount", 180);
+            transition("Your price is ready.", "Want 10% off before I show you the total?", "discount", 180);
           });
         });
       });
@@ -390,7 +390,7 @@ export default function MagicPriceMirror() {
               <div className="grid min-h-[60px] grid-cols-2 gap-3 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
                 <button
                   type="button"
-                  onClick={() => transition("What else should we take?", "List the additional item or items.", "more", 520)}
+                  onClick={() => transition("What else should we take?", "List the additional items — size and type help us price them correctly.", "more", 520)}
                   className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
                 >
                   Add more items
@@ -420,7 +420,7 @@ export default function MagicPriceMirror() {
                   inputMode={stage === "phone" ? "tel" : "text"}
                   autoComplete={stage === "phone" ? "tel" : "off"}
                   enterKeyHint="done"
-                  placeholder={stage === "items" ? "couch, mattress, dresser…" : stage === "phone" ? "+1 346 555 0123" : stage === "result" ? "add more or schedule…" : "type here…"}
+                  placeholder={stage === "items" || stage === "more" ? "queen mattress, sectional sofa, dresser…" : stage === "phone" ? "+1 346 555 0123" : stage === "result" ? "add more or schedule…" : "type here…"}
                   className="min-w-0 flex-1 bg-transparent py-2 text-lg text-white outline-none placeholder:text-white/18 sm:text-xl"
                 />
                 <button type="submit" disabled={stage === "loading"} className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-[#c8b477]/40 text-[#d8c47c] transition hover:bg-[#c8b477]/10 disabled:opacity-20" aria-label="Send">→</button>
