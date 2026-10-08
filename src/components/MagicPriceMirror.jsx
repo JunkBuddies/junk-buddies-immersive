@@ -36,7 +36,7 @@ export default function MagicPriceMirror() {
   const sessionId = useMemo(getSessionId, []);
   const [stage, setStage] = useState("items");
   const [prompt, setPrompt] = useState("Want a guaranteed price now?");
-  const [subPrompt, setSubPrompt] = useState("List what you need removed. Be as specific as you can — size and type help.");
+  const [subPrompt, setSubPrompt] = useState("List what you need removed.||Be as specific as you can — size and type help.");
   const [value, setValue] = useState("");
   const [items, setItems] = useState([]);
   const [price, setPrice] = useState(0);
@@ -344,12 +344,25 @@ export default function MagicPriceMirror() {
                   ))}
                 </div>
                 <div
-                  className={(hierarchyFlipped ? "mt-4 pb-[0.14em] text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1.12] tracking-[-.035em] text-white " : "mt-5 text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl ") + "w-full min-w-0 max-w-full transition-all duration-500"}
+                  className={(hierarchyFlipped ? "mt-4 pb-[0.14em] " : "mt-5 ") + "w-full min-w-0 max-w-full transition-all duration-500"}
                   style={{ overflowWrap: "anywhere", wordBreak: "normal" }}
                 >
-                  {typedSubPrompt.split("").map((char, index) => (
-                    <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
-                  ))}
+                  {typedSubPrompt.includes("||") ? (
+                    <>
+                      <div className={hierarchyFlipped ? "text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1.12] tracking-[-.035em] text-white" : "text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl"}>
+                        {typedSubPrompt.split("||")[0]}
+                      </div>
+                      <div className={hierarchyFlipped ? "mt-3 text-sm leading-relaxed text-white/45 sm:text-base lg:text-lg" : "mt-2 text-sm leading-relaxed text-white/40 sm:text-base"}>
+                        {typedSubPrompt.split("||")[1]}
+                      </div>
+                    </>
+                  ) : (
+                    <div className={hierarchyFlipped ? "text-[clamp(2.15rem,5.2vw,5.4rem)] font-semibold leading-[1.12] tracking-[-.035em] text-white" : "text-[17px] leading-[1.55] text-white/55 sm:text-lg lg:text-xl"}>
+                      {typedSubPrompt.split("").map((char, index) => (
+                        <span key={index} className="inline" style={{ animation: "jbMirrorLetterIn 260ms ease-out both" }}>{char}</span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </>
             )}
