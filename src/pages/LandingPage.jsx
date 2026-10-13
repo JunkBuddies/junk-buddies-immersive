@@ -198,7 +198,7 @@ function LandingPage() {
             <div className="mb-5 flex items-center gap-4 text-[10px] sm:text-xs font-medium uppercase tracking-[0.34em]">
               <span className="h-px w-10 bg-[#aa9257]" />
               <span
-                className="bg-clip-text text-transparent"
+                className="jb-polished-gold-text"
                 style={{
                   backgroundImage:
                     "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)",
@@ -214,7 +214,7 @@ function LandingPage() {
             <h1 className="max-w-[620px] text-[clamp(2.65rem,7.2vw,6.8rem)] font-semibold leading-[0.91] tracking-[-0.055em] text-[#f3f1ec]">
               Making space
               <span
-                className="mt-2 block bg-clip-text text-transparent"
+                className="jb-polished-gold-text mt-2 block"
                 style={{
                   backgroundImage:
                     "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)",
