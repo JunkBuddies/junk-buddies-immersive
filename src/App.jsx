@@ -9,6 +9,7 @@ import LoadSizePage from "./pages/LoadSizePage";
 import ItemizedPage from "./pages/ItemizedPage";
 import SchedulePage from "./pages/SchedulePage";
 import ConfirmationPage from "./pages/ConfirmationPage";
+import ConnectPage from "./pages/ConnectPage";
 
 // Blog + Articles
 import BlogPage from "./pages/BlogPage";
@@ -64,6 +65,7 @@ function App() {
             <Route path="/itemized" element={<ItemizedPage />} />
             <Route path="/schedule" element={<SchedulePage />} />
             <Route path="/confirmation" element={<ConfirmationPage />} />
+            <Route path="/connect" element={<ConnectPage />} />
 
             {/* Blog Routes */}
             <Route path="/blog" element={<BlogPage />} />
