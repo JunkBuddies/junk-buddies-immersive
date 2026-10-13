@@ -83,15 +83,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
             className="w-9 h-9 object-contain"
           />
           <h1
-            className="font-bold text-lg hidden sm:block bg-clip-text text-transparent"
-            style={{
-              backgroundImage:
-                "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)",
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              filter: "drop-shadow(0 1px 0 rgba(255,248,205,0.34)) drop-shadow(0 4px 9px rgba(0,0,0,0.3))",
-              textShadow: "0 -1px 0 rgba(255,255,220,0.16), 0 1px 0 rgba(72,43,4,0.32)",
-            }}
+            className="jb-polished-gold-text font-bold text-lg hidden sm:block"
           >
             Junk Buddies
           </h1>
