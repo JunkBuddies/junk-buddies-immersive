@@ -4,13 +4,6 @@ import { useState, useCallback } from "react";
 import { Search, X, Home, Sparkles, CalendarDays, MapPin, CircleHelp } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 
-const goldStyle = {
-  backgroundImage:
-    "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)",
-  WebkitBackgroundClip: "text",
-  backgroundClip: "text",
-};
-
 export default function TopNavMobile() {
   const [searchOpen, setSearchOpen] = useState(false);
 
@@ -28,7 +21,7 @@ export default function TopNavMobile() {
       >
         <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Junk Buddies home">
           <img src="/images/logo-icon.png" alt="" className="h-7 w-7 shrink-0 object-contain" />
-          <span className="truncate bg-clip-text text-sm font-bold text-transparent min-[360px]:text-base" style={goldStyle}>
+          <span className="jb-polished-gold-text truncate text-sm font-bold min-[360px]:text-base">
             Junk Buddies
           </span>
         </Link>
