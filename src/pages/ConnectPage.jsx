@@ -1,36 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, ContactRound, Sparkles, Globe2, Phone } from "lucide-react";
-
-const goldGradient =
-  "linear-gradient(180deg, #6f4d12 0%, #b88722 10%, #f6df86 22%, #fff7c7 31%, #d6a936 38%, #8a5c10 48%, #f2cf63 58%, #fff3ad 66%, #c18b20 75%, #765014 88%, #d4a63e 100%)";
+import { ArrowRight, ContactRound, Sparkles, Phone } from "lucide-react";
 
 export default function ConnectPage() {
   const navigate = useNavigate();
-
-  const saveContact = () => {
-    const vcard = [
-      "BEGIN:VCARD",
-      "VERSION:3.0",
-      "FN:Junk Buddies LLC",
-      "ORG:Junk Buddies LLC",
-      "TEL;TYPE=WORK,VOICE:+13465936080",
-      "URL:https://junkbuddies.info",
-      "ADR;TYPE=WORK:;;;Houston;TX;;;United States",
-      "NOTE:Making Space For What Matters",
-      "END:VCARD",
-    ].join("\r\n");
-
-    const blob = new Blob([vcard], { type: "text/vcard;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "Junk-Buddies.vcf";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    window.setTimeout(() => URL.revokeObjectURL(url), 1200);
-  };
 
   const openPricing = () => {
     const trigger = document.querySelector(
@@ -66,16 +39,7 @@ export default function ConnectPage() {
             alt=""
             className="h-12 w-12 object-contain sm:h-14 sm:w-14"
           />
-          <span
-            className="bg-clip-text text-xl font-semibold text-transparent sm:text-2xl"
-            style={{
-              backgroundImage: goldGradient,
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              filter:
-                "drop-shadow(0 1px 0 rgba(255,248,205,.28)) drop-shadow(0 6px 14px rgba(0,0,0,.35))",
-            }}
-          >
+          <span className="jb-polished-gold-text text-xl font-semibold sm:text-2xl">
             Junk Buddies
           </span>
         </button>
@@ -88,16 +52,7 @@ export default function ConnectPage() {
 
         <h1 className="max-w-[680px] text-[clamp(2.7rem,8vw,5.6rem)] font-semibold leading-[.94] tracking-[-.05em] text-[#f3f1ec]">
           Keep Junk Buddies
-          <span
-            className="mt-2 block bg-clip-text text-transparent"
-            style={{
-              backgroundImage: goldGradient,
-              WebkitBackgroundClip: "text",
-              backgroundClip: "text",
-              filter:
-                "drop-shadow(0 1px 0 rgba(255,248,205,.34)) drop-shadow(0 7px 18px rgba(0,0,0,.4))",
-            }}
-          >
+          <span className="jb-polished-gold-text mt-2 block">
             one tap away.
           </span>
         </h1>
@@ -107,9 +62,9 @@ export default function ConnectPage() {
         </p>
 
         <div className="mt-9 grid w-full gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={saveContact}
+          <a
+            href="/Junk-Buddies.vcf"
+            type="text/vcard"
             className="group relative min-h-[72px] overflow-hidden rounded-2xl border border-[#c8b477]/45 bg-black/20 px-5 text-left transition duration-300 hover:border-[#fff3ad]/70 hover:bg-[#c8b477]/8 active:scale-[.99]"
           >
             <div className="flex h-full items-center gap-4">
@@ -122,7 +77,7 @@ export default function ConnectPage() {
               </span>
               <ArrowRight className="ml-auto shrink-0 text-[#d8c47c] transition-transform group-hover:translate-x-1" size={18} />
             </div>
-          </button>
+          </a>
 
           <button
             type="button"
@@ -147,8 +102,8 @@ export default function ConnectPage() {
           onClick={() => navigate("/")}
           className="group mt-3 flex min-h-[62px] w-full items-center rounded-2xl border border-white/[0.08] bg-white/[0.025] px-5 text-left transition duration-300 hover:border-[#c8b477]/35 hover:bg-white/[0.04] active:scale-[.99]"
         >
-          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 text-white/55">
-            <Globe2 size={19} />
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#c8b477]/25 bg-black/20">
+            <img src="/images/logo-icon.png" alt="" className="h-7 w-7 object-contain" />
           </span>
           <span className="ml-4 min-w-0">
             <span className="block text-sm font-semibold text-white/85">Visit JunkBuddies.info</span>
