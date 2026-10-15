@@ -290,7 +290,7 @@ export default function MagicPriceMirror() {
       localStorage.setItem("jb_lead_phone_" + sessionId, normalizedPhone); localStorage.setItem("jb_lead_" + sessionId, "1");
       try { await addDoc(collection(db, "leadCaptures"), { phone: clean, sessionId, source:"landing_magic_mirror", enteredAt:serverTimestamp() }); } catch (err) { console.error("Magic Mirror lead capture:", err); }
       const total = discounted ? Math.round(price * 0.9 * 100) / 100 : price;
-      transition("$" + total.toFixed(2), "Anything else before we schedule?", "result");
+      transition("$" + total.toFixed(2), "Anything else before we schedule?||You’ve got your price. No need to keep searching.", "result");
       return;
     }
     if (stage === "result") return;
@@ -400,21 +400,26 @@ export default function MagicPriceMirror() {
                 </button>
               </div>
             ) : stage === "result" ? (
-              <div className="grid min-h-[60px] grid-cols-2 gap-3 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
-                <button
-                  type="button"
-                  onClick={() => transition("What else should we take?", "List the additional items — size and type help us price them correctly.", "more", 520)}
-                  className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
-                >
-                  Add more items
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate("/schedule")}
-                  className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
-                >
-                  See availability
-                </button>
+              <div>
+                <div className="grid min-h-[60px] grid-cols-2 gap-3 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
+                  <button
+                    type="button"
+                    onClick={() => transition("What else should we take?", "List the additional items — size and type help us price them correctly.", "more", 520)}
+                    className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
+                  >
+                    Add more items
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate("/schedule")}
+                    className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
+                  >
+                    See availability
+                  </button>
+                </div>
+                <p className="mt-3 text-center text-[10px] leading-relaxed tracking-[.04em] text-white/30 sm:text-[11px]">
+                  No commitment to view availability · Free cancellation
+                </p>
               </div>
             ) : (
               <div className="flex items-end gap-3 border-b border-[#c8b477]/35 pb-3 transition-colors focus-within:border-[#e0cf91]/80 [animation:jbMirrorBarPulse_1350ms_ease-in-out_0ms_3]">
