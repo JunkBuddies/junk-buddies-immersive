@@ -290,7 +290,7 @@ export default function MagicPriceMirror() {
       localStorage.setItem("jb_lead_phone_" + sessionId, normalizedPhone); localStorage.setItem("jb_lead_" + sessionId, "1");
       try { await addDoc(collection(db, "leadCaptures"), { phone: clean, sessionId, source:"landing_magic_mirror", enteredAt:serverTimestamp() }); } catch (err) { console.error("Magic Mirror lead capture:", err); }
       const total = discounted ? Math.round(price * 0.9 * 100) / 100 : price;
-      transition("$" + total.toFixed(2), "Anything else before you go?", "result");
+      transition("$" + total.toFixed(2), "Anything else before we schedule?", "result");
       return;
     }
     if (stage === "result") return;
