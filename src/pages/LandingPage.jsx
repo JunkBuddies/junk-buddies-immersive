@@ -419,96 +419,6 @@ function LandingPage() {
 <MagicPriceMirror />
 
 
-{/* === MAIN SERVICES === */}
-<section className="relative z-30 px-2 sm:px-4 md:px-10 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
-  <div
-    ref={mainServicesRef}
-    onWheel={handleServiceWheel}
-    onPointerDown={startServiceDrag}
-    onPointerMove={moveServiceDrag}
-    onPointerUp={endServiceDrag}
-    onPointerCancel={endServiceDrag}
-    className="flex flex-nowrap overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide
-               touch-pan-x scroll-smooth w-full max-w-[1600px] mx-auto gap-4 sm:gap-5 md:gap-7
-               px-3 sm:px-4 md:px-8 pb-3 cursor-grab active:cursor-grabbing"
-    style={{
-      WebkitOverflowScrolling: "touch",
-      scrollbarWidth: "none",
-      msOverflowStyle: "none",
-      touchAction: "pan-x",
-      userSelect: "none",
-    }}
-  >
-    {mainServices.map((s) => (
-      <div
-        key={s.title}
-        onClick={() => openService(s.link)}
-        draggable={false}
-        className={`cursor-pointer flex flex-col items-center flex-none snap-start
-                   w-[42vw] sm:w-[220px] md:w-[260px] lg:w-[300px]
-                   aspect-square
-                   ${topTheme === "day" ? "bg-[#343128]/95" : "bg-zinc-900/90"} border border-gold/30 hover:border-gold rounded-xl
-                   overflow-hidden shadow-md hover:scale-105 transition-transform`}
-      >
-        <img
-          src={getImage(s.image)}
-          alt={s.title}
-          draggable="false"
-          className="w-full h-full object-cover"
-        />
-        <h3 className="text-gold font-semibold text-[2.5vw] sm:text-xs md:text-sm mt-2 text-center">
-          {s.title}
-        </h3>
-      </div>
-    ))}
-  </div>
-</section>
-
-
-        {/* === REUSABLE SCROLL ROWS === */}
-        {[
-          { key: "other", label: "Other Services", data: otherServices },
-          { key: "cities", label: "Cities", data: cities },
-          { key: "blogs", label: "Blogs & Articles", data: blogs },
-          { key: "faq", label: "FAQ", data: faqs },
-        ].map((section) => (
-          <section key={section.key} className="relative z-30 px-4 md:px-8 pb-14 md:pb-16">
-            <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
-
-            <div className="relative flex items-center">
-              <div
-                ref={rowRefs[section.key]}
-                className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
-              >
-                {section.data.map((item, i) => (
-                  <div key={i} className="flex flex-col items-center">
-                    <div
-                      onClick={() => item.link && navigate(item.link)}
-                      className={`cursor-pointer flex-shrink-0 ${
-                        isMobile
-                          ? "w-[96px] h-[144px]"
-                          : "w-[240px] md:w-[320px] h-[140px] md:h-[190px]"
-                      } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
-                        overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
-                    >
-                      {"image" in item ? (
-                        <img
-                          src={getImage(item.image)}
-                          alt={item.title || item.q}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : null}
-                    </div>
-                    <h3 className="text-gold font-semibold text-xs md:text-base mt-2 px-2 text-center">
-                      {item.title || item.q}
-                    </h3>
-                    {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        ))}
       </div>
 
       {/* =========================
@@ -1068,6 +978,101 @@ function LandingPage() {
           <div className="w-full bg-gray-100 py-4 px-6 text-center text-xs sm:text-sm text-gray-700 font-semibold">
             Junk Buddies LLC — Official Junk Removal in Houston, TX | Harris County | Katy | Sugar Land | Pearland | Pasadena | Cypress | The Woodlands | League City | Baytown | Missouri City | Tomball | Richmond | Rosenberg | Friendswood | Humble | La Porte | Channelview | Deer Park | Alvin | Greater Houston Metro
           </div>
+        </section>
+
+        {/* === MOVED DISCOVERY CARD RAILS: immediately above Read Our Blog footer === */}
+        <section className={`relative w-full overflow-x-hidden border-t border-gold/30 transition-colors duration-700 ${topTheme === "day" ? "bg-[#25241f]" : "bg-black"}`}>
+          {/* === MAIN SERVICES === */}
+          <section className="relative z-30 px-2 sm:px-4 md:px-10 pt-6 pb-10 md:pt-12 md:pb-20 flex justify-center items-center">
+            <div
+              ref={mainServicesRef}
+              onWheel={handleServiceWheel}
+              onPointerDown={startServiceDrag}
+              onPointerMove={moveServiceDrag}
+              onPointerUp={endServiceDrag}
+              onPointerCancel={endServiceDrag}
+              className="flex flex-nowrap overflow-x-auto overscroll-x-contain snap-x snap-proximity scrollbar-hide
+                         touch-pan-x scroll-smooth w-full max-w-[1600px] mx-auto gap-4 sm:gap-5 md:gap-7
+                         px-3 sm:px-4 md:px-8 pb-3 cursor-grab active:cursor-grabbing"
+              style={{
+                WebkitOverflowScrolling: "touch",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                touchAction: "pan-x",
+                userSelect: "none",
+              }}
+            >
+              {mainServices.map((s) => (
+                <div
+                  key={s.title}
+                  onClick={() => openService(s.link)}
+                  draggable={false}
+                  className={`cursor-pointer flex flex-col items-center flex-none snap-start
+                             w-[42vw] sm:w-[220px] md:w-[260px] lg:w-[300px]
+                             aspect-square
+                             ${topTheme === "day" ? "bg-[#343128]/95" : "bg-zinc-900/90"} border border-gold/30 hover:border-gold rounded-xl
+                             overflow-hidden shadow-md hover:scale-105 transition-transform`}
+                >
+                  <img
+                    src={getImage(s.image)}
+                    alt={s.title}
+                    draggable="false"
+                    className="w-full h-full object-cover"
+                  />
+                  <h3 className="text-gold font-semibold text-[2.5vw] sm:text-xs md:text-sm mt-2 text-center">
+                    {s.title}
+                  </h3>
+                </div>
+              ))}
+            </div>
+          </section>
+          
+          
+                  {/* === REUSABLE SCROLL ROWS === */}
+                  {[
+                    { key: "other", label: "Other Services", data: otherServices },
+                    { key: "cities", label: "Cities", data: cities },
+                    { key: "blogs", label: "Blogs & Articles", data: blogs },
+                    { key: "faq", label: "FAQ", data: faqs },
+                  ].map((section) => (
+                    <section key={section.key} className="relative z-30 px-4 md:px-8 pb-14 md:pb-16">
+                      <div className="text-gold text-sm font-semibold mb-2 pl-3">{section.label}</div>
+          
+                      <div className="relative flex items-center">
+                        <div
+                          ref={rowRefs[section.key]}
+                          className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-7 pb-6 scrollbar-hide w-full px-[20px]"
+                        >
+                          {section.data.map((item, i) => (
+                            <div key={i} className="flex flex-col items-center">
+                              <div
+                                onClick={() => item.link && navigate(item.link)}
+                                className={`cursor-pointer flex-shrink-0 ${
+                                  isMobile
+                                    ? "w-[96px] h-[144px]"
+                                    : "w-[240px] md:w-[320px] h-[140px] md:h-[190px]"
+                                } bg-zinc-900/90 border border-gold/30 hover:border-gold rounded-xl 
+                                  overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
+                              >
+                                {"image" in item ? (
+                                  <img
+                                    src={getImage(item.image)}
+                                    alt={item.title || item.q}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : null}
+                              </div>
+                              <h3 className="text-gold font-semibold text-xs md:text-base mt-2 px-2 text-center">
+                                {item.title || item.q}
+                              </h3>
+                              {item.a && <p className="text-gray-400 text-xs mt-1 px-2 text-center">{item.a}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+                  ))}
+          
         </section>
 
         <footer className="bg-black text-gray-400 py-10 px-6 text-center border-t border-gold">
