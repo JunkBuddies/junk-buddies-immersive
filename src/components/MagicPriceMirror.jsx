@@ -368,7 +368,7 @@ export default function MagicPriceMirror() {
             )}
           </div>
         </div>
-        <form onSubmit={submit} className="mb-5 box-border w-full min-w-0 max-w-full overflow-visible lg:mb-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
+        <form onSubmit={submit} className="absolute left-0 right-0 top-[61%] -translate-y-1/2 box-border w-full min-w-0 max-w-full overflow-visible lg:static lg:translate-y-0 lg:self-center lg:justify-self-start lg:w-[min(100%,500px)] lg:translate-x-[clamp(14px,1.5vw,24px)] lg:pl-0 lg:pr-0">
           <label className="mb-3 block text-[10px] uppercase tracking-[.28em] text-white/30">{stage === "items" || stage === "more" ? "Your items" : stage === "phone" ? "Phone number" : stage === "discount" || stage === "result" ? "Choose one" : "Your response"}</label>
           {stage === "loading" && (
             <div className="mb-4 flex items-center gap-3 text-[11px] uppercase tracking-[.22em] text-[#d8c47c]/70">
