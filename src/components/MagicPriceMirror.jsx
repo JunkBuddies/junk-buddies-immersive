@@ -30,6 +30,30 @@ function parseItems(text) {
   return found;
 }
 
+async function parseItemsWithAI(text, sessionId) {
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId,
+        messages: [{ role: "user", content: text }],
+      }),
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json?.error || "AI request failed");
+
+    const cart = Array.isArray(json?.parsed?.cart) ? json.parsed.cart : [];
+    if (!cart.length) throw new Error("AI returned no priced items");
+
+    return cart;
+  } catch (err) {
+    console.warn("Magic Mirror AI parse fallback:", err);
+    return parseItems(text);
+  }
+}
+
 export default function MagicPriceMirror() {
   const navigate = useNavigate();
   const { setCart } = useCart();
@@ -251,20 +275,44 @@ export default function MagicPriceMirror() {
     const clean = value.trim();
     if (!clean) return;
     if (stage === "items" || stage === "more") {
-      const parsed = parseItems(clean);
-      if (!parsed.length) { transition("I want to price that correctly.", "Try specific item names — queen mattress, sectional sofa, dresser, refrigerator.", stage); return; }
-      const nextItems = stage === "more" ? [...items, ...parsed] : parsed;
-      const result = calculatePrice(nextItems);
-      setItems(nextItems); setPrice(result.finalPrice); setCart(nextItems);
+      const sourceStage = stage;
       setStage("loading");
       setValue("");
       setTypedPrompt("");
       setTypedSubPrompt("");
+
+      // AI works silently during the existing thinking scene.
+      const aiItemsPromise = parseItemsWithAI(clean, sessionId);
+
       playThinkingPhrase("Recognizing your items", 1, () => {
         playThinkingPhrase("Checking load size and removal pricing", 2, () => {
-          playThinkingPhrase("Finalizing your guaranteed quote", 3, () => {
+          playThinkingPhrase("Finalizing your guaranteed quote", 3, async () => {
+            const parsed = await aiItemsPromise;
+
+            if (!parsed.length) {
+              setThinkingStep(0);
+              transition(
+                "I want to price that correctly.",
+                "Try specific item names — queen mattress, sectional sofa, dresser, refrigerator.",
+                sourceStage,
+                180
+              );
+              return;
+            }
+
+            const nextItems = sourceStage === "more" ? [...items, ...parsed] : parsed;
+            const result = calculatePrice(nextItems);
+
+            setItems(nextItems);
+            setPrice(result.finalPrice);
+            setCart(nextItems);
             setThinkingStep(0);
-            transition("Your price is ready.", "Want 10% off before I show you the total?", "discount", 180);
+            transition(
+              "Your price is ready.",
+              "Want 10% off before I show you the total?",
+              "discount",
+              180
+            );
           });
         });
       });
