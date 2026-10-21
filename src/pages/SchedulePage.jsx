@@ -74,6 +74,17 @@ zip: '',
 
   const navigate = useNavigate();
 
+  const resumeMirrorToAddMore = () => {
+    let sessionId = localStorage.getItem("jb_chat_session");
+    if (!sessionId) {
+      sessionId = "sess_" + Math.random().toString(36).slice(2);
+      localStorage.setItem("jb_chat_session", sessionId);
+    }
+
+    localStorage.setItem("jb_mirror_resume_" + sessionId, "more");
+    navigate("/");
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     let updated = { ...formData, [name]: value };
@@ -325,7 +336,7 @@ else if (formData.time === '5:00 PM – 9:00 PM') timeOfDay = 'Evening';
 
         <button
           type="button"
-          onClick={() => navigate('/itemized')}
+          onClick={resumeMirrorToAddMore}
           className="w-full rounded-xl border border-gold/55 bg-black px-6 py-3 font-bold text-gold transition hover:border-gold hover:bg-gold/10 active:scale-[.99]"
         >
           Add More Items
@@ -334,7 +345,7 @@ else if (formData.time === '5:00 PM – 9:00 PM') timeOfDay = 'Evening';
         <button
           type="submit"
           disabled={!cart.length}
-          className="w-full button-glow disabled:cursor-not-allowed disabled:opacity-40"
+          className="jb-polished-gold-button w-full disabled:cursor-not-allowed disabled:opacity-40"
         >
           Schedule Pickup
         </button>
