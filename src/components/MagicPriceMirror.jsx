@@ -56,7 +56,7 @@ async function parseItemsWithAI(text, sessionId) {
 
 export default function MagicPriceMirror() {
   const navigate = useNavigate();
-  const { setCart } = useCart();
+  const { cart, setCart } = useCart();
   const sessionId = useMemo(getSessionId, []);
   const [stage, setStage] = useState("items");
   const [prompt, setPrompt] = useState("Want a guaranteed price now?");
@@ -77,6 +77,43 @@ export default function MagicPriceMirror() {
   const [thinkingFadeOut, setThinkingFadeOut] = useState(false);
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const resumeKey = "jb_mirror_resume_" + sessionId;
+    if (localStorage.getItem(resumeKey) !== "more") return;
+
+    localStorage.removeItem(resumeKey);
+
+    const existingCart = Array.isArray(cart) ? cart : [];
+    const existingPrice = calculatePrice(existingCart).finalPrice;
+
+    setItems(existingCart);
+    setPrice(existingPrice);
+    setDiscounted(localStorage.getItem("jb_disc_on_" + sessionId) === "1");
+    setPrompt("What else should we take?");
+    setSubPrompt("List the additional items — size and type help us price them correctly.");
+    setStage("more");
+    setMirrorActive(true);
+    setTypedPrompt("");
+    setTypedSubPrompt("");
+    setHierarchyFlipped(false);
+
+    window.setTimeout(() => {
+      const section = sectionRef.current;
+      const scroller = section?.closest("main");
+
+      if (section && scroller) {
+        const sectionRect = section.getBoundingClientRect();
+        const scrollerRect = scroller.getBoundingClientRect();
+        const targetTop = scroller.scrollTop + sectionRect.top - scrollerRect.top;
+        scroller.scrollTo({ top: targetTop, behavior: "smooth" });
+      } else {
+        section?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      window.setTimeout(() => inputRef.current?.focus(), 700);
+    }, 120);
+  }, [cart, sessionId]);
 
   useEffect(() => {
     setTypedPrompt("");
@@ -346,7 +383,7 @@ export default function MagicPriceMirror() {
 
   const resultStage = stage === "result";
   return (
-    <section ref={sectionRef} className="relative box-border h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full min-w-0 max-w-full snap-start snap-always scroll-mt-0 overflow-x-clip overflow-y-hidden bg-[#111110] text-white">
+    <section id="magic-price-mirror" ref={sectionRef} className="relative box-border h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full min-w-0 max-w-full snap-start snap-always scroll-mt-0 overflow-x-clip overflow-y-hidden bg-[#111110] text-white">
       <div aria-hidden="true" className="absolute inset-0" style={{background:"radial-gradient(circle at 50% 45%, rgba(184,134,55,.09), transparent 25%), linear-gradient(145deg,#171716,#0c0c0b 62%,#050505)"}} />
       <div aria-hidden="true" className="absolute inset-[clamp(18px,7vw,110px)] border border-[#c8b477]/10" />
       <div aria-hidden="true" className="absolute inset-[clamp(36px,14vw,210px)] border border-white/[0.035]" />
