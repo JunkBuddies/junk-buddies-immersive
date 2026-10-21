@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import TopNav from "./TopNav";
 import SideNav from "./SideNav";
 import TopNavMobile from "./TopNavMobile";
+import ScheduleCartEnhancer from "./ScheduleCartEnhancer";
 
 export default function LayoutShell() {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);
@@ -49,6 +50,7 @@ export default function LayoutShell() {
           }}
         >
           <Outlet />
+          <ScheduleCartEnhancer />
         </main>
       </div>
 
