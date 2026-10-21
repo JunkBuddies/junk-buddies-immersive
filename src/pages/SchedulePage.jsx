@@ -29,8 +29,35 @@ const generatePresetDates = () => {
 const presetDates = generatePresetDates();
 
 function SchedulePage() {
-  const { cart } = useCart();
+  const { cart, setCart } = useCart();
   const { finalPrice } = calculatePrice(cart);
+
+  const cartSummary = Object.values(
+    cart.reduce((groups, item, index) => {
+      const key = item.name || `Item-${index}`;
+      const qty = Math.max(1, Number(item.qty || 1));
+
+      if (!groups[key]) {
+        groups[key] = {
+          key,
+          name: item.name || "Item",
+          qty: 0,
+          price: 0,
+          indexes: [],
+        };
+      }
+
+      groups[key].qty += qty;
+      groups[key].price += Number(item.price || 0);
+      groups[key].indexes.push(index);
+      return groups;
+    }, {})
+  );
+
+  const removeCartItem = (summaryItem) => {
+    const indexes = new Set(summaryItem.indexes);
+    setCart((prev) => prev.filter((_, index) => !indexes.has(index)));
+  };
 
   const [formData, setFormData] = useState({
     name: '',
@@ -68,8 +95,12 @@ const handleSubmit = async (e) => {
 
   const orderNumber = `JB-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  const itemsTextList = cart.map((item) => `${item.name}: $${item.price.toFixed(2)}`).join('\n');
-  const itemsHtmlList = `<ul>${cart.map((item) => `<li><strong>${item.name}</strong>: $${item.price.toFixed(2)}</li>`).join('')}</ul>`;
+  const itemsTextList = cartSummary
+    .map((item) => `${item.name} ×${item.qty}: ${item.price.toFixed(2)}`)
+    .join('\n');
+  const itemsHtmlList = `<ul>${cartSummary
+    .map((item) => `<li><strong>${item.name} ×${item.qty}</strong>: ${item.price.toFixed(2)}</li>`)
+    .join('')}</ul>`;
 
   const templateParams = {
     ...formData,
@@ -250,12 +281,37 @@ else if (formData.time === '5:00 PM – 9:00 PM') timeOfDay = 'Evening';
         </div>
 
         <div className="bg-gray-800 text-white p-4 rounded-xl">
-          <h2 className="text-lg font-bold mb-2">Your Cart:</h2>
-          <ul className="mb-2">
-            {cart.map((item, idx) => (
-              <li key={idx}>{item.name} - ${item.price.toFixed(2)}</li>
-            ))}
-          </ul>
+          <h2 className="text-lg font-bold mb-3">Your Cart:</h2>
+
+          {cartSummary.length ? (
+            <ul className="mb-3 divide-y divide-white/10">
+              {cartSummary.map((item) => (
+                <li key={item.key} className="flex items-center gap-3 py-3 first:pt-0">
+                  <div className="min-w-0 flex-1">
+                    <div className="font-semibold text-white">
+                      {item.name}
+                      <span className="ml-2 text-gold">×{item.qty}</span>
+                    </div>
+                    <div className="mt-1 text-sm text-gray-400">
+                      ${item.price.toFixed(2)}
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => removeCartItem(item)}
+                    className="shrink-0 rounded-lg border border-white/15 px-3 py-2 text-xs font-semibold text-white/65 transition hover:border-gold/60 hover:text-gold active:scale-95"
+                    aria-label={"Remove " + item.name + " from cart"}
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="mb-3 text-sm text-gray-400">Your cart is empty.</p>
+          )}
+
           <p className="font-bold">Total: ${finalPrice.toFixed(2)}</p>
           <p className="mt-2 italic text-yellow-300">You don't pay until the job is done!</p>
         </div>
@@ -267,7 +323,21 @@ else if (formData.time === '5:00 PM – 9:00 PM') timeOfDay = 'Evening';
           </Link>.
         </p>
 
-        <button type="submit" className="w-full button-glow">Schedule Pickup</button>
+        <button
+          type="button"
+          onClick={() => navigate('/itemized')}
+          className="w-full rounded-xl border border-gold/55 bg-black px-6 py-3 font-bold text-gold transition hover:border-gold hover:bg-gold/10 active:scale-[.99]"
+        >
+          Add More Items
+        </button>
+
+        <button
+          type="submit"
+          disabled={!cart.length}
+          className="w-full button-glow disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          Schedule Pickup
+        </button>
       </form>
     </div>
   );
