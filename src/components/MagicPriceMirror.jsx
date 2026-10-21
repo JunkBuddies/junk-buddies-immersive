@@ -90,8 +90,16 @@ export default function MagicPriceMirror() {
     setItems(existingCart);
     setPrice(existingPrice);
     setDiscounted(localStorage.getItem("jb_disc_on_" + sessionId) === "1");
-    setPrompt("What else should we take?");
-    setSubPrompt("List the additional items — size and type help us price them correctly.");
+    const relatedPromptKey = "jb_mirror_related_prompt_" + sessionId;
+    const relatedPrompt = localStorage.getItem(relatedPromptKey) || "";
+    localStorage.removeItem(relatedPromptKey);
+
+    setPrompt(relatedPrompt ? "Anything else with it?" : "What else should we take?");
+    setSubPrompt(
+      relatedPrompt
+        ? "Tell us what you have — for example " + relatedPrompt + "."
+        : "List the additional items — size and type help us price them correctly."
+    );
     setStage("more");
     setMirrorActive(true);
     setTypedPrompt("");
@@ -344,12 +352,28 @@ export default function MagicPriceMirror() {
             setPrice(result.finalPrice);
             setCart(nextItems);
             setThinkingStep(0);
-            transition(
-              "Your price is ready.",
-              "Want 10% off before I show you the total?",
-              "discount",
-              180
-            );
+
+            if (sourceStage === "more") {
+              const discountStillActive =
+                discounted || localStorage.getItem("jb_disc_on_" + sessionId) === "1";
+              const updatedTotal = discountStillActive
+                ? Math.round(result.finalPrice * 0.9 * 100) / 100
+                : result.finalPrice;
+
+              transition(
+                "$" + updatedTotal.toFixed(2),
+                "Anything else before we schedule?||Updated. Your cart and price are ready.",
+                "result",
+                180
+              );
+            } else {
+              transition(
+                "Your price is ready.",
+                "Want 10% off before I show you the total?",
+                "discount",
+                180
+              );
+            }
           });
         });
       });
