@@ -369,6 +369,7 @@ const pricePerPoint = 1.82;
 const minimumPrice = 100;
 const quarterLoadThreshold = fullLoadPoints * 0.25; // 137.5
 const quarterLoadPrice = 250;
+const transitionFloorPrice = 200;
 
 function calculatePrice(cart) {
   const totalVolume = cart.reduce((sum, item) => sum + item.volume, 0);
@@ -393,8 +394,8 @@ function calculatePrice(cart) {
       // Still under $250 – use higher of min or item price
       return { finalPrice: Math.max(minimumPrice, totalItemPrice), totalVolume };
     } else {
-      // Crossed $250 → switch entirely to volume-based pricing
-      return { finalPrice: volumePrice, totalVolume };
+      // Crossed $250 → switch to volume pricing, but protect against an extreme drop
+      return { finalPrice: Math.max(transitionFloorPrice, volumePrice), totalVolume };
     }
   }
 
