@@ -593,6 +593,11 @@ async function routeWithAI(env, messages) {
     "- Keep chat answers brief, 1–2 sentences.",
     "- Preserve quantities and important size/type details such as queen, king, sectional piece count, commercial/residential, etc.",
     "- Prefer catalog wording when a clear match exists.",
+    "- Understand common furniture-set language by decomposing sets into real catalog components instead of treating the set as one vague object.",
+    "- If the user says bed set and does not list pieces, interpret it as mattress + matching bed frame + matching bed base/foundation; preserve Twin/Full/Queen/King size when stated.",
+    "- If the user says bedroom set and does not list pieces, interpret it as bed frame + dresser + 2 nightstands; if a mattress/base is explicitly mentioned, include it too. Preserve stated bed size.",
+    "- If the user says living room set and does not list pieces, interpret it as sofa/couch + loveseat + coffee table. If the user lists the pieces, use their explicit list instead.",
+    "- Do not double-count pieces that the user already named separately.",
     "- Never invent or state a dollar price. The website calculates pricing.",
     "Catalog examples: " + catalogNames
   ].join("\n");
@@ -622,7 +627,7 @@ async function extractItemsWithAI(env, text) {
   const content = await callOpenAI(env, [
     {
       role: "system",
-      content: 'Extract junk-removal items. Reply ONLY with JSON {"items":[{"name":"string","qty":number,"dims":"optional raw dims"}]}. Preserve quantities and useful size/type details. Prefer catalog wording when clear. Never invent prices.'
+      content: 'Extract junk-removal items. Reply ONLY with JSON {"items":[{"name":"string","qty":number,"dims":"optional raw dims"}]}. Preserve quantities and useful size/type details. Prefer catalog wording when clear. Understand sets: bed set means mattress + matching bed frame + matching bed base/foundation when pieces are not listed; bedroom set means bed frame + dresser + 2 nightstands by default; living room set means sofa/couch + loveseat + coffee table by default. Preserve stated bed size, use explicit listed pieces instead of defaults, and do not double-count. Never invent prices.'
     },
     { role: "system", content: "Catalog examples: " + catalogNames },
     { role: "user", content: text }

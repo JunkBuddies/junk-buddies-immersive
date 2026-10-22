@@ -30,7 +30,13 @@ const presetDates = generatePresetDates();
 
 function SchedulePage() {
   const { cart, setCart } = useCart();
-  const { finalPrice } = calculatePrice(cart);
+  const { finalPrice: rawFinalPrice } = calculatePrice(cart);
+  const sessionId = localStorage.getItem("jb_chat_session") || "";
+  const discountActive =
+    sessionId && localStorage.getItem("jb_disc_on_" + sessionId) === "1";
+  const finalPrice = discountActive
+    ? Math.round(rawFinalPrice * 0.9 * 100) / 100
+    : rawFinalPrice;
 
   const cartSummary = Object.values(
     cart.reduce((groups, item, index) => {

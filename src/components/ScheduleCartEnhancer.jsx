@@ -101,7 +101,7 @@ export default function ScheduleCartEnhancer() {
   const location = useLocation();
   const { cart, setCart } = useCart();
   const [mountNode, setMountNode] = useState(null);
-  const [lastRemoved, setLastRemoved] = useState(null);
+  const [removedItems, setRemovedItems] = useState([]);
   const [openRelated, setOpenRelated] = useState({});
 
   const cartSummary = useMemo(() => {
@@ -129,7 +129,13 @@ export default function ScheduleCartEnhancer() {
     );
   }, [cart]);
 
-  const { finalPrice } = calculatePrice(cart);
+  const { finalPrice: rawFinalPrice } = calculatePrice(cart);
+  const sessionId = localStorage.getItem("jb_chat_session") || "";
+  const discountActive =
+    sessionId && localStorage.getItem("jb_disc_on_" + sessionId) === "1";
+  const finalPrice = discountActive
+    ? Math.round(rawFinalPrice * 0.9 * 100) / 100
+    : rawFinalPrice;
 
   useEffect(() => {
     if (location.pathname !== "/schedule") {
@@ -241,35 +247,41 @@ export default function ScheduleCartEnhancer() {
     setCart(next);
 
     if (quantityFor(name) === 1) {
-      setLastRemoved({
-        name,
-        items: [removedItem],
-      });
+      const token = name + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+      setRemovedItems((prev) => [
+        ...prev,
+        { token, name, items: [{ ...removedItem }] },
+      ]);
     }
   };
 
   const minusOne = (summaryItem) => minusOneByName(summaryItem.name);
 
   const removeAllByName = (name) => {
-    const removedItems = cart.filter((item) => item.name === name);
-    if (!removedItems.length) return;
+    const removed = cart.filter((item) => item.name === name);
+    if (!removed.length) return;
 
-    setLastRemoved({
-      name,
-      items: removedItems.map((item) => ({ ...item })),
-    });
+    const token = name + "-" + Date.now() + "-" + Math.random().toString(36).slice(2, 7);
+    setRemovedItems((prev) => [
+      ...prev,
+      {
+        token,
+        name,
+        items: removed.map((item) => ({ ...item })),
+      },
+    ]);
 
     setCart((prev) => prev.filter((item) => item.name !== name));
   };
 
   const removeAll = (summaryItem) => removeAllByName(summaryItem.name);
 
-  const addAgain = () => {
-    if (!lastRemoved?.items?.length) return;
+  const addAgain = (token) => {
+    const entry = removedItems.find((item) => item.token === token);
+    if (!entry?.items?.length) return;
 
-    const restore = lastRemoved.items.map((item) => ({ ...item }));
-    setCart((prev) => [...prev, ...restore]);
-    setLastRemoved(null);
+    setCart((prev) => [...prev, ...entry.items.map((item) => ({ ...item }))]);
+    setRemovedItems((prev) => prev.filter((item) => item.token !== token));
   };
 
   const toggleRelated = (name) => {
@@ -327,18 +339,45 @@ export default function ScheduleCartEnhancer() {
                 </div>
 
                 {related.length > 0 && (
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={() => toggleRelated(item.name)}
-                      className="flex items-center gap-2 text-xs font-semibold text-[#e0cf91] transition hover:text-white"
-                    >
-                      <span>{openRelated[item.name] ? "Hide related items" : "Any related items?"}</span>
-                      <span className={"transition-transform " + (openRelated[item.name] ? "rotate-180" : "")}>⌄</span>
-                    </button>
-
-                    {openRelated[item.name] && (
-                      <div className="mt-2 space-y-2 rounded-xl border border-[#c8b477]/15 bg-black/20 p-3">
+                  <div className="mt-3">
+                    {!openRelated[item.name] ? (
+                      <div className="flex items-center justify-between gap-3 rounded-xl border border-[#c8b477]/20 bg-black/20 px-3 py-3">
+                        <div>
+                          <div className="text-sm font-semibold text-white/85">
+                            {/(mattress|bed frame|bed base|bed foundation|adjustable bed base)/i.test(item.name)
+                              ? "Have any matching bed pieces too?"
+                              : /(couch|sofa|loveseat|sectional|ottoman)/i.test(item.name)
+                              ? "Have any matching living-room pieces too?"
+                              : /(washer|dryer)/i.test(item.name)
+                              ? "Have the matching laundry appliance too?"
+                              : "Have any related items too?"}
+                          </div>
+                          <div className="mt-1 text-xs text-white/35">
+                            Add them here without leaving your schedule.
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => toggleRelated(item.name)}
+                          className="shrink-0 rounded-lg border border-[#c8b477]/35 px-3 py-2 text-xs font-semibold text-[#e0cf91] transition hover:border-[#e0cf91] hover:bg-[#c8b477]/10 hover:text-white"
+                        >
+                          Add
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 rounded-xl border border-[#c8b477]/15 bg-black/20 p-3">
+                        <div className="mb-1 flex items-center justify-between">
+                          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#e0cf91]/80">
+                            Related items
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => toggleRelated(item.name)}
+                            className="text-xs text-white/40 transition hover:text-white"
+                          >
+                            Hide
+                          </button>
+                        </div>
                         {related.map(({ label, item: relatedItem }) => {
                           const relatedQty = quantityFor(relatedItem.name);
 
@@ -407,16 +446,23 @@ export default function ScheduleCartEnhancer() {
         <p className="mb-3 text-sm text-gray-400">Your cart is empty.</p>
       )}
 
-      {lastRemoved && (
-        <div className="mb-3 flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-white/55">
-          <span>{lastRemoved.name} removed</span>
-          <button
-            type="button"
-            onClick={addAgain}
-            className="font-semibold text-gold transition hover:text-white"
-          >
-            Add again
-          </button>
+      {removedItems.length > 0 && (
+        <div className="mb-3 space-y-2">
+          {removedItems.map((entry) => (
+            <div
+              key={entry.token}
+              className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-white/55"
+            >
+              <span>{entry.name} removed</span>
+              <button
+                type="button"
+                onClick={() => addAgain(entry.token)}
+                className="font-semibold text-gold transition hover:text-white"
+              >
+                Add again
+              </button>
+            </div>
+          ))}
         </div>
       )}
 
