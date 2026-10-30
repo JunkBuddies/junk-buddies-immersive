@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection, doc, runTransaction, Timestamp } from "firebase/firestore";
+import { addDoc, collection, getDocs, limit, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { useCart } from "../context/CartContext";
 import { calculatePrice, minimumPrice } from "../utils/pricing";
 import { db } from "../lib/firebase";
@@ -34,28 +34,24 @@ const makeDates = () =>
   });
 
 async function getNextOrderNumber() {
-  const counterRef = doc(db, "counters", "orders");
+  const jobsRef = collection(db, "jobs");
+  const sequenceQuery = query(
+    jobsRef,
+    where("orderSequence", ">=", 330102),
+    orderBy("orderSequence", "desc"),
+    limit(1)
+  );
 
-  const nextNumber = await runTransaction(db, async (transaction) => {
-    const snapshot = await transaction.get(counterRef);
-    const current = snapshot.exists()
-      ? Number(snapshot.data().lastNumber || 330101)
-      : 330101;
-    const next = current + 1;
+  const snapshot = await getDocs(sequenceQuery);
+  const latest = snapshot.empty
+    ? 330101
+    : Number(snapshot.docs[0].data().orderSequence || 330101);
+  const next = Math.max(330101, latest) + 1;
 
-    transaction.set(
-      counterRef,
-      {
-        lastNumber: next,
-        updatedAt: Timestamp.now(),
-      },
-      { merge: true }
-    );
-
-    return next;
-  });
-
-  return "JB-" + nextNumber;
+  return {
+    orderNumber: "JB-" + next,
+    orderSequence: next,
+  };
 }
 
 export default function SchedulePremiumPage() {
@@ -253,7 +249,8 @@ export default function SchedulePremiumPage() {
       : "Evening";
 
     try {
-      const orderNumber = await getNextOrderNumber();
+      const nextOrder = await getNextOrderNumber();
+      const orderNumber = nextOrder.orderNumber;
 
       await addDoc(collection(db, "jobs"), {
         ...form,
@@ -262,6 +259,7 @@ export default function SchedulePremiumPage() {
         fullAddress,
         timeOfDay,
         orderNumber,
+        orderSequence: nextOrder.orderSequence,
         items: cart,
         total: finalPrice,
         discountActive: Boolean(discountActive),
