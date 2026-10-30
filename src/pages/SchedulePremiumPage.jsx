@@ -177,11 +177,15 @@ export default function SchedulePremiumPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-    if (savedBooking) {
-      localStorage.removeItem("jb_schedule_draft");
-      localStorage.removeItem("jb_return_to_schedule");
-    }
+    localStorage.removeItem("jb_return_to_schedule");
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "jb_schedule_draft",
+      JSON.stringify({ form, step })
+    );
+  }, [form, step]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
