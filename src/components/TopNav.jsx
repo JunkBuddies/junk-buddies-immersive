@@ -1,7 +1,8 @@
 // TopNav.jsx
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { goToPriceMirror } from "../utils/mirrorNavigation";
 import {
   Search,
   Menu,
@@ -29,11 +30,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
 
   const closeSearch = () => setSearchOpen(false);
 
-  const openChatWidget = useCallback(() => {
-    const trigger = document.querySelector(".jb-chat-bubble, .chat-widget-trigger, #jb-open-button");
-    if (trigger) trigger.click();
-    setSearchOpen(false);
-  }, []);
+  const openPriceMirror = () => goToPriceMirror(navigate, () => setSearchOpen(false));
 
   const go = (path) => {
     navigate(path);
@@ -42,7 +39,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
 
   const suggestions = [
     { label: "Home", icon: Home, action: () => go("/") },
-    { label: "Instant Pricing", icon: Calculator, action: openChatWidget },
+    { label: "Instant Pricing", icon: Calculator, action: openPriceMirror },
     { label: "Manual Selection", icon: ClipboardList, action: () => go("/itemized") },
     { label: "Cities", icon: MapPin, action: () => go("/service-areas") },
     { label: "Blog", icon: BookOpen, action: () => go("/blog") },
