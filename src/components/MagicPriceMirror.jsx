@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import { useCart } from "../context/CartContext";
-import { calculatePrice } from "../utils/pricing";
+import { calculatePrice, premiumType, premiumUnitPrice } from "../utils/pricing";
 import itemData from "../data/itemData";
 
 const allItems = itemData.flatMap((section) => section.items);
@@ -49,11 +49,12 @@ function normalizeQuotedItems(rows = []) {
     }
 
     if (lower.includes("tire") && !lower.includes("rim")) {
+      const unit = premiumUnitPrice("tire", qty) || 35;
       return {
         ...item,
         name: "Tire",
         qty,
-        price: 35 * qty,
+        price: unit * qty,
         volume: 4 * qty,
         pricingMode: "fixed",
       };
@@ -70,7 +71,7 @@ function normalizeQuotedItems(rows = []) {
         ...item,
         name: catalogName,
         qty,
-        price: Number(match?.price || (fiveGallon ? 40 : 20)) * qty,
+        price: (premiumUnitPrice(fiveGallon ? "paint-5" : "paint-wet", qty) || Number(match?.price || (fiveGallon ? 40 : 20))) * qty,
         volume: Number(match?.volume || (fiveGallon ? 5 : 2)) * qty,
         pricingMode: "fixed",
       };
