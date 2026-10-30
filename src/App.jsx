@@ -50,7 +50,6 @@ import LaPorte from "./pages/cities/La-Porte";
 
 // Context + Global Chat
 import { CartProvider } from "./context/CartContext";
-import ChatWidget from "./components/chat/ChatWidget";
 import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
@@ -126,8 +125,6 @@ function App() {
           </Route>
         </Routes>
 
-        {/* 🧠 Chat widget overlays all pages */}
-        <ChatWidget />
       </Router>
     </CartProvider>
   );
