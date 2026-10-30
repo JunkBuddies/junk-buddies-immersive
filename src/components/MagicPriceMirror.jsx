@@ -5,8 +5,9 @@ import { db } from "../lib/firebase";
 import { useCart } from "../context/CartContext";
 import { calculatePrice, premiumType, premiumUnitPrice } from "../utils/pricing";
 import itemData from "../data/itemData";
+import premiumItems from "../data/premiumItems";
 
-const allItems = itemData.flatMap((section) => section.items);
+const allItems = [...itemData, premiumItems].flatMap((section) => section.items);
 const aliases = { couch:"Couch / Loveseat", sofa:"Sofa", loveseat:"Couch / Loveseat", mattress:"Mattress", fridge:"Refrigerator", refrigerator:"Refrigerator", washer:"Washer", dryer:"Dryer", desk:"Desk", recliner:"Recliner", trampoline:"Trampoline", dresser:"Dresser", table:"Table", chair:"Chair", microwave:"Microwave", freezer:"Freezer", treadmill:"Treadmill" };
 
 function getSessionId() {
