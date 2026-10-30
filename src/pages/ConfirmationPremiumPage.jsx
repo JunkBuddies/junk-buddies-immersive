@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import emailjs from "emailjs-com";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 export default function ConfirmationPremiumPage() {
@@ -9,6 +10,93 @@ export default function ConfirmationPremiumPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
+
+  useEffect(() => {
+    if (!state?.orderNumber || !state?.email) return;
+
+    const sentKey = "jb_booking_emails_sent_" + state.orderNumber;
+    if (sessionStorage.getItem(sentKey) === "1") return;
+
+    const items = Array.isArray(state.items) ? state.items : [];
+    const itemsText = items
+      .map((item) => {
+        return (
+          (item.qty > 1 ? item.qty + "x " : "") +
+          item.name +
+          ": $" +
+          Number(item.price || 0).toFixed(2)
+        );
+      })
+      .join("\n");
+
+    const itemsHtml =
+      "<ul>" +
+      items
+        .map((item) => {
+          return (
+            "<li><strong>" +
+            (item.qty > 1 ? item.qty + "x " : "") +
+            item.name +
+            "</strong>: $" +
+            Number(item.price || 0).toFixed(2) +
+            "</li>"
+          );
+        })
+        .join("") +
+      "</ul>";
+
+    const emailParams = {
+      name: state.name || "",
+      email: state.email || "",
+      phone: state.phone || "",
+      street: state.street || "",
+      city: state.city || "",
+      state: state.stateName || "TX",
+      zip: state.zip || "",
+      date: state.date || "",
+      time: state.time || "",
+      fullAddress: state.fullAddress || "",
+      orderNumber: state.orderNumber,
+      customerEmail: state.email,
+      total: "$" + Number(state.total || 0).toFixed(2),
+      itemsText,
+      itemsHtml,
+    };
+
+    sessionStorage.setItem(sentKey, "1");
+
+    Promise.allSettled([
+      emailjs.send(
+        "JunkBuddies.info",
+        "Junk_Buddies_Booking",
+        { ...emailParams, items: itemsHtml, email: state.email },
+        "QCl4Akw_LZ3T8IvUd"
+      ),
+      emailjs.send(
+        "JunkBuddies.info",
+        "template_57eij3s",
+        { ...emailParams, items: itemsText, email: state.email },
+        "QCl4Akw_LZ3T8IvUd"
+      ),
+    ]).then((results) => {
+      const anyFailed = results.some((result) => result.status === "rejected");
+
+      if (anyFailed) {
+        sessionStorage.removeItem(sentKey);
+      }
+
+      results.forEach((result, index) => {
+        if (result.status === "rejected") {
+          console.warn(
+            index === 0
+              ? "Customer confirmation email failed."
+              : "Owner lead email failed.",
+            result.reason
+          );
+        }
+      });
+    });
+  }, [state]);
 
   return (
     <main className="fixed inset-0 z-[9999] overflow-y-auto bg-[#050505] px-4 py-6 text-white sm:py-10">
