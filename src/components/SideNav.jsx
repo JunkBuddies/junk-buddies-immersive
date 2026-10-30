@@ -36,6 +36,7 @@ export default function SideNav({ open }) {
         <NavItem to="/service-areas" icon={<MapPin />} label="Cities" open={open} />
         <NavItem to="/blog" icon={<BookOpen />} label="Blog" open={open} />
         <NavItem to="/faq" icon={<HelpCircle />} label="FAQ" open={open} />
+        <NavItem to="/lookup" icon={<ClipboardList />} label="Order Lookup" open={open} />
       </nav>
 
       {open && (
