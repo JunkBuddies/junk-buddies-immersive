@@ -76,6 +76,7 @@ export default function TopNavMobile() {
               <QuickLink to="/load-size" label="Load Size Guide" />
               <QuickLink to="/service-areas" label="Cities We Serve" />
               <QuickLink to="/faq" label="FAQ" />
+              <QuickLink to="/lookup" label="Order Lookup" />
               <QuickLink to="/blog" label="Blog Articles" />
             </div>
           </motion.div>
