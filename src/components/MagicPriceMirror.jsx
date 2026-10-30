@@ -488,6 +488,7 @@ export default function MagicPriceMirror() {
   };
 
   const resultStage = stage === "result";
+  const customQuoteActive = items.some((item) => item?.customQuote || item?.pricingMode === "custom" || /cleanout/i.test(String(item?.name || "")));
   return (
     <section id="magic-price-mirror" ref={sectionRef} className="relative box-border h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full min-w-0 max-w-full snap-start snap-always scroll-mt-0 overflow-x-clip overflow-y-hidden bg-[#111110] text-white">
       <div aria-hidden="true" className="absolute inset-0" style={{background:"radial-gradient(circle at 50% 45%, rgba(184,134,55,.09), transparent 25%), linear-gradient(145deg,#171716,#0c0c0b 62%,#050505)"}} />
@@ -602,14 +603,14 @@ export default function MagicPriceMirror() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => navigate("/schedule")}
+                    onClick={() => customQuoteActive ? (window.location.href = "tel:3465936080") : navigate("/schedule")}
                     className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
                   >
-                    See availability
+                    {customQuoteActive ? "Call for custom quote" : "See availability"}
                   </button>
                 </div>
                 <p className="mt-3 text-center text-[10px] leading-relaxed tracking-[.04em] text-white/30 sm:text-[11px]">
-                  No commitment to view availability · Free cancellation
+{customQuoteActive ? "Cleanouts are quoted individually so we can price the actual job correctly." : "No commitment to view availability · Free cancellation"}
                 </p>
               </div>
             ) : (
