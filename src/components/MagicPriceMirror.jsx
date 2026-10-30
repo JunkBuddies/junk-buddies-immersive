@@ -124,6 +124,14 @@ export default function MagicPriceMirror() {
   }, [cart, sessionId]);
 
   useEffect(() => {
+    if (!Array.isArray(cart)) return;
+    if (stage === "result" || stage === "more") {
+      setItems(cart);
+      setPrice(calculatePrice(cart).finalPrice);
+    }
+  }, [cart, stage]);
+
+  useEffect(() => {
     setTypedPrompt("");
     setTypedSubPrompt("");
     setHierarchyFlipped(false);
@@ -345,7 +353,8 @@ export default function MagicPriceMirror() {
               return;
             }
 
-            const nextItems = sourceStage === "more" ? [...items, ...parsed] : parsed;
+            const currentCart = Array.isArray(cart) ? cart : [];
+            const nextItems = sourceStage === "more" ? [...currentCart, ...parsed] : parsed;
             const result = calculatePrice(nextItems);
 
             setItems(nextItems);
