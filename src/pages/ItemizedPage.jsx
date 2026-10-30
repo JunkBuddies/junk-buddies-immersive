@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { calculatePrice, getLoadLabel, fullLoadPoints } from "../utils/pricing";
 import itemData from "../data/itemData";
+import premiumItems from "../data/premiumItems";
 
 const DISCOUNT_RATE = 0.10;
  
@@ -55,7 +56,7 @@ function ItemizedPage() {
   const addToCart = (item) => setCart((prev) => [...prev, item]);
   const removeFromCart = (idx) => setCart((prev) => prev.filter((_, i) => i !== idx));
 
-  const filteredData = itemData.map((section) => ({
+  const filteredData = [...itemData, premiumItems].map((section) => ({
     ...section,
     items: section.items.filter((item) =>
       item.name.toLowerCase().includes(search.toLowerCase())
