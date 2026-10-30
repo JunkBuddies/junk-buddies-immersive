@@ -275,7 +275,23 @@ export default function SchedulePremiumPage() {
       : "Evening";
 
     try {
-      const nextOrder = await getNextOrderNumber();
+      let nextOrder;
+
+      try {
+        nextOrder = await getNextOrderNumber();
+      } catch (sequenceError) {
+        console.warn(
+          "Sequential order lookup unavailable; booking will continue.",
+          sequenceError
+        );
+
+        const fallbackNumber = String(Date.now()).slice(-8);
+        nextOrder = {
+          orderNumber: "JB-" + fallbackNumber,
+          orderSequence: null,
+        };
+      }
+
       const orderNumber = nextOrder.orderNumber;
 
       await addDoc(collection(db, "jobs"), {
@@ -285,7 +301,7 @@ export default function SchedulePremiumPage() {
         fullAddress,
         timeOfDay,
         orderNumber,
-        orderSequence: nextOrder.orderSequence,
+        ...(nextOrder.orderSequence != null ? { orderSequence: nextOrder.orderSequence } : {}),
         items: cart,
         total: customQuote ? null : finalPrice,
         customQuote,
