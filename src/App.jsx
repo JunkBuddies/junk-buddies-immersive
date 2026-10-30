@@ -7,9 +7,10 @@ import LandingPage from "./pages/LandingPage";
 import SelectionPage from "./pages/SelectionPage";
 import LoadSizePage from "./pages/LoadSizePage";
 import ItemizedPage from "./pages/ItemizedPage";
-import SchedulePage from "./pages/SchedulePage";
-import ConfirmationPage from "./pages/ConfirmationPage";
+import SchedulePremiumPage from "./pages/SchedulePremiumPage";
+import ConfirmationPremiumPage from "./pages/ConfirmationPremiumPage";
 import ConnectPage from "./pages/ConnectPage";
+import PartnersPage from "./pages/PartnersPage";
 
 // Blog + Articles
 import BlogPage from "./pages/BlogPage";
@@ -63,9 +64,10 @@ function App() {
             <Route path="/selection" element={<SelectionPage />} />
             <Route path="/load-size" element={<LoadSizePage />} />
             <Route path="/itemized" element={<ItemizedPage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/confirmation" element={<ConfirmationPage />} />
+            <Route path="/schedule" element={<SchedulePremiumPage />} />
+            <Route path="/confirmation" element={<ConfirmationPremiumPage />} />
             <Route path="/connect" element={<ConnectPage />} />
+            <Route path="/partners" element={<PartnersPage />} />
 
             {/* Blog Routes */}
             <Route path="/blog" element={<BlogPage />} />
