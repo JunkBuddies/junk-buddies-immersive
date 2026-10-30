@@ -44,6 +44,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
     { label: "Cities", icon: MapPin, action: () => go("/service-areas") },
     { label: "Blog", icon: BookOpen, action: () => go("/blog") },
     { label: "FAQ", icon: HelpCircle, action: () => go("/faq") },
+    { label: "Order Lookup", icon: Search, action: () => go("/lookup") },
   ];
 
   const filteredSuggestions = suggestions.filter(({ label }) =>
