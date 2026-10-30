@@ -23,50 +23,86 @@ const makeCode = (name = "") => {
   return base + "-" + String(Math.floor(Math.random() * 900) + 100);
 };
 
+const normalizeCode = (value = "") =>
+  value.toUpperCase().replace(/[^A-Z0-9-]/g, "").slice(0, 24);
+
 export default function PartnerAdminPage() {
   const [user, setUser] = useState(undefined);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
   const [applications, setApplications] = useState([]);
+  const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState("All");
   const [savingId, setSavingId] = useState("");
   const [notice, setNotice] = useState("");
+  const [approvalTarget, setApprovalTarget] = useState(null);
+  const [approvalCode, setApprovalCode] = useState("");
+  const [approvalNote, setApprovalNote] = useState("");
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (nextUser) => setUser(nextUser || null));
     return unsub;
   }, []);
 
-  const loadApplications = async () => {
+  const loadData = async () => {
     setLoading(true);
     setNotice("");
     try {
-      const q = query(collection(db, "partnerApplications"), orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
+      const [applicationSnapshot, jobsSnapshot] = await Promise.all([
+        getDocs(query(collection(db, "partnerApplications"), orderBy("createdAt", "desc"))),
+        getDocs(query(collection(db, "jobs"), orderBy("createdAt", "desc"))),
+      ]);
+
       setApplications(
-        snapshot.docs.map((item) => ({
+        applicationSnapshot.docs.map((item) => ({
+          id: item.id,
+          ...item.data(),
+        }))
+      );
+
+      setJobs(
+        jobsSnapshot.docs.map((item) => ({
           id: item.id,
           ...item.data(),
         }))
       );
     } catch (err) {
       console.error(err);
-      setNotice("Could not load partner applications.");
+      setNotice("Could not load partner data.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user) loadApplications();
+    if (user) loadData();
   }, [user]);
 
   const visible = useMemo(() => {
     if (filter === "All") return applications;
     return applications.filter((item) => item.status === filter);
   }, [applications, filter]);
+
+  const jobsByPartner = useMemo(() => {
+    return jobs.reduce((map, job) => {
+      const code = String(job.partnerCode || "").trim().toUpperCase();
+      if (!code) return map;
+
+      if (!map[code]) {
+        map[code] = { jobs: 0, revenue: 0, scheduled: 0, quoteRequests: 0 };
+      }
+
+      map[code].jobs += 1;
+      const total = Number(job.total);
+      if (Number.isFinite(total)) map[code].revenue += total;
+      if (job.status === "Scheduled") map[code].scheduled += 1;
+      if (job.status === "Quote Requested") map[code].quoteRequests += 1;
+
+      return map;
+    }, {});
+  }, [jobs]);
 
   const login = async (e) => {
     e.preventDefault();
@@ -93,21 +129,55 @@ export default function PartnerAdminPage() {
           item.id === application.id ? { ...item, ...changes } : item
         )
       );
+      return true;
     } catch (err) {
       console.error(err);
       setNotice("Could not update that partner application.");
+      return false;
     } finally {
       setSavingId("");
     }
   };
 
-  const approve = async (application) => {
-    const partnerCode = application.partnerCode || makeCode(application.businessName);
-    await updateApplication(application, {
+  const openApproval = (application) => {
+    setApprovalTarget(application);
+    setApprovalCode(application.partnerCode || makeCode(application.businessName));
+    setApprovalNote(application.adminNote || "");
+  };
+
+  const confirmApproval = async () => {
+    if (!approvalTarget) return;
+
+    const code = normalizeCode(approvalCode);
+    if (!code) {
+      setNotice("Add a partner code before approving.");
+      return;
+    }
+
+    const duplicate = applications.some(
+      (item) =>
+        item.id !== approvalTarget.id &&
+        String(item.partnerCode || "").trim().toUpperCase() === code
+    );
+
+    if (duplicate) {
+      setNotice("That partner code is already assigned to another partner.");
+      return;
+    }
+
+    const success = await updateApplication(approvalTarget, {
       status: "Approved",
-      partnerCode,
+      partnerCode: code,
+      adminNote: approvalNote.trim(),
       approvedAt: Timestamp.now(),
+      approvedBy: user?.email || "",
     });
+
+    if (success) {
+      setApprovalTarget(null);
+      setApprovalCode("");
+      setApprovalNote("");
+    }
   };
 
   const deny = async (application) => {
@@ -135,6 +205,16 @@ export default function PartnerAdminPage() {
           hour: "numeric",
           minute: "2-digit",
         });
+  };
+
+  const metricFor = (application) => {
+    const code = String(application.partnerCode || "").trim().toUpperCase();
+    return jobsByPartner[code] || {
+      jobs: 0,
+      revenue: 0,
+      scheduled: 0,
+      quoteRequests: 0,
+    };
   };
 
   if (user === undefined) {
@@ -194,12 +274,12 @@ export default function PartnerAdminPage() {
             </div>
             <h1 className="mt-2 text-3xl font-black sm:text-4xl">Applications</h1>
             <p className="mt-2 text-sm text-black/45">
-              Review new partner leads, approve accounts, and assign partner codes.
+              Review leads, approve partners, assign codes, and track attributed jobs.
             </p>
           </div>
           <div className="flex gap-2">
             <button
-              onClick={loadApplications}
+              onClick={loadData}
               className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm font-bold"
             >
               Refresh
@@ -248,10 +328,12 @@ export default function PartnerAdminPage() {
         <section className="mt-5 space-y-4">
           {loading ? (
             <div className="rounded-3xl border border-black/10 bg-white p-8 text-center text-black/45">
-              Loading applications...
+              Loading partner data...
             </div>
           ) : visible.length ? (
-            visible.map((application) => (
+            visible.map((application) => {
+              const metrics = metricFor(application);
+              return (
               <article
                 key={application.id}
                 className="rounded-[28px] border border-black/10 bg-white p-5 shadow-sm sm:p-6"
@@ -281,7 +363,7 @@ export default function PartnerAdminPage() {
                     )}
                     {application.status !== "Approved" && (
                       <button
-                        onClick={() => approve(application)}
+                        onClick={() => openApproval(application)}
                         disabled={savingId === application.id}
                         className="jb-polished-gold-button px-4 py-2 text-sm"
                       >
@@ -322,8 +404,29 @@ export default function PartnerAdminPage() {
                   </div>
                 </div>
 
-                {(application.audience || application.volume || application.notes) && (
-                  <div className="mt-5 grid gap-3 rounded-2xl bg-[#f7f3eb] p-4 md:grid-cols-3">
+                {application.status === "Approved" && (
+                  <div className="mt-5 grid gap-3 rounded-2xl border border-[#c8b477]/20 bg-[#f8f3e5] p-4 sm:grid-cols-4">
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Attributed jobs</div>
+                      <div className="mt-1 text-2xl font-black">{metrics.jobs}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Revenue</div>
+                      <div className="mt-1 text-2xl font-black">{"$" + metrics.revenue.toFixed(2)}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Scheduled</div>
+                      <div className="mt-1 text-2xl font-black">{metrics.scheduled}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Quote requests</div>
+                      <div className="mt-1 text-2xl font-black">{metrics.quoteRequests}</div>
+                    </div>
+                  </div>
+                )}
+
+                {(application.audience || application.volume || application.notes || application.adminNote) && (
+                  <div className="mt-5 grid gap-3 rounded-2xl bg-[#f7f3eb] p-4 md:grid-cols-4">
                     <div>
                       <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Audience</div>
                       <div className="mt-1 text-sm text-black/65">{application.audience || "—"}</div>
@@ -333,13 +436,18 @@ export default function PartnerAdminPage() {
                       <div className="mt-1 text-sm text-black/65">{application.volume || "—"}</div>
                     </div>
                     <div>
-                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Notes</div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Applicant notes</div>
                       <div className="mt-1 text-sm text-black/65">{application.notes || "—"}</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-black/35">Admin note</div>
+                      <div className="mt-1 text-sm text-black/65">{application.adminNote || "—"}</div>
                     </div>
                   </div>
                 )}
               </article>
-            ))
+              );
+            })
           ) : (
             <div className="rounded-3xl border border-black/10 bg-white p-8 text-center text-black/45">
               No partner applications in this view.
@@ -347,6 +455,69 @@ export default function PartnerAdminPage() {
           )}
         </section>
       </div>
+
+      {approvalTarget && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/55 p-4 backdrop-blur-sm">
+          <button
+            type="button"
+            aria-label="Close approval"
+            className="absolute inset-0 cursor-default"
+            onClick={() => setApprovalTarget(null)}
+          />
+          <section className="relative z-10 w-full max-w-lg rounded-[30px] border border-black/10 bg-[#f8f4eb] p-6 shadow-2xl sm:p-8">
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#9a7d2f]">Approve partner</div>
+            <h2 className="mt-2 text-3xl font-black">{approvalTarget.businessName || "Partner"}</h2>
+            <p className="mt-2 text-sm leading-6 text-black/50">
+              Review the code before approval. This code will attribute future bookings to this partner.
+            </p>
+
+            <div className="mt-6">
+              <label className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Partner code</label>
+              <input
+                value={approvalCode}
+                onChange={(e) => setApprovalCode(normalizeCode(e.target.value))}
+                className="mt-2 w-full rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-lg font-black uppercase tracking-wide outline-none focus:border-[#b89b46]"
+                placeholder="PARTNER-123"
+              />
+              <button
+                type="button"
+                onClick={() => setApprovalCode(makeCode(approvalTarget.businessName))}
+                className="mt-2 text-sm font-bold text-[#8b712b]"
+              >
+                Generate another code
+              </button>
+            </div>
+
+            <div className="mt-5">
+              <label className="text-xs font-bold uppercase tracking-[0.14em] text-black/45">Internal admin note</label>
+              <textarea
+                value={approvalNote}
+                onChange={(e) => setApprovalNote(e.target.value)}
+                className="mt-2 min-h-28 w-full resize-y rounded-2xl border border-black/10 bg-white px-4 py-3.5 text-sm outline-none focus:border-[#b89b46]"
+                placeholder="Optional notes about agreed terms, property count, follow-up, etc."
+              />
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setApprovalTarget(null)}
+                className="rounded-xl border border-black/10 bg-white px-5 py-3 font-bold text-black/60"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={savingId === approvalTarget.id}
+                onClick={confirmApproval}
+                className="jb-polished-gold-button flex-1 disabled:opacity-50"
+              >
+                {savingId === approvalTarget.id ? "Approving..." : "Confirm Approval"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }
