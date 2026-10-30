@@ -7,35 +7,64 @@ export const quarterLoadThreshold = fullLoadPoints * 0.25; // 137.5
 export const quarterLoadPrice = 250;
 export const transitionFloorPrice = 200;
 
-export function calculatePrice(cart) {
-  const totalVolume = cart.reduce((sum, item) => sum + item.volume, 0);
-  const totalItemPrice = cart.reduce((sum, item) => sum + item.price, 0);
-  const highestItemPrice = cart.reduce((max, item) => Math.max(max, item.price), 0);
+const FIXED_ADDON_PATTERNS = [
+  /\bpaint\b/i,
+  /\btire\b/i,
+  /\bpropane tank\b/i,
+  /proof of disposal/i,
+  /proof of recycling/i,
+  /^mileage$/i,
+  /^moving fee/i,
+];
+
+export function isCustomQuoteItem(item) {
+  return Boolean(item?.customQuote) || /cleanout/i.test(String(item?.name || ""));
+}
+
+export function isFixedPriceAddon(item) {
+  if (item?.pricingMode === "fixed") return true;
+  const name = String(item?.name || "");
+  return FIXED_ADDON_PATTERNS.some((pattern) => pattern.test(name));
+}
+
+function basePriceFor(normalCart) {
+  const totalVolume = normalCart.reduce(
+    (sum, item) => sum + Number(item?.volume || 0),
+    0
+  );
+  const totalItemPrice = normalCart.reduce(
+    (sum, item) => sum + Number(item?.price || 0),
+    0
+  );
+  const highestItemPrice = normalCart.reduce(
+    (max, item) => Math.max(max, Number(item?.price || 0)),
+    0
+  );
+
+  if (!normalCart.length) {
+    return { finalPrice: minimumPrice, totalVolume: 0 };
+  }
 
   const volumePrice = totalVolume * pricePerPoint;
 
-  // ✅ NEW: If cart is empty, total must be 0
-  if (totalVolume === 0) {
-    return { finalPrice: 0, totalVolume };
-  }
-
-  // ✅ 1) Single high-value item rule
-  if (cart.length === 1 && highestItemPrice > quarterLoadPrice) {
+  if (normalCart.length === 1 && highestItemPrice > quarterLoadPrice) {
     return { finalPrice: highestItemPrice, totalVolume };
   }
 
-  // ✅ 2) UNDER 1/4 load logic
   if (totalVolume < quarterLoadThreshold) {
     if (totalItemPrice < quarterLoadPrice) {
-      // Still under $250 – use higher of min or item price
-      return { finalPrice: Math.max(minimumPrice, totalItemPrice), totalVolume };
-    } else {
-      // Crossed $250 → switch to volume pricing, but protect against an extreme drop
-      return { finalPrice: Math.max(transitionFloorPrice, volumePrice), totalVolume };
+      return {
+        finalPrice: Math.max(minimumPrice, totalItemPrice),
+        totalVolume,
+      };
     }
+
+    return {
+      finalPrice: Math.max(transitionFloorPrice, volumePrice),
+      totalVolume,
+    };
   }
 
-  // ✅ 3) 1/4 load and above – tier snapping for FIRST truck only
   const fullLoads = Math.floor(totalVolume / fullLoadPoints);
   const remainder = totalVolume % fullLoadPoints;
   const remainderCost = remainder * pricePerPoint;
@@ -54,20 +83,67 @@ export function calculatePrice(cart) {
       }
     }
 
-    // If not within rounding zone → fall back to raw volume
     return { finalPrice: volumePrice, totalVolume };
   }
 
-  // ✅ 4) MULTIPLE TRUCKS → flat 1000 per full + cubic on remainder
   return {
     finalPrice: fullLoads * 1000 + remainderCost,
     totalVolume,
   };
 }
 
-// ✅ Needed for load bar labeling and UI
+export function calculatePrice(cart = []) {
+  const safeCart = Array.isArray(cart) ? cart : [];
+
+  if (!safeCart.length) {
+    return {
+      finalPrice: 0,
+      totalVolume: 0,
+      fixedAddonTotal: 0,
+      customQuote: false,
+    };
+  }
+
+  const customItems = safeCart.filter(isCustomQuoteItem);
+  if (customItems.length) {
+    return {
+      finalPrice: null,
+      totalVolume: safeCart.reduce(
+        (sum, item) => sum + Number(item?.volume || 0),
+        0
+      ),
+      fixedAddonTotal: safeCart
+        .filter(isFixedPriceAddon)
+        .reduce((sum, item) => sum + Number(item?.price || 0), 0),
+      customQuote: true,
+      customItems,
+    };
+  }
+
+  const fixedAddons = safeCart.filter(isFixedPriceAddon);
+  const normalCart = safeCart.filter((item) => !isFixedPriceAddon(item));
+  const fixedAddonTotal = fixedAddons.reduce(
+    (sum, item) => sum + Number(item?.price || 0),
+    0
+  );
+
+  // Fixed disposal/premium items are added on top of the normal pickup calculation.
+  // If the entire pickup is premium items, the normal pickup minimum still applies.
+  const base = basePriceFor(normalCart);
+
+  return {
+    finalPrice: base.finalPrice + fixedAddonTotal,
+    totalVolume: safeCart.reduce(
+      (sum, item) => sum + Number(item?.volume || 0),
+      0
+    ),
+    fixedAddonTotal,
+    customQuote: false,
+  };
+}
+
 export function getLoadLabel(volume) {
-  if (volume === 0) return 'Empty';
+  if (volume === 0) return "Empty";
   const loadNum = Math.floor(volume / fullLoadPoints) + 1;
   const segment = volume % fullLoadPoints;
   if (segment === 0) return `Load ${loadNum}`;
