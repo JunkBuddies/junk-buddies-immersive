@@ -163,6 +163,30 @@ export default function ConfirmationPremiumPage() {
             )}
           </div>
 
+          {Array.isArray(state.items) && state.items.length > 0 && (
+            <div className="mt-3 rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-left">
+              <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/30 sm:text-xs">
+                Items in this pickup
+              </div>
+              <div className="mt-2 divide-y divide-white/10">
+                {state.items.map((item, index) => (
+                  <div
+                    key={(item.name || "item") + "-" + index}
+                    className="flex items-center justify-between gap-4 py-2.5"
+                  >
+                    <span className="min-w-0 truncate text-sm font-semibold text-white/75">
+                      {item.qty > 1 ? item.qty + "x " : ""}
+                      {item.name}
+                    </span>
+                    <span className="shrink-0 text-xs text-white/35">
+                      {"$"}{Number(item.price || 0).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="mt-4 rounded-2xl border border-[#c8b477]/20 bg-[#c8b477]/[0.06] p-4 sm:mt-6">
             <div className="font-black text-[#e0cf91]">
               No payment was taken.
