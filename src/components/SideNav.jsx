@@ -1,6 +1,7 @@
 // SideNav.jsx
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { goToPriceMirror } from "../utils/mirrorNavigation";
 import {
   Home,
   Calculator,
@@ -9,13 +10,10 @@ import {
   BookOpen,
   HelpCircle,
 } from "lucide-react";
-import { useCallback } from "react";
 
 export default function SideNav({ open }) {
-  const openChatWidget = useCallback(() => {
-    const trigger = document.querySelector(".jb-chat-bubble, .chat-widget-trigger");
-    if (trigger) trigger.click();
-  }, []);
+  const navigate = useNavigate();
+  const openPriceMirror = () => goToPriceMirror(navigate);
 
   return (
     <motion.aside
@@ -27,7 +25,7 @@ export default function SideNav({ open }) {
       <nav className="flex flex-col justify-center items-start gap-2 flex-1 px-3">
         <NavItem to="/" icon={<Home />} label="Home" open={open} />
         <button
-          onClick={openChatWidget}
+          onClick={openPriceMirror}
           className="flex items-center gap-3 w-full text-gray-200 hover:text-gold px-3 py-2 transition rounded"
           title="Instant Pricing"
         >
