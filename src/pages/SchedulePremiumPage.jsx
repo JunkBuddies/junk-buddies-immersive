@@ -58,23 +58,29 @@ export default function SchedulePremiumPage() {
   const { cart, setCart } = useCart();
   const navigate = useNavigate();
   const stepRef = useRef(null);
-  const { finalPrice: rawFinalPrice } = calculatePrice(cart);
+  const pricingResult = calculatePrice(cart);
+  const rawFinalPrice = pricingResult.finalPrice;
+  const customQuote = Boolean(pricingResult.customQuote);
 
   const sessionId = localStorage.getItem("jb_chat_session") || "";
   const discountActive =
     sessionId && localStorage.getItem("jb_disc_on_" + sessionId) === "1";
 
-  const finalPrice = discountActive
-    ? Math.round(rawFinalPrice * 0.9 * 100) / 100
-    : rawFinalPrice;
+  const finalPrice = customQuote
+    ? null
+    : discountActive
+    ? Math.round(Number(rawFinalPrice || 0) * 0.9 * 100) / 100
+    : Number(rawFinalPrice || 0);
 
   const itemSubtotal = cart.reduce(
     (sum, item) => sum + Number(item.price || 0),
     0
   );
   const minimumApplied =
-    rawFinalPrice === minimumPrice && itemSubtotal < minimumPrice;
-  const discountSavings = Math.max(0, rawFinalPrice - finalPrice);
+    !customQuote && rawFinalPrice === minimumPrice && itemSubtotal < minimumPrice;
+  const discountSavings = customQuote
+    ? 0
+    : Math.max(0, Number(rawFinalPrice || 0) - Number(finalPrice || 0));
 
   const dates = useMemo(makeDates, []);
   const savedBooking = (() => {
@@ -261,11 +267,12 @@ export default function SchedulePremiumPage() {
         orderNumber,
         orderSequence: nextOrder.orderSequence,
         items: cart,
-        total: finalPrice,
+        total: customQuote ? null : finalPrice,
+        customQuote,
         discountActive: Boolean(discountActive),
         Latitude: null,
         Longitude: null,
-        status: "Scheduled",
+        status: customQuote ? "Quote Requested" : "Scheduled",
         bookingSource: "immersive-premium",
         createdAt: Timestamp.now(),
       });
@@ -283,7 +290,8 @@ export default function SchedulePremiumPage() {
           date: form.date,
           formattedDate: formatDate(),
           time: form.time,
-          total: finalPrice,
+          total: customQuote ? null : finalPrice,
+          customQuote,
           discountActive: Boolean(discountActive),
           itemCount: cartSummary.reduce((sum, item) => sum + item.qty, 0),
           items: cartSummary.map((item) => ({ name: item.name, qty: item.qty, price: item.price })),
@@ -711,7 +719,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">Estimated total</div>
-                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{"$"}{finalPrice.toFixed(2)}</div>
+                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{customQuote ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
                 </div>
                 <button type="button" onClick={addMoreItems} className="text-xs font-bold text-[#e0cf91]">Edit items</button>
               </div>
@@ -726,7 +734,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                 <button type="button" onClick={goNext} className="jb-polished-gold-button flex-1">Continue</button>
               ) : (
                 <button type="button" onClick={submit} disabled={submitting || !cart.length} className="jb-polished-gold-button flex-1 disabled:cursor-not-allowed disabled:opacity-40">
-                  {submitting ? "Locking it in…" : "Confirm Pickup"}
+                  {submitting ? "Locking it in…" : customQuote ? "Request Custom Quote" : "Confirm Pickup"}
                 </button>
               )}
             </div>
@@ -747,7 +755,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     {item.qty > 1 && <b className="text-[#e0cf91]">{item.qty}x </b>}
                     {item.name}
                   </span>
-                  <span className="shrink-0 text-white/40">{"$"}{item.price.toFixed(2)}</span>
+                  <span className="shrink-0 text-white/40">{item.customQuote || item.pricingMode === "custom" ? "Custom quote" : item.price == null || Number(item.price) <= 0 ? "Volume priced" : "$" + Number(item.price).toFixed(2)}</span>
                 </div>
               )) : <div className="text-sm text-white/40">Your cart is empty. Add items before scheduling.</div>}
             </div>
@@ -755,7 +763,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
             <div className="mt-5 border-t border-white/10 pt-5">
               {discountActive && <div className="mb-3 inline-flex rounded-full border border-[#c8b477]/25 bg-[#c8b477]/10 px-3 py-1 text-xs font-bold text-[#e0cf91]">10% offer applied</div>}
               <div className="text-xs uppercase tracking-wider text-white/30">Estimated total</div>
-              <div className="mt-1 text-3xl font-black text-[#e0cf91]">{"$"}{finalPrice.toFixed(2)}</div>
+              <div className="mt-1 text-3xl font-black text-[#e0cf91]">{customQuote ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
               <div className="mt-2 text-xs text-white/35">Pay after completion.</div>
               <PricingBridge />
             </div>
@@ -793,7 +801,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     <div key={(item.name || "item") + "-" + index} className="flex items-center justify-between gap-4 py-3">
                       <div className="min-w-0">
                         <div className="truncate text-sm font-bold text-white/85">{item.name || "Item"}</div>
-                        <div className="mt-0.5 text-xs text-white/35">{"$"}{Number(item.price || 0).toFixed(2)}</div>
+                        <div className="mt-0.5 text-xs text-white/35">{item.customQuote || item.pricingMode === "custom" ? "Custom quote" : item.price == null || Number(item.price) <= 0 ? "Volume priced" : "$" + Number(item.price).toFixed(2)}</div>
                       </div>
                       <button
                         type="button"
