@@ -1,16 +1,15 @@
 // File: src/components/TopNavMobile.jsx
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { Search, X, Home, Sparkles, CalendarDays, MapPin, CircleHelp } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { goToPriceMirror } from "../utils/mirrorNavigation";
 
 export default function TopNavMobile() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const navigate = useNavigate();
 
-  const openChatWidget = useCallback(() => {
-    document.querySelector(".jb-chat-bubble, .chat-widget-trigger, #jb-open-button")?.click();
-    setSearchOpen(false);
-  }, []);
+  const openPriceMirror = () => goToPriceMirror(navigate, () => setSearchOpen(false));
 
   return (
     <>
@@ -41,7 +40,7 @@ export default function TopNavMobile() {
       >
         <div className="mx-auto grid h-[62px] max-w-lg grid-cols-5">
           <MobileTab to="/" icon={Home} label="Home" />
-          <button onClick={openChatWidget} className="group flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[#b8b1a2] active:bg-white/10" aria-label="Instant pricing">
+          <button onClick={openPriceMirror} className="group flex min-w-0 flex-col items-center justify-center gap-1 rounded-xl px-1 text-[#b8b1a2] active:bg-white/10" aria-label="Instant pricing">
             <Sparkles size={21} strokeWidth={1.8} className="text-[#d4b65e]" />
             <span className="max-w-full truncate text-[10px] font-medium leading-none">Price</span>
           </button>
@@ -72,7 +71,7 @@ export default function TopNavMobile() {
               <Search className="pointer-events-none absolute right-4 top-3.5 text-[#d4b65e]" size={19} />
             </div>
             <div className="flex w-full flex-col gap-3 text-center">
-              <QuickLink onClick={openChatWidget} label="Instant Pricing" />
+              <QuickLink onClick={openPriceMirror} label="Instant Pricing" />
               <QuickLink to="/itemized" label="Manual Item Selection" />
               <QuickLink to="/load-size" label="Load Size Guide" />
               <QuickLink to="/service-areas" label="Cities We Serve" />
