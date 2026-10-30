@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addDoc, collection, getDocs, limit, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { useCart } from "../context/CartContext";
-import { calculatePrice, minimumPrice } from "../utils/pricing";
+import { calculatePrice, minimumPrice, premiumType, premiumUnitPrice } from "../utils/pricing";
 import { db } from "../lib/firebase";
 
 const STEPS = ["Contact", "Property", "Date & time", "Review"];
@@ -102,6 +102,26 @@ export default function SchedulePremiumPage() {
     partnerCode: "",
   });
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+
+  const premiumQtyByType = useMemo(() => {
+    return cart.reduce((counts, item) => {
+      const type = premiumType(item);
+      if (type && type !== "custom") {
+        counts[type] = (counts[type] || 0) + Math.max(1, Number(item.qty || 1));
+      }
+      return counts;
+    }, {});
+  }, [cart]);
+
+  const displayLinePrice = (item) => {
+    const type = premiumType(item);
+    if (type === "custom") return null;
+    if (type) {
+      const unit = premiumUnitPrice(type, premiumQtyByType[type] || item.qty || 1);
+      if (unit != null) return unit * Math.max(1, Number(item.qty || 1));
+    }
+    return Number(item.price || 0);
+  };
 
   const cartSummary = useMemo(() => {
     return Object.values(
@@ -801,7 +821,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     <div key={(item.name || "item") + "-" + index} className="flex items-center justify-between gap-4 py-3">
                       <div className="min-w-0">
                         <div className="truncate text-sm font-bold text-white/85">{item.name || "Item"}</div>
-                        <div className="mt-0.5 text-xs text-white/35">{item.customQuote || item.pricingMode === "custom" ? "Custom quote" : item.price == null || Number(item.price) <= 0 ? "Volume priced" : "$" + Number(item.price).toFixed(2)}</div>
+                        <div className="mt-0.5 text-xs text-white/35">{premiumType(item) === "custom" ? "Custom quote" : "$" + displayLinePrice(item).toFixed(2)}</div>
                       </div>
                       <button
                         type="button"
