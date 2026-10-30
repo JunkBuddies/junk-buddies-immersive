@@ -1096,6 +1096,9 @@ function LandingPage() {
               <Link to="/faq" className="text-gold hover:underline block">
                 📌 Frequently Asked Questions
               </Link>
+              <Link to="/lookup" className="text-gold hover:underline block">
+                🔎 Look Up Your Pickup
+              </Link>
             </div>
 
             {/* City Links Grid */}
