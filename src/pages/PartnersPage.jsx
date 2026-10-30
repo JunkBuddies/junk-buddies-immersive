@@ -63,7 +63,7 @@ const steps = [
 
 const initialApplication = {
   businessName: "",
-  category: "Property Management",
+  category: "Property Managers",
   website: "",
   serviceArea: "",
   contactName: "",
