@@ -454,87 +454,158 @@ export default function SchedulePremiumPage() {
                   Choose a preferred day and arrival window.
                 </p>
 
-                <div className="mt-5 flex gap-2 overflow-x-auto pb-1 sm:mt-7 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:pb-0">
-                  {dates.map((date) => {
-                    const active = form.date === date.value;
-
-                    return (
-                      <button
-                        key={date.value}
-                        type="button"
-                        onClick={() => update("date", date.value)}
-                        className={
-                          "min-w-[88px] rounded-2xl border p-3 text-left transition sm:min-w-0 sm:p-4 " +
-                          (active
-                            ? "border-[#c8b477] bg-[#c8b477] text-black"
-                            : "border-white/10 bg-white/[0.035] hover:border-[#c8b477]/50")
-                        }
-                      >
-                        <div className="text-sm font-black sm:text-base">
-                          {date.label}
+                <div className="mt-5 sm:mt-7">
+                  <div className="sm:hidden">
+                    <div className="rounded-[22px] border border-[#c8b477]/20 bg-gradient-to-b from-[#15120d] to-[#0b0b0b] p-3.5">
+                      <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+                        <div>
+                          <div className="text-[9px] font-bold uppercase tracking-[0.18em] text-white/35">
+                            Preferred day
+                          </div>
+                          <div className="mt-1 text-base font-black text-white">
+                            {form.date ? formatDate() : "Choose a date"}
+                          </div>
                         </div>
-                        <div
-                          className={
-                            "mt-0.5 text-xs " +
-                            (active
-                              ? "text-black/60"
-                              : "text-white/40")
-                          }
-                        >
-                          {date.sub}
+                        <div className="rounded-xl border border-[#c8b477]/25 bg-[#c8b477]/10 px-3 py-2 text-[10px] font-bold text-[#e0cf91]">
+                          Step 3
                         </div>
-                      </button>
-                    );
-                  })}
-                </div>
+                      </div>
 
-                <label className="mt-3 block sm:mt-4">
-                  <span className="text-[10px] text-white/35 sm:text-xs">
-                    Or choose another date
-                  </span>
-                  <input
-                    type="date"
-                    className={
-                      fieldClass + " mt-1.5 [color-scheme:dark] sm:mt-2"
-                    }
-                    min={dates[0].value}
-                    value={form.date}
-                    onChange={(e) => update("date", e.target.value)}
-                  />
-                </label>
+                      <div className="mt-3 grid grid-cols-2 gap-2">
+                        {dates.slice(0, 4).map((date) => {
+                          const active = form.date === date.value;
 
-                <div className="mt-5 grid grid-cols-3 gap-2 sm:mt-7 sm:gap-3">
-                  {WINDOWS.map((window) => {
-                    const active = form.time === window.value;
+                          return (
+                            <button
+                              key={date.value}
+                              type="button"
+                              onClick={() => update("date", date.value)}
+                              className={
+                                "rounded-xl border px-3 py-2.5 text-left transition " +
+                                (active
+                                  ? "border-[#c8b477] bg-[#c8b477] text-black"
+                                  : "border-white/10 bg-white/[0.035] text-white")
+                              }
+                            >
+                              <div className="text-xs font-black">{date.label}</div>
+                              <div className={"mt-0.5 text-[10px] " + (active ? "text-black/60" : "text-white/35")}>
+                                {date.sub}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
 
-                    return (
-                      <button
-                        key={window.value}
-                        type="button"
-                        onClick={() => update("time", window.value)}
-                        className={
-                          "rounded-2xl border p-3 text-center transition sm:p-4 sm:text-left " +
-                          (active
-                            ? "border-[#c8b477] bg-[#c8b477] text-black"
-                            : "border-white/10 bg-white/[0.035] hover:border-[#c8b477]/50")
-                        }
-                      >
-                        <div className="text-xs font-black sm:text-base">
-                          {window.label}
-                        </div>
-                        <div
-                          className={
-                            "mt-1 text-[9px] leading-tight sm:text-xs " +
-                            (active
-                              ? "text-black/60"
-                              : "text-white/40")
-                          }
-                        >
-                          {window.sub}
-                        </div>
-                      </button>
-                    );
-                  })}
+                      <label className="mt-2 block">
+                        <input
+                          type="date"
+                          className="w-full rounded-xl border border-white/10 bg-[#111] px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-[#c8b477]"
+                          min={dates[0].value}
+                          value={form.date}
+                          onChange={(e) => update("date", e.target.value)}
+                        />
+                      </label>
+                    </div>
+
+                    <div className="mt-3 rounded-[22px] border border-white/10 bg-[#0d0d0d] p-3.5">
+                      <div className="mb-2.5 text-[9px] font-bold uppercase tracking-[0.18em] text-white/35">
+                        Arrival window
+                      </div>
+
+                      <div className="space-y-2">
+                        {WINDOWS.map((window) => {
+                          const active = form.time === window.value;
+
+                          return (
+                            <button
+                              key={window.value}
+                              type="button"
+                              onClick={() => update("time", window.value)}
+                              className={
+                                "flex w-full items-center justify-between rounded-xl border px-3.5 py-3 text-left transition " +
+                                (active
+                                  ? "border-[#c8b477] bg-[#c8b477] text-black"
+                                  : "border-white/10 bg-white/[0.03] text-white")
+                              }
+                            >
+                              <div>
+                                <div className="text-sm font-black">{window.label}</div>
+                                <div className={"mt-0.5 text-[10px] " + (active ? "text-black/60" : "text-white/35")}>
+                                  {window.sub}
+                                </div>
+                              </div>
+                              <div className={"flex h-5 w-5 items-center justify-center rounded-full border text-[10px] " + (active ? "border-black/30 bg-black/10" : "border-white/15")}>
+                                {active ? "✓" : ""}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="hidden sm:block">
+                    <div className="grid grid-cols-3 gap-3">
+                      {dates.map((date) => {
+                        const active = form.date === date.value;
+
+                        return (
+                          <button
+                            key={date.value}
+                            type="button"
+                            onClick={() => update("date", date.value)}
+                            className={
+                              "rounded-2xl border p-4 text-left transition " +
+                              (active
+                                ? "border-[#c8b477] bg-[#c8b477] text-black"
+                                : "border-white/10 bg-white/[0.035] hover:border-[#c8b477]/50")
+                            }
+                          >
+                            <div className="font-black">{date.label}</div>
+                            <div className={"mt-1 text-sm " + (active ? "text-black/60" : "text-white/40")}>
+                              {date.sub}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <label className="mt-4 block">
+                      <span className="text-xs text-white/35">Or choose another date</span>
+                      <input
+                        type="date"
+                        className={fieldClass + " mt-2 [color-scheme:dark]"}
+                        min={dates[0].value}
+                        value={form.date}
+                        onChange={(e) => update("date", e.target.value)}
+                      />
+                    </label>
+
+                    <div className="mt-7 grid grid-cols-3 gap-3">
+                      {WINDOWS.map((window) => {
+                        const active = form.time === window.value;
+
+                        return (
+                          <button
+                            key={window.value}
+                            type="button"
+                            onClick={() => update("time", window.value)}
+                            className={
+                              "rounded-2xl border p-4 text-left transition " +
+                              (active
+                                ? "border-[#c8b477] bg-[#c8b477] text-black"
+                                : "border-white/10 bg-white/[0.035] hover:border-[#c8b477]/50")
+                            }
+                          >
+                            <div className="font-black">{window.label}</div>
+                            <div className={"mt-1 text-xs " + (active ? "text-black/60" : "text-white/40")}>
+                              {window.sub}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
