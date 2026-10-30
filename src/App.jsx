@@ -11,6 +11,7 @@ import SchedulePremiumPage from "./pages/SchedulePremiumPage";
 import ConfirmationPremiumPage from "./pages/ConfirmationPremiumPage";
 import ConnectPage from "./pages/ConnectPage";
 import PartnersPage from "./pages/PartnersPage";
+import OrderLookupPage from "./pages/OrderLookupPage";
 
 // Blog + Articles
 import BlogPage from "./pages/BlogPage";
@@ -69,6 +70,7 @@ function App() {
             <Route path="/confirmation" element={<ConfirmationPremiumPage />} />
             <Route path="/connect" element={<ConnectPage />} />
             <Route path="/partners" element={<PartnersPage />} />
+            <Route path="/lookup" element={<OrderLookupPage />} />
 
             {/* Blog Routes */}
             <Route path="/blog" element={<BlogPage />} />
