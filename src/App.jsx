@@ -51,11 +51,13 @@ import LaPorte from "./pages/cities/La-Porte";
 // Context + Global Chat
 import { CartProvider } from "./context/CartContext";
 import ChatWidget from "./components/chat/ChatWidget";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
     <CartProvider>
       <Router>
+        <ScrollToTop />
         <Routes>
           {/* Everything inside LayoutShell = immersive app-like navigation */}
           <Route element={<LayoutShell />}>
