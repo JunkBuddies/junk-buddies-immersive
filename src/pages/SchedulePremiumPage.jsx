@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { addDoc, collection, doc, runTransaction, Timestamp } from "firebase/firestore";
 import { useCart } from "../context/CartContext";
 import { calculatePrice, minimumPrice } from "../utils/pricing";
 import { db } from "../lib/firebase";
@@ -32,6 +32,31 @@ const makeDates = () =>
       sub: date.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
     };
   });
+
+async function getNextOrderNumber() {
+  const counterRef = doc(db, "counters", "orders");
+
+  const nextNumber = await runTransaction(db, async (transaction) => {
+    const snapshot = await transaction.get(counterRef);
+    const current = snapshot.exists()
+      ? Number(snapshot.data().lastNumber || 330101)
+      : 330101;
+    const next = current + 1;
+
+    transaction.set(
+      counterRef,
+      {
+        lastNumber: next,
+        updatedAt: Timestamp.now(),
+      },
+      { merge: true }
+    );
+
+    return next;
+  });
+
+  return "JB-" + nextNumber;
+}
 
 export default function SchedulePremiumPage() {
   const { cart, setCart } = useCart();
@@ -72,6 +97,7 @@ export default function SchedulePremiumPage() {
     zip: "",
     date: "",
     time: "",
+    partnerCode: "",
   });
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
 
@@ -211,8 +237,6 @@ export default function SchedulePremiumPage() {
     setSubmitting(true);
     setError("");
 
-    const orderNumber =
-      "JB-" + Math.floor(100000 + Math.random() * 900000);
     const fullAddress =
       form.street +
       ", " +
@@ -229,8 +253,12 @@ export default function SchedulePremiumPage() {
       : "Evening";
 
     try {
+      const orderNumber = await getNextOrderNumber();
+
       await addDoc(collection(db, "jobs"), {
         ...form,
+        emailLower: form.email.trim().toLowerCase(),
+        partnerCode: form.partnerCode.trim(),
         fullAddress,
         timeOfDay,
         orderNumber,
@@ -265,6 +293,7 @@ export default function SchedulePremiumPage() {
           city: form.city,
           stateName: form.state,
           zip: form.zip,
+          partnerCode: form.partnerCode.trim(),
         },
       });
     } catch (err) {
@@ -658,6 +687,23 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     <div className="text-[10px] uppercase tracking-wider text-white/30 sm:text-xs">Preferred time</div>
                     <div className="mt-1 text-sm font-bold sm:text-base">{formatDate()}</div>
                     <div className="text-xs text-white/50 sm:text-sm">{form.time}</div>
+                  </div>
+                  <div className="rounded-2xl border border-[#c8b477]/15 bg-[#c8b477]/[0.035] p-3 sm:p-4">
+                    <label className="block">
+                      <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c8b477]/70 sm:text-xs">
+                        Partner / property code
+                      </span>
+                      <input
+                        className="mt-2 w-full rounded-xl border border-white/10 bg-black/35 px-3.5 py-2.5 text-sm uppercase tracking-[0.08em] text-white placeholder:normal-case placeholder:tracking-normal placeholder:text-white/25 outline-none focus:border-[#c8b477]"
+                        value={form.partnerCode}
+                        onChange={(e) => update("partnerCode", e.target.value.toUpperCase())}
+                        placeholder="Optional"
+                        autoComplete="off"
+                      />
+                      <span className="mt-1.5 block text-[10px] leading-relaxed text-white/30">
+                        For approved property, partner, or QR referral codes. No code is required to book.
+                      </span>
+                    </label>
                   </div>
                 </div>
               </div>
