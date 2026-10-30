@@ -28,6 +28,7 @@ function ItemizedPage() {
   const [discountApplied, setDiscountApplied] = useState(false);
 
   const navigate = useNavigate();
+  const returningToSchedule = localStorage.getItem("jb_return_to_schedule") === "1";
 
   // reflect discount flag from ChatWidget (stored in localStorage)
   useEffect(() => {
@@ -191,7 +192,7 @@ function ItemizedPage() {
               onClick={() => navigate("/schedule")}
               className="mt-4 w-full px-3 py-2 bg-gold text-black font-semibold rounded"
             >
-              Continue to Schedule
+              {returningToSchedule ? "Return to Scheduling" : "Continue to Schedule"}
             </button>
           </div>
         </div>
