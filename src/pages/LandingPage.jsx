@@ -1,10 +1,21 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MagicPriceMirror from "../components/MagicPriceMirror";
+import { goToPriceMirror } from "../utils/mirrorNavigation";
 
 function LandingPage() {
   const navigate = useNavigate();
+  const openPriceMirror = () => goToPriceMirror(navigate);
   const [topTheme, setTopTheme] = useState(() => localStorage.getItem("jb_top_theme") || "night");
+
+  useEffect(() => {
+    if (localStorage.getItem("jb_focus_price_mirror") !== "1") return;
+    localStorage.removeItem("jb_focus_price_mirror");
+    const id = window.setTimeout(() => {
+      document.getElementById("magic-price-mirror")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 180);
+    return () => window.clearTimeout(id);
+  }, []);
 
   useEffect(() => {
     const syncTheme = (event) => setTopTheme(event.detail || document.documentElement.dataset.jbTopTheme || "night");
@@ -232,7 +243,7 @@ function LandingPage() {
             </p>
             <button
               type="button"
-              onClick={() => document.getElementById("jb-open-button")?.click()}
+              onClick={openPriceMirror}
               className="group mt-8 inline-flex items-center gap-5 rounded-full border border-[#a99056]/70 bg-black/10 px-7 py-3.5 text-xs sm:text-sm font-medium uppercase tracking-[0.18em] text-[#c8b477] backdrop-blur-sm transition duration-300 hover:border-[#cbb77a] hover:bg-[#aa9257]/10 hover:text-[#e0cf91]"
             >
               Get instant price
@@ -454,7 +465,7 @@ function LandingPage() {
           <div className="flex justify-center mt-2">
             <button
               className="ai-price-button text-[10px] sm:text-xs px-2 py-1"
-              onClick={() => document.getElementById('jb-open-button')?.click()}
+              onClick={openPriceMirror}
             >
               View Price In Seconds
             </button>
@@ -593,7 +604,7 @@ function LandingPage() {
             <div className="hidden sm:flex justify-center mt-4">
               <button
                 className="ai-price-button"
-                onClick={() => document.getElementById('jb-open-button')?.click()}
+                onClick={openPriceMirror}
               >
                 View Price In Seconds
               </button>
@@ -612,7 +623,7 @@ function LandingPage() {
               <div className="flex justify-center mt-4">
                 <button
                   className="ai-price-button"
-                  onClick={() => document.getElementById('jb-open-button')?.click()}
+                  onClick={openPriceMirror}
                 >
                   View Price In Seconds
                 </button>
@@ -809,7 +820,7 @@ function LandingPage() {
             <div className="flex justify-center mt-8">
               <button
                 className="ai-price-button"
-                onClick={() => document.getElementById('jb-open-button')?.click()}
+                onClick={openPriceMirror}
               >
                 View Price In Seconds
               </button>
@@ -952,7 +963,7 @@ function LandingPage() {
           <div className="flex justify-center mt-8 mb-8">
             <button
               className="ai-price-button"
-              onClick={() => document.getElementById('jb-open-button')?.click()}
+              onClick={openPriceMirror}
             >
               View Price In Seconds
             </button>
