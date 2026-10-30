@@ -36,9 +36,16 @@ export function premiumType(item) {
   }
   if (/proof of disposal/.test(name)) return "proof-disposal";
   if (/proof of recycling/.test(name)) return "proof-recycling";
-  if (/propane tank - 20lb|20lb.*propane/.test(name)) return "propane-20";
-  if (/refrigerator|freezer|window unit|air conditioner/.test(name)) return "refrigerant";
-  if (/television|\btv\b|computer monitor|electronics/.test(name)) return "ewaste";
+  if (/propane tank - 20\s*lb|20\s*lb.*propane/.test(name)) return "propane-20";
+  if (/window unit|window ac|air conditioner/.test(name)) return "window-ac";
+  if (/refrigerator|freezer/.test(name)) return "refrigerant";
+  if (/crt|tube tv|projection tv/.test(name)) return "tv-crt";
+  if (/television|\btv\b/.test(name)) return "tv-flat";
+  if (/computer monitor/.test(name)) return "monitor";
+  if (/desktop computer/.test(name)) return "desktop";
+  if (/laptop/.test(name)) return "laptop";
+  if (/printer/.test(name)) return "printer";
+  if (/electronics/.test(name)) return "ewaste";
 
   return null;
 }
@@ -80,13 +87,48 @@ const PREMIUM_TIERS = {
     { max: Infinity, unit: 20 },
   ],
   refrigerant: [
-    { max: 1, unit: 50 },
-    { max: 3, unit: 45 },
+    { max: 1, unit: 125 },
+    { max: 3, unit: 105 },
+    { max: Infinity, unit: 95 },
+  ],
+  "window-ac": [
+    { max: 1, unit: 85 },
+    { max: 3, unit: 75 },
+    { max: Infinity, unit: 65 },
+  ],
+  "tv-flat": [
+    { max: 1, unit: 70 },
+    { max: 4, unit: 50 },
     { max: Infinity, unit: 40 },
   ],
-  ewaste: [
+  "tv-crt": [
+    { max: 1, unit: 100 },
+    { max: 4, unit: 85 },
+    { max: Infinity, unit: 75 },
+  ],
+  monitor: [
+    { max: 1, unit: 60 },
+    { max: 4, unit: 40 },
+    { max: Infinity, unit: 30 },
+  ],
+  desktop: [
+    { max: 1, unit: 60 },
+    { max: 4, unit: 40 },
+    { max: Infinity, unit: 30 },
+  ],
+  laptop: [
     { max: 1, unit: 40 },
-    { max: 4, unit: 35 },
+    { max: 4, unit: 30 },
+    { max: Infinity, unit: 25 },
+  ],
+  printer: [
+    { max: 1, unit: 55 },
+    { max: 4, unit: 45 },
+    { max: Infinity, unit: 35 },
+  ],
+  ewaste: [
+    { max: 1, unit: 60 },
+    { max: 4, unit: 40 },
     { max: Infinity, unit: 30 },
   ],
 };
