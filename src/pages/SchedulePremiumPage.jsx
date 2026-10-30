@@ -34,7 +34,7 @@ const makeDates = () =>
   });
 
 export default function SchedulePremiumPage() {
-  const { cart } = useCart();
+  const { cart, setCart } = useCart();
   const navigate = useNavigate();
   const stepRef = useRef(null);
   const { finalPrice: rawFinalPrice } = calculatePrice(cart);
@@ -56,10 +56,13 @@ export default function SchedulePremiumPage() {
   const discountSavings = Math.max(0, rawFinalPrice - finalPrice);
 
   const dates = useMemo(makeDates, []);
-  const [step, setStep] = useState(0);
+  const savedBooking = (() => {
+    try { return JSON.parse(localStorage.getItem("jb_schedule_draft") || "null"); } catch { return null; }
+  })();
+  const [step, setStep] = useState(savedBooking?.step ?? 0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState({
+  const [form, setForm] = useState(savedBooking?.form || {
     name: "",
     email: "",
     phone: "",
@@ -70,6 +73,7 @@ export default function SchedulePremiumPage() {
     date: "",
     time: "",
   });
+  const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
 
   const cartSummary = useMemo(() => {
     return Object.values(
@@ -125,6 +129,10 @@ export default function SchedulePremiumPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    if (savedBooking) {
+      localStorage.removeItem("jb_schedule_draft");
+      localStorage.removeItem("jb_return_to_schedule");
+    }
   }, []);
 
   useEffect(() => {
@@ -156,16 +164,21 @@ export default function SchedulePremiumPage() {
     setStep((current) => Math.max(current - 1, 0));
   };
 
+  const persistScheduleDraft = () => {
+    localStorage.setItem(
+      "jb_schedule_draft",
+      JSON.stringify({ form, step })
+    );
+  };
+
   const addMoreItems = () => {
-    let id = localStorage.getItem("jb_chat_session");
+    persistScheduleDraft();
+    localStorage.setItem("jb_return_to_schedule", "1");
+    navigate("/itemized");
+  };
 
-    if (!id) {
-      id = "sess_" + Math.random().toString(36).slice(2);
-      localStorage.setItem("jb_chat_session", id);
-    }
-
-    localStorage.setItem("jb_mirror_resume_" + id, "more");
-    navigate("/");
+  const removeCartItem = (index) => {
+    setCart((current) => current.filter((_, itemIndex) => itemIndex !== index));
   };
 
   const formatDate = () => {
@@ -231,6 +244,9 @@ export default function SchedulePremiumPage() {
         createdAt: Timestamp.now(),
       });
 
+      localStorage.removeItem("jb_schedule_draft");
+      localStorage.removeItem("jb_return_to_schedule");
+
       navigate("/confirmation", {
         state: {
           orderNumber,
@@ -243,10 +259,8 @@ export default function SchedulePremiumPage() {
           time: form.time,
           total: finalPrice,
           discountActive: Boolean(discountActive),
-          itemCount: cartSummary.reduce(
-            (sum, item) => sum + item.qty,
-            0
-          ),
+          itemCount: cartSummary.reduce((sum, item) => sum + item.qty, 0),
+          items: cartSummary.map((item) => ({ name: item.name, qty: item.qty, price: item.price })),
         },
       });
     } catch (err) {
@@ -496,10 +510,11 @@ export default function SchedulePremiumPage() {
                         })}
                       </div>
 
-                      <label className="mt-2 block">
+                      <label className="mt-2 block min-w-0 overflow-hidden">
+                        <span className="mb-1.5 block text-[9px] font-semibold uppercase tracking-[0.14em] text-white/35">Calendar</span>
                         <input
                           type="date"
-                          className="w-full rounded-xl border border-white/10 bg-[#111] px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-[#c8b477]"
+className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-[#111] px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-[#c8b477]"
                           min={dates[0].value}
                           value={form.date}
                           onChange={(e) => update("date", e.target.value)}
@@ -674,7 +689,7 @@ export default function SchedulePremiumPage() {
           <aside className="hidden rounded-[28px] border border-[#c8b477]/20 bg-gradient-to-b from-[#15120a] to-[#090909] p-5 lg:sticky lg:top-24 lg:block">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-lg font-black">Your pickup</h2>
-              <button type="button" onClick={addMoreItems} className="text-xs font-bold text-[#e0cf91] hover:text-white">Add more</button>
+<button type="button" onClick={() => setCartDrawerOpen(true)} className="text-xs font-bold text-[#e0cf91] hover:text-white">Edit items</button>
             </div>
 
             <div className="mt-5 max-h-64 space-y-3 overflow-y-auto pr-1">
@@ -699,6 +714,84 @@ export default function SchedulePremiumPage() {
           </aside>
         </div>
       </section>
+
+      {cartDrawerOpen && (
+        <div className="fixed inset-0 z-[9998] flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-6">
+          <button
+            type="button"
+            aria-label="Close cart"
+            className="absolute inset-0 cursor-default"
+            onClick={() => setCartDrawerOpen(false)}
+          />
+          <section className="relative z-10 flex max-h-[78svh] w-full max-w-lg flex-col overflow-hidden rounded-t-[28px] border border-[#c8b477]/25 bg-[#0b0b0b] shadow-[0_-20px_70px_rgba(0,0,0,.65)] sm:rounded-[28px]">
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-[0.18em] text-white/35">Current pickup</div>
+                <h3 className="mt-1 text-xl font-black">Edit your items</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setCartDrawerOpen(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-lg text-white/70"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-3">
+              {cart.length ? (
+                <div className="divide-y divide-white/10">
+                  {cart.map((item, index) => (
+                    <div key={(item.name || "item") + "-" + index} className="flex items-center justify-between gap-4 py-3">
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-bold text-white/85">{item.name || "Item"}</div>
+                        <div className="mt-0.5 text-xs text-white/35">{"$"}{Number(item.price || 0).toFixed(2)}</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeCartItem(index)}
+                        className="shrink-0 rounded-lg border border-red-400/20 bg-red-500/[0.07] px-3 py-1.5 text-xs font-bold text-red-300"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-10 text-center text-sm text-white/40">Your cart is empty.</div>
+              )}
+            </div>
+
+            <div className="border-t border-white/10 bg-[#0d0d0d] p-4">
+              <div className="mb-3 flex items-end justify-between">
+                <div>
+                  <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/30">Updated estimate</div>
+                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{"$"}{finalPrice.toFixed(2)}</div>
+                </div>
+                <div className="text-xs text-white/35">{cart.length} selected</div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCartDrawerOpen(false)}
+                  className="rounded-xl border border-white/15 bg-white/[0.04] px-4 py-3 text-sm font-bold text-white"
+                >
+                  Done
+                </button>
+                <button
+                  type="button"
+                  onClick={addMoreItems}
+                  className="jb-polished-gold-button text-sm"
+                >
+                  Add items
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      )}
+
     </main>
   );
 }
