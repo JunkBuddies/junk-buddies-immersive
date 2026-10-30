@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
-import emailjs from "emailjs-com";
 import { useCart } from "../context/CartContext";
 import { calculatePrice, minimumPrice } from "../utils/pricing";
 import { db } from "../lib/firebase";
@@ -245,64 +244,6 @@ export default function SchedulePremiumPage() {
         createdAt: Timestamp.now(),
       });
 
-      const itemsText = cartSummary
-        .map((item) => {
-          return (item.qty > 1 ? item.qty + "x " : "") + item.name + ": $" + Number(item.price || 0).toFixed(2);
-        })
-        .join("\n");
-
-      const itemsHtml =
-        "<ul>" +
-        cartSummary
-          .map((item) => {
-            return (
-              "<li><strong>" +
-              (item.qty > 1 ? item.qty + "x " : "") +
-              item.name +
-              "</strong>: $" +
-              Number(item.price || 0).toFixed(2) +
-              "</li>"
-            );
-          })
-          .join("") +
-        "</ul>";
-
-      const emailParams = {
-        ...form,
-        orderNumber,
-        fullAddress,
-        customerEmail: form.email,
-        total: "$" + finalPrice.toFixed(2),
-        itemsText,
-        itemsHtml,
-      };
-
-      Promise.allSettled([
-        emailjs.send(
-          "JunkBuddies.info",
-          "Junk_Buddies_Booking",
-          { ...emailParams, items: itemsHtml },
-          "QCl4Akw_LZ3T8IvUd"
-        ),
-        emailjs.send(
-          "JunkBuddies.info",
-          "template_57eij3s",
-          { ...emailParams, items: itemsText, email: form.email },
-          "QCl4Akw_LZ3T8IvUd"
-        ),
-      ]).then((results) => {
-        results.forEach((result, index) => {
-          if (result.status === "rejected") {
-            console.warn(
-              index === 0
-                ? "Customer confirmation email failed."
-                : "Owner lead email failed.",
-              result.reason
-            );
-          }
-        });
-      });
-
       localStorage.removeItem("jb_schedule_draft");
       localStorage.removeItem("jb_return_to_schedule");
 
@@ -320,6 +261,10 @@ export default function SchedulePremiumPage() {
           discountActive: Boolean(discountActive),
           itemCount: cartSummary.reduce((sum, item) => sum + item.qty, 0),
           items: cartSummary.map((item) => ({ name: item.name, qty: item.qty, price: item.price })),
+          street: form.street,
+          city: form.city,
+          stateName: form.state,
+          zip: form.zip,
         },
       });
     } catch (err) {
