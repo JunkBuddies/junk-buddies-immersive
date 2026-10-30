@@ -30,6 +30,65 @@ function parseItems(text) {
   return found;
 }
 
+function normalizeQuotedItems(rows = []) {
+  return (Array.isArray(rows) ? rows : []).map((item) => {
+    const name = String(item?.name || "");
+    const lower = name.toLowerCase();
+    const qty = Math.max(1, Number(item?.qty || 1));
+
+    if (lower.includes("cleanout")) {
+      return {
+        ...item,
+        name,
+        qty,
+        price: null,
+        volume: 0,
+        customQuote: true,
+        pricingMode: "custom",
+      };
+    }
+
+    if (lower.includes("tire") && !lower.includes("rim")) {
+      return {
+        ...item,
+        name: "Tire",
+        qty,
+        price: 35 * qty,
+        volume: 4 * qty,
+        pricingMode: "fixed",
+      };
+    }
+
+    if (lower.includes("paint")) {
+      const fiveGallon = lower.includes("5 gallon") || lower.includes("5-gallon");
+      const catalogName = fiveGallon
+        ? "Paint - 5 Gallon Bucket"
+        : "Paint - 1 Gallon Paint Can";
+      const match = allItems.find((entry) => entry.name === catalogName);
+
+      return {
+        ...item,
+        name: catalogName,
+        qty,
+        price: Number(match?.price || (fiveGallon ? 40 : 20)) * qty,
+        volume: Number(match?.volume || (fiveGallon ? 5 : 2)) * qty,
+        pricingMode: "fixed",
+      };
+    }
+
+    if (Number(item?.price || 0) <= 0) {
+      return {
+        ...item,
+        qty,
+        price: null,
+        pricingMode: "volume",
+      };
+    }
+
+    return item;
+  });
+}
+
 async function parseItemsWithAI(text, sessionId) {
   try {
     const res = await fetch("/api/chat", {
@@ -47,10 +106,10 @@ async function parseItemsWithAI(text, sessionId) {
     const cart = Array.isArray(json?.parsed?.cart) ? json.parsed.cart : [];
     if (!cart.length) throw new Error("AI returned no priced items");
 
-    return cart;
+    return normalizeQuotedItems(cart);
   } catch (err) {
     console.warn("Magic Mirror AI parse fallback:", err);
-    return parseItems(text);
+    return normalizeQuotedItems(parseItems(text));
   }
 }
 
@@ -356,6 +415,20 @@ export default function MagicPriceMirror() {
             const currentCart = Array.isArray(cart) ? cart : [];
             const nextItems = sourceStage === "more" ? [...currentCart, ...parsed] : parsed;
             const result = calculatePrice(nextItems);
+
+            if (result.customQuote) {
+              setItems(nextItems);
+              setCart(nextItems);
+              setPrice(0);
+              setThinkingStep(0);
+              transition(
+                "Custom quote required.",
+                "Cleanouts vary too much to guarantee from volume alone. Call us and we’ll price the actual job.",
+                "result",
+                180
+              );
+              return;
+            }
 
             setItems(nextItems);
             setPrice(result.finalPrice);
