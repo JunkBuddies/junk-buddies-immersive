@@ -61,6 +61,7 @@ export default function ConfirmationPremiumPage() {
       total: "$" + Number(state.total || 0).toFixed(2),
       itemsText,
       itemsHtml,
+      partnerCode: state.partnerCode || "",
     };
 
     sessionStorage.setItem(sentKey, "1");
@@ -300,12 +301,20 @@ export default function ConfirmationPremiumPage() {
             </button>
           </div>
 
-          <Link
-            to="/itemized"
-            className="mt-4 inline-block text-xs font-bold text-white/30 hover:text-[#e0cf91] sm:mt-6 sm:text-sm"
-          >
-            Need another pickup? Start a new estimate
-          </Link>
+          <div className="mt-4 flex flex-col items-center gap-2 sm:mt-6">
+            <Link
+              to="/lookup"
+              className="text-xs font-bold text-[#e0cf91]/70 hover:text-[#e0cf91] sm:text-sm"
+            >
+              Look up this booking later
+            </Link>
+            <Link
+              to="/itemized"
+              className="text-xs font-bold text-white/30 hover:text-[#e0cf91] sm:text-sm"
+            >
+              Need another pickup? Start a new estimate
+            </Link>
+          </div>
         </section>
       </div>
     </main>
