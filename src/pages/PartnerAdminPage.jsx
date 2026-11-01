@@ -199,6 +199,36 @@ export default function PartnerAdminPage() {
     }
   };
 
+  const publishPartnerCode = async (application) => {
+    const code = normalizeCode(application.partnerCode || "");
+    if (!code) {
+      setNotice("This approved partner does not have a code to publish.");
+      return;
+    }
+
+    setSavingId(application.id);
+    setNotice("");
+
+    try {
+      await setDoc(doc(db, "partnerCodes", code), {
+        active: true,
+        code,
+        businessName: application.businessName || "Approved partner",
+        partnerApplicationId: application.id,
+        discountRate: 0.3,
+        approvedAt: application.approvedAt || Timestamp.now(),
+        updatedAt: Timestamp.now(),
+      });
+
+      setNotice(code + " is active for booking validation.");
+    } catch (err) {
+      console.error("Partner code republish failed:", err);
+      setNotice("Could not publish that partner code.");
+    } finally {
+      setSavingId("");
+    }
+  };
+
   const deny = async (application) => {
     await updateApplication(application, {
       status: "Denied",
@@ -387,6 +417,15 @@ export default function PartnerAdminPage() {
                         className="jb-polished-gold-button px-4 py-2 text-sm"
                       >
                         Approve
+                      </button>
+                    )}
+                    {application.status === "Approved" && application.partnerCode && (
+                      <button
+                        onClick={() => publishPartnerCode(application)}
+                        disabled={savingId === application.id}
+                        className="rounded-xl border border-[#c8b477]/30 bg-[#f8f3e5] px-4 py-2 text-sm font-bold text-[#806823]"
+                      >
+                        {savingId === application.id ? "Publishing..." : "Publish Code"}
                       </button>
                     )}
                     {application.status !== "Denied" && (
