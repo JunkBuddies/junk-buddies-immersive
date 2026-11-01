@@ -1,11 +1,11 @@
 // File: src/utils/pricing.js
 
-export const fullLoadPoints = 550;
-export const pricePerPoint = 1.82;
-export const minimumPrice = 100;
+export const fullLoadPoints = 450;
+export const pricePerPoint = 2.22;
+export const minimumPrice = 150;
 export const quarterLoadThreshold = fullLoadPoints * 0.25;
 export const quarterLoadPrice = 250;
-export const transitionFloorPrice = 200;
+export const transitionFloorPrice = 250;
 
 const qty = (item) => Math.max(1, Number(item?.qty || 1));
 const nameOf = (item) => String(item?.name || "").toLowerCase();
@@ -183,59 +183,62 @@ function basePriceFor(normalCart) {
   }
 
   const totalVolume = normalCart.reduce(
-    (sum, item) => sum + Number(item?.volume || 0),
+    (sum, item) => sum + Number(item?.volume || 0) * qty(item),
     0
   );
+
   const totalItemPrice = normalCart.reduce(
-    (sum, item) => sum + Number(item?.price || 0),
+    (sum, item) => sum + Number(item?.price || 0) * qty(item),
     0
   );
-  const highestItemPrice = normalCart.reduce(
+
+  const highestSingleItemPrice = normalCart.reduce(
     (max, item) => Math.max(max, Number(item?.price || 0)),
     0
   );
+
   const volumePrice = totalVolume * pricePerPoint;
 
-  if (normalCart.length === 1 && highestItemPrice > quarterLoadPrice) {
-    return { finalPrice: highestItemPrice, totalVolume };
+  // Single-item exception: a genuinely high-priced single item can exceed
+  // the normal under-quarter cap.
+  if (
+    normalCart.length === 1 &&
+    qty(normalCart[0]) === 1 &&
+    highestSingleItemPrice > quarterLoadPrice
+  ) {
+    return { finalPrice: highestSingleItemPrice, totalVolume };
   }
 
+  // Under 1/4 truck: charge the highest of item pricing, minimum pickup,
+  // or volume pricing, but do not exceed $250 unless volume itself has
+  // crossed the quarter-truck threshold.
   if (totalVolume < quarterLoadThreshold) {
-    if (totalItemPrice < quarterLoadPrice) {
-      return {
-        finalPrice: Math.max(minimumPrice, totalItemPrice),
-        totalVolume,
-      };
-    }
     return {
-      finalPrice: Math.max(transitionFloorPrice, volumePrice),
+      finalPrice: Math.min(
+        quarterLoadPrice,
+        Math.max(minimumPrice, totalItemPrice, volumePrice)
+      ),
       totalVolume,
     };
   }
 
-  const fullLoads = Math.floor(totalVolume / fullLoadPoints);
-  const remainder = totalVolume % fullLoadPoints;
-  const remainderCost = remainder * pricePerPoint;
-
-  if (fullLoads === 0) {
-    const tiers = [
-      { point: quarterLoadThreshold, price: 250 },
-      { point: fullLoadPoints * 0.5, price: 500 },
-      { point: fullLoadPoints * 0.75, price: 750 },
-      { point: fullLoadPoints, price: 1000 },
-    ];
-
-    for (const tier of tiers) {
-      if (totalVolume > tier.point && totalVolume <= tier.point + 10) {
-        return { finalPrice: tier.price, totalVolume };
-      }
-    }
-
-    return { finalPrice: volumePrice, totalVolume };
+  // From 1/4 truck through just under a full truck, price directly by volume.
+  if (totalVolume < fullLoadPoints) {
+    return {
+      finalPrice: Math.round(volumePrice * 100) / 100,
+      totalVolume,
+    };
   }
 
+  // Full truck is exactly $1,000. Additional volume continues into
+  // subsequent loads at the same 450-point / $1,000 relationship.
+  const fullLoads = Math.floor(totalVolume / fullLoadPoints);
+  const remainder = totalVolume % fullLoadPoints;
+
   return {
-    finalPrice: fullLoads * 1000 + remainderCost,
+    finalPrice:
+      fullLoads * 1000 +
+      Math.round(remainder * pricePerPoint * 100) / 100,
     totalVolume,
   };
 }
