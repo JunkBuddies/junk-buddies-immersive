@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addDoc, collection, getDocs, limit, orderBy, query, Timestamp, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, Timestamp, where } from "firebase/firestore";
 import { useCart } from "../context/CartContext";
 import { calculatePrice, minimumPrice, premiumType, premiumUnitPrice } from "../utils/pricing";
 import { db } from "../lib/firebase";
@@ -61,13 +61,36 @@ export default function SchedulePremiumPage() {
   const pricingResult = calculatePrice(cart);
   const rawFinalPrice = pricingResult.finalPrice;
   const customQuote = Boolean(pricingResult.customQuote);
+  const fixedAddonTotal = Number(pricingResult.fixedAddonTotal || 0);
+  const hasStandardItems = cart.some((item) => !premiumType(item));
 
   const sessionId = localStorage.getItem("jb_chat_session") || "";
   const discountActive =
     sessionId && localStorage.getItem("jb_disc_on_" + sessionId) === "1";
 
+  const partnerDiscountActive =
+    partnerLookup.status === "valid" &&
+    Number(partnerLookup.discountRate || 0) > 0 &&
+    hasStandardItems &&
+    !customQuote;
+
+  const standardEligibleAmount =
+    !customQuote && hasStandardItems
+      ? Math.max(0, Number(rawFinalPrice || 0) - fixedAddonTotal)
+      : 0;
+
+  const partnerSavings = partnerDiscountActive
+    ? Math.round(
+        standardEligibleAmount * Number(partnerLookup.discountRate || 0) * 100
+      ) / 100
+    : 0;
+
   const finalPrice = customQuote
     ? null
+    : partnerDiscountActive
+    ? Math.round(
+        (standardEligibleAmount - partnerSavings + fixedAddonTotal) * 100
+      ) / 100
     : discountActive
     ? Math.round(Number(rawFinalPrice || 0) * 0.9 * 100) / 100
     : Number(rawFinalPrice || 0);
@@ -102,6 +125,13 @@ export default function SchedulePremiumPage() {
     partnerCode: "",
   });
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [partnerLookup, setPartnerLookup] = useState({
+    status: "idle",
+    id: "",
+    businessName: "",
+    code: "",
+    discountRate: 0,
+  });
 
   const premiumQtyByType = useMemo(() => {
     return cart.reduce((counts, item) => {
@@ -186,6 +216,72 @@ export default function SchedulePremiumPage() {
       JSON.stringify({ form, step })
     );
   }, [form, step]);
+
+  useEffect(() => {
+    const code = String(form.partnerCode || "").trim().toUpperCase();
+
+    if (!code) {
+      setPartnerLookup({
+        status: "idle",
+        id: "",
+        businessName: "",
+        code: "",
+        discountRate: 0,
+      });
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setPartnerLookup((current) => ({ ...current, status: "checking" }));
+
+      try {
+        const snapshot = await getDoc(doc(db, "partnerCodes", code));
+
+        if (!snapshot.exists()) {
+          setPartnerLookup({
+            status: "invalid",
+            id: "",
+            businessName: "",
+            code,
+            discountRate: 0,
+          });
+          return;
+        }
+
+        const data = snapshot.data();
+
+        if (data.active !== true) {
+          setPartnerLookup({
+            status: "invalid",
+            id: "",
+            businessName: "",
+            code,
+            discountRate: 0,
+          });
+          return;
+        }
+
+        setPartnerLookup({
+          status: "valid",
+          id: data.partnerApplicationId || "",
+          businessName: data.businessName || "Approved partner",
+          code,
+          discountRate: Number(data.discountRate || 0.3),
+        });
+      } catch (err) {
+        console.error("Partner code lookup failed:", err);
+        setPartnerLookup({
+          status: "error",
+          id: "",
+          businessName: "",
+          code,
+          discountRate: 0,
+        });
+      }
+    }, 350);
+
+    return () => clearTimeout(timer);
+  }, [form.partnerCode]);
 
   useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -301,7 +397,14 @@ export default function SchedulePremiumPage() {
       await addDoc(collection(db, "jobs"), {
         ...form,
         emailLower: form.email.trim().toLowerCase(),
-        partnerCode: form.partnerCode.trim(),
+        partnerCode: partnerLookup.status === "valid" ? partnerLookup.code : "",
+        partnerId: partnerLookup.status === "valid" ? partnerLookup.id : "",
+        partnerBusinessName:
+          partnerLookup.status === "valid" ? partnerLookup.businessName : "",
+        partnerDiscountRate: partnerDiscountActive
+          ? Number(partnerLookup.discountRate || 0)
+          : 0,
+        partnerSavings: partnerDiscountActive ? partnerSavings : 0,
         fullAddress,
         timeOfDay,
         orderNumber,
@@ -309,7 +412,8 @@ export default function SchedulePremiumPage() {
         items: cart,
         total: customQuote ? null : finalPrice,
         customQuote,
-        discountActive: Boolean(discountActive),
+        discountActive: partnerDiscountActive ? false : Boolean(discountActive),
+        partnerDiscountActive,
         Latitude: null,
         Longitude: null,
         status: customQuote ? "Quote Requested" : "Scheduled",
@@ -332,14 +436,18 @@ export default function SchedulePremiumPage() {
           time: form.time,
           total: customQuote ? null : finalPrice,
           customQuote,
-          discountActive: Boolean(discountActive),
+          discountActive: partnerDiscountActive ? false : Boolean(discountActive),
+          partnerDiscountActive,
+          partnerSavings: partnerDiscountActive ? partnerSavings : 0,
           itemCount: cartSummary.reduce((sum, item) => sum + item.qty, 0),
           items: cartSummary.map((item) => ({ name: item.name, qty: item.qty, price: item.price })),
           street: form.street,
           city: form.city,
           stateName: form.state,
           zip: form.zip,
-          partnerCode: form.partnerCode.trim(),
+          partnerCode: partnerLookup.status === "valid" ? partnerLookup.code : "",
+          partnerBusinessName:
+            partnerLookup.status === "valid" ? partnerLookup.businessName : "",
         },
       });
     } catch (err) {
@@ -352,6 +460,29 @@ export default function SchedulePremiumPage() {
   };
 
   const PricingBridge = ({ compact = false }) => {
+    if (partnerDiscountActive) {
+      return (
+        <div
+          className={
+            compact
+              ? "mt-3 border-t border-white/10 pt-3 text-xs leading-relaxed text-white/55"
+              : "mt-4 rounded-xl border border-[#c8b477]/20 bg-[#c8b477]/[0.06] p-3 text-xs leading-relaxed text-white/55"
+          }
+        >
+          Partner rate applied to qualifying standard removal
+          <span className="mx-1.5 text-white/25">→</span>
+          <b className="text-[#e0cf91]">
+            save {"$"}{partnerSavings.toFixed(2)}
+          </b>
+          {fixedAddonTotal > 0 && (
+            <span className="block mt-1 text-white/35">
+              Premium / specialty line items remain at their listed price.
+            </span>
+          )}
+        </div>
+      );
+    }
+
     if (minimumApplied) {
       return (
         <div
@@ -749,6 +880,27 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                       <span className="mt-1.5 block text-[10px] leading-relaxed text-white/30">
                         For approved property, partner, or QR referral codes. No code is required to book.
                       </span>
+                      {form.partnerCode.trim() && (
+                        <span
+                          className={
+                            "mt-2 block text-xs font-bold " +
+                            (partnerLookup.status === "valid"
+                              ? "text-emerald-300"
+                              : partnerLookup.status === "checking"
+                              ? "text-white/45"
+                              : "text-red-300")
+                          }
+                        >
+                          {partnerLookup.status === "checking"
+                            ? "Checking partner code..."
+                            : partnerLookup.status === "valid"
+                            ? partnerLookup.businessName +
+                              " partner rate applied"
+                            : partnerLookup.status === "error"
+                            ? "Could not verify this code right now."
+                            : "This partner code is not active."}
+                        </span>
+                      )}
                     </label>
                   </div>
                 </div>
