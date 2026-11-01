@@ -58,6 +58,13 @@ export default function SchedulePremiumPage() {
   const { cart, setCart } = useCart();
   const navigate = useNavigate();
   const stepRef = useRef(null);
+  const [partnerLookup, setPartnerLookup] = useState({
+    status: "idle",
+    id: "",
+    businessName: "",
+    code: "",
+    discountRate: 0,
+  });
   const pricingResult = calculatePrice(cart);
   const rawFinalPrice = pricingResult.finalPrice;
   const customQuote = Boolean(pricingResult.customQuote);
@@ -125,13 +132,6 @@ export default function SchedulePremiumPage() {
     partnerCode: "",
   });
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
-  const [partnerLookup, setPartnerLookup] = useState({
-    status: "idle",
-    id: "",
-    businessName: "",
-    code: "",
-    discountRate: 0,
-  });
 
   const premiumQtyByType = useMemo(() => {
     return cart.reduce((counts, item) => {
