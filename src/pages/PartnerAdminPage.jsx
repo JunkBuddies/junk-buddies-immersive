@@ -5,6 +5,7 @@ import {
   getDocs,
   orderBy,
   query,
+  setDoc,
   Timestamp,
   updateDoc,
 } from "firebase/firestore";
@@ -174,6 +175,24 @@ export default function PartnerAdminPage() {
     });
 
     if (success) {
+      try {
+        await setDoc(doc(db, "partnerCodes", code), {
+          active: true,
+          code,
+          businessName: approvalTarget.businessName || "Approved partner",
+          partnerApplicationId: approvalTarget.id,
+          discountRate: 0.3,
+          approvedAt: Timestamp.now(),
+          updatedAt: Timestamp.now(),
+        });
+      } catch (err) {
+        console.error("Partner code publishing failed:", err);
+        setNotice(
+          "Partner was approved, but the public partner code could not be published."
+        );
+        return;
+      }
+
       setApprovalTarget(null);
       setApprovalCode("");
       setApprovalNote("");
