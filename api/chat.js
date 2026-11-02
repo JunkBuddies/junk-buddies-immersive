@@ -253,9 +253,15 @@ export default async function handler(req, res){
     // imports
     const pricing = await import(new URL("../src/utils/pricing.js", import.meta.url).href);
     const mod = await import(new URL("../src/data/itemData.js", import.meta.url).href);
+    const premiumMod = await import(new URL("../src/data/premiumItems.js", import.meta.url).href);
     const nested = mod.default || mod.items || mod.ITEMS || mod.data || [];
+    const premiumNested =
+      premiumMod.default || premiumMod.items || premiumMod.ITEMS || premiumMod.data || [];
     if (!Array.isArray(nested)) throw new Error("itemData is not an array");
-    const ITEMS = flattenCatalog(nested);
+    const ITEMS = flattenCatalog([
+      ...nested,
+      ...(Array.isArray(premiumNested) ? premiumNested : [premiumNested]),
+    ]);
     res.setHeader("X-Catalog", "/src/data/itemData.js");
 
     // input
