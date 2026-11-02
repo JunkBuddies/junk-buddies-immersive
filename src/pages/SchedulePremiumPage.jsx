@@ -121,17 +121,27 @@ export default function SchedulePremiumPage() {
   const [step, setStep] = useState(savedBooking?.step ?? 0);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [form, setForm] = useState(savedBooking?.form || {
-    name: "",
-    email: "",
-    phone: "",
-    street: "",
-    city: "",
-    state: "TX",
-    zip: "",
-    date: "",
-    time: "",
-    partnerCode: "",
+  const capturedPhone =
+    (sessionId && localStorage.getItem("jb_lead_phone_" + sessionId)) || "";
+
+  const [form, setForm] = useState(() => {
+    const base = savedBooking?.form || {
+      name: "",
+      email: "",
+      phone: "",
+      street: "",
+      city: "",
+      state: "TX",
+      zip: "",
+      date: "",
+      time: "",
+      partnerCode: "",
+    };
+
+    return {
+      ...base,
+      phone: base.phone || capturedPhone,
+    };
   });
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
 
@@ -235,6 +245,17 @@ export default function SchedulePremiumPage() {
   }, [form, step]);
 
   useEffect(() => {
+    if (!sessionId || form.phone.trim()) return;
+    const mirrorPhone = localStorage.getItem("jb_lead_phone_" + sessionId) || "";
+    if (mirrorPhone) {
+      setForm((current) => ({
+        ...current,
+        phone: current.phone || mirrorPhone,
+      }));
+    }
+  }, [sessionId, form.phone]);
+
+  useEffect(() => {
     const code = String(form.partnerCode || "").trim().toUpperCase();
 
     if (!code) {
@@ -336,14 +357,88 @@ export default function SchedulePremiumPage() {
     );
   };
 
-  const addMoreItems = () => {
-    persistScheduleDraft();
-    localStorage.setItem("jb_mirror_resume_" + sessionId, "more");
-    goToPriceMirror(navigate);
-  };
+  const addMoreItems = () => resumeMirrorFor("");
 
   const removeCartItem = (index) => {
     setCart((current) => current.filter((_, itemIndex) => itemIndex !== index));
+  };
+
+  const setItemQuantity = (itemName, nextQty) => {
+    const targetQty = Math.max(1, Math.min(20, Number(nextQty || 1)));
+
+    setCart((current) => {
+      const matching = current.filter((item) => (item.name || "Item") === itemName);
+      if (!matching.length) return current;
+
+      const firstIndex = current.findIndex((item) => (item.name || "Item") === itemName);
+      const source = matching[0];
+
+      const replacement = {
+        ...source,
+        qty: targetQty,
+      };
+
+      const without = current.filter((item) => (item.name || "Item") !== itemName);
+      without.splice(Math.min(firstIndex, without.length), 0, replacement);
+      return without;
+    });
+  };
+
+  const relatedSuggestion = useMemo(() => {
+    const names = cart.map((item) => String(item.name || "").toLowerCase());
+
+    const has = (pattern) => names.some((name) => pattern.test(name));
+
+    if (has(/mattress/) && !has(/bed frame|bed base|foundation|box spring|bunky|side rail/)) {
+      return {
+        title: "Got a bed frame or base with it?",
+        detail: "We can add it to the same pickup.",
+        prompt: "bed frame or bed base",
+      };
+    }
+
+    if (has(/washer/) && !has(/dryer/)) {
+      return {
+        title: "Got the dryer too?",
+        detail: "Add it without restarting your quote.",
+        prompt: "dryer",
+      };
+    }
+
+    if (has(/dryer/) && !has(/washer/)) {
+      return {
+        title: "Got the washer too?",
+        detail: "Add it without restarting your quote.",
+        prompt: "washer",
+      };
+    }
+
+    if (has(/dining table|table - dining/) && !has(/chair/)) {
+      return {
+        title: "Any dining chairs with it?",
+        detail: "Add matching pieces before you finish scheduling.",
+        prompt: "dining chairs",
+      };
+    }
+
+    if (has(/sofa|couch|loveseat|sectional/) && !has(/recliner|chair/)) {
+      return {
+        title: "Any matching chairs or recliners?",
+        detail: "Keep everything in the same pickup.",
+        prompt: "matching chair or recliner",
+      };
+    }
+
+    return null;
+  }, [cart]);
+
+  const resumeMirrorFor = (relatedPrompt = "") => {
+    persistScheduleDraft();
+    localStorage.setItem("jb_mirror_resume_" + sessionId, "more");
+    if (relatedPrompt) {
+      localStorage.setItem("jb_mirror_related_prompt_" + sessionId, relatedPrompt);
+    }
+    goToPriceMirror(navigate, () => setCartDrawerOpen(false));
   };
 
   const formatDate = () => {
@@ -1062,6 +1157,38 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                             ? "$" + Number(displayLinePrice(item)).toFixed(2)
                             : "Price included"}
                         </div>
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          {[1, 2, 3, 4].map((qtyOption) => {
+                            const active = Math.max(1, Number(item.qty || 1)) === qtyOption;
+                            return (
+                              <button
+                                key={qtyOption}
+                                type="button"
+                                onClick={() => setItemQuantity(item.name || "Item", qtyOption)}
+                                className={
+                                  "min-w-9 rounded-lg border px-2 py-1 text-[11px] font-bold transition " +
+                                  (active
+                                    ? "border-[#c8b477] bg-[#c8b477]/15 text-[#e0cf91]"
+                                    : "border-white/10 bg-white/[0.03] text-white/45")
+                                }
+                              >
+                                ×{qtyOption}
+                              </button>
+                            );
+                          })}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setItemQuantity(
+                                item.name || "Item",
+                                Math.max(1, Number(item.qty || 1)) + 1
+                              )
+                            }
+                            className="min-w-9 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-[11px] font-bold text-white/45"
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
                       <button
                         type="button"
@@ -1077,6 +1204,26 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                 <div className="py-10 text-center text-sm text-white/40">Your cart is empty.</div>
               )}
             </div>
+
+            {relatedSuggestion && (
+              <div className="border-t border-white/10 bg-[#0c0c0c] px-4 py-3">
+                <div className="rounded-2xl border border-[#c8b477]/15 bg-[#c8b477]/[0.04] p-3">
+                  <div className="text-sm font-bold text-white/85">
+                    {relatedSuggestion.title}
+                  </div>
+                  <div className="mt-1 text-xs text-white/35">
+                    {relatedSuggestion.detail}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => resumeMirrorFor(relatedSuggestion.prompt)}
+                    className="mt-2 rounded-lg border border-[#c8b477]/30 px-3 py-1.5 text-xs font-bold text-[#e0cf91]"
+                  >
+                    Add similar item
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="border-t border-white/10 bg-[#0d0d0d] p-4">
               <div className="mb-3 flex items-end justify-between">
@@ -1097,11 +1244,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    persistScheduleDraft();
-                    localStorage.setItem("jb_mirror_resume_" + sessionId, "more");
-                    goToPriceMirror(navigate, () => setCartDrawerOpen(false));
-                  }}
+                  onClick={() => resumeMirrorFor("")}
                   className="jb-polished-gold-button text-sm"
                 >
                   Add items
