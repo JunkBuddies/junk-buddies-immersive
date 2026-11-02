@@ -1205,25 +1205,25 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                             ? "$" + Number(displayLinePrice(item)).toFixed(2)
                             : "Price included"}
                         </div>
-                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                          {[1, 2, 3, 4].map((qtyOption) => {
-                            const active = Math.max(1, Number(item.qty || 1)) === qtyOption;
-                            return (
-                              <button
-                                key={qtyOption}
-                                type="button"
-                                onClick={() => setItemQuantity(item.name || "Item", qtyOption)}
-                                className={
-                                  "min-w-9 rounded-lg border px-2 py-1 text-[11px] font-bold transition " +
-                                  (active
-                                    ? "border-[#c8b477] bg-[#c8b477]/15 text-[#e0cf91]"
-                                    : "border-white/10 bg-white/[0.03] text-white/45")
-                                }
-                              >
-                                ×{qtyOption}
-                              </button>
-                            );
-                          })}
+                        <div className="mt-2 inline-flex items-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.025]">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setItemQuantity(
+                                item.name || "Item",
+                                Math.max(1, Number(item.qty || 1)) - 1
+                              )
+                            }
+                            disabled={Math.max(1, Number(item.qty || 1)) <= 1}
+                            className="grid h-8 w-9 place-items-center text-sm font-black text-white/55 transition hover:bg-white/[0.05] hover:text-[#e0cf91] disabled:cursor-not-allowed disabled:opacity-20"
+                          >
+                            −
+                          </button>
+
+                          <div className="min-w-12 border-x border-white/10 px-2 text-center text-[11px] font-black text-[#e0cf91]">
+                            ×{Math.max(1, Number(item.qty || 1))}
+                          </div>
+
                           <button
                             type="button"
                             onClick={() =>
@@ -1232,7 +1232,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                                 Math.max(1, Number(item.qty || 1)) + 1
                               )
                             }
-                            className="min-w-9 rounded-lg border border-white/10 bg-white/[0.03] px-2 py-1 text-[11px] font-bold text-white/45"
+                            className="grid h-8 w-9 place-items-center text-sm font-black text-white/55 transition hover:bg-white/[0.05] hover:text-[#e0cf91]"
                           >
                             +
                           </button>
