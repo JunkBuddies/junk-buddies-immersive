@@ -144,6 +144,14 @@ export default function SchedulePremiumPage() {
     };
   });
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [removedItems, setRemovedItems] = useState(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem("jb_schedule_removed_items") || "[]");
+      return Array.isArray(saved) ? saved : [];
+    } catch {
+      return [];
+    }
+  });
 
   const premiumQtyByType = useMemo(() => {
     return cart.reduce((counts, item) => {
@@ -256,6 +264,13 @@ export default function SchedulePremiumPage() {
   }, [sessionId, form.phone]);
 
   useEffect(() => {
+    localStorage.setItem(
+      "jb_schedule_removed_items",
+      JSON.stringify(removedItems)
+    );
+  }, [removedItems]);
+
+  useEffect(() => {
     const code = String(form.partnerCode || "").trim().toUpperCase();
 
     if (!code) {
@@ -360,7 +375,38 @@ export default function SchedulePremiumPage() {
   const addMoreItems = () => resumeMirrorFor("");
 
   const removeCartItem = (index) => {
-    setCart((current) => current.filter((_, itemIndex) => itemIndex !== index));
+    setCart((current) => {
+      const item = current[index];
+      if (!item) return current;
+
+      const removedEntry = {
+        ...item,
+        removedId:
+          "removed_" +
+          Date.now() +
+          "_" +
+          Math.random().toString(36).slice(2, 8),
+      };
+
+      setRemovedItems((previous) => [...previous, removedEntry]);
+      return current.filter((_, itemIndex) => itemIndex !== index);
+    });
+  };
+
+  const reAddRemovedItem = (removedId) => {
+    setRemovedItems((previous) => {
+      const restored = previous.find((item) => item.removedId === removedId);
+      if (!restored) return previous;
+
+      const { removedId: _removedId, ...cartItem } = restored;
+      setCart((current) => [...current, cartItem]);
+
+      return previous.filter((item) => item.removedId !== removedId);
+    });
+  };
+
+  const clearRemovedItems = () => {
+    setRemovedItems([]);
   };
 
   const setItemQuantity = (itemName, nextQty) => {
@@ -536,6 +582,8 @@ export default function SchedulePremiumPage() {
 
       localStorage.removeItem("jb_schedule_draft");
       localStorage.removeItem("jb_return_to_schedule");
+      localStorage.removeItem("jb_schedule_removed_items");
+      setRemovedItems([]);
 
       navigate("/confirmation", {
         state: {
@@ -1204,6 +1252,63 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                 <div className="py-10 text-center text-sm text-white/40">Your cart is empty.</div>
               )}
             </div>
+
+            {removedItems.length > 0 && (
+              <div className="border-t border-white/10 bg-[#0b0b0b] px-5 py-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
+                      Removed items
+                    </div>
+                    <div className="mt-0.5 text-[11px] text-white/25">
+                      Kept here in case you want them back.
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={clearRemovedItems}
+                    className="text-[10px] font-bold text-white/30 hover:text-white/60"
+                  >
+                    Clear
+                  </button>
+                </div>
+
+                <div className="mt-2 max-h-36 space-y-1.5 overflow-y-auto pr-1">
+                  {removedItems.map((item) => (
+                    <div
+                      key={item.removedId}
+                      className="flex items-center justify-between gap-3 rounded-xl border border-white/8 bg-white/[0.025] px-3 py-2"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate text-xs font-bold text-white/65">
+                          {Math.max(1, Number(item.qty || 1)) > 1 && (
+                            <span className="mr-1 text-[#e0cf91]">
+                              ×{Math.max(1, Number(item.qty || 1))}
+                            </span>
+                          )}
+                          {item.name || "Item"}
+                        </div>
+                        <div className="mt-0.5 text-[10px] text-white/25">
+                          {premiumType(item) === "custom"
+                            ? "Quoted separately"
+                            : displayLinePrice(item) != null
+                            ? "$" + Number(displayLinePrice(item)).toFixed(2)
+                            : "Price included"}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => reAddRemovedItem(item.removedId)}
+                        className="shrink-0 rounded-lg border border-[#c8b477]/25 bg-[#c8b477]/[0.06] px-3 py-1.5 text-[11px] font-bold text-[#e0cf91]"
+                      >
+                        Re-add
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {relatedSuggestion && (
               <div className="border-t border-white/10 bg-[#0c0c0c] px-4 py-3">
