@@ -23,8 +23,9 @@ export default function ConfirmationPremiumPage() {
         return (
           (item.qty > 1 ? item.qty + "x " : "") +
           item.name +
-          ": $" +
-          Number(item.price || 0).toFixed(2)
+          (item.customQuote
+            ? ": quoted separately"
+            : ": $" + Number(item.price || 0).toFixed(2))
         );
       })
       .join("\n");
@@ -37,8 +38,10 @@ export default function ConfirmationPremiumPage() {
             "<li><strong>" +
             (item.qty > 1 ? item.qty + "x " : "") +
             item.name +
-            "</strong>: $" +
-            Number(item.price || 0).toFixed(2) +
+            "</strong>" +
+            (item.customQuote
+              ? ": quoted separately"
+              : ": $" + Number(item.price || 0).toFixed(2)) +
             "</li>"
           );
         })
@@ -268,7 +271,9 @@ export default function ConfirmationPremiumPage() {
                       {item.name}
                     </span>
                     <span className="shrink-0 text-xs text-white/35">
-                      {"$"}{Number(item.price || 0).toFixed(2)}
+                      {item.customQuote
+                        ? "Quoted separately"
+                        : "$" + Number(item.price || 0).toFixed(2)}
                     </span>
                   </div>
                 ))}
