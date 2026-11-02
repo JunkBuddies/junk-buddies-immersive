@@ -4,6 +4,7 @@ import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, Timest
 import { useCart } from "../context/CartContext";
 import { calculatePrice, minimumPrice, premiumType, premiumUnitPrice } from "../utils/pricing";
 import { db } from "../lib/firebase";
+import { goToPriceMirror } from "../utils/mirrorNavigation";
 
 const STEPS = ["Contact", "Property", "Date & time", "Review"];
 const WINDOWS = [
@@ -68,6 +69,7 @@ export default function SchedulePremiumPage() {
   const pricingResult = calculatePrice(cart);
   const rawFinalPrice = pricingResult.finalPrice;
   const customQuote = Boolean(pricingResult.customQuote);
+  const customOnly = Boolean(pricingResult.customOnly);
   const fixedAddonTotal = Number(pricingResult.fixedAddonTotal || 0);
   const hasStandardItems = cart.some((item) => !premiumType(item));
 
@@ -79,10 +81,10 @@ export default function SchedulePremiumPage() {
     partnerLookup.status === "valid" &&
     Number(partnerLookup.discountRate || 0) > 0 &&
     hasStandardItems &&
-    !customQuote;
+    !customOnly;
 
   const standardEligibleAmount =
-    !customQuote && hasStandardItems
+    !customOnly && hasStandardItems
       ? Math.max(0, Number(rawFinalPrice || 0) - fixedAddonTotal)
       : 0;
 
@@ -92,7 +94,7 @@ export default function SchedulePremiumPage() {
       ) / 100
     : 0;
 
-  const finalPrice = customQuote
+  const finalPrice = customOnly
     ? null
     : partnerDiscountActive
     ? Math.round(
@@ -108,7 +110,7 @@ export default function SchedulePremiumPage() {
   );
   const minimumApplied =
     !customQuote && rawFinalPrice === minimumPrice && itemSubtotal < minimumPrice;
-  const discountSavings = customQuote
+  const discountSavings = customOnly
     ? 0
     : Math.max(0, Number(rawFinalPrice || 0) - Number(finalPrice || 0));
 
@@ -146,11 +148,21 @@ export default function SchedulePremiumPage() {
   const displayLinePrice = (item) => {
     const type = premiumType(item);
     if (type === "custom") return null;
+
+    const itemQty = Math.max(1, Number(item.qty || 1));
+
     if (type) {
-      const unit = premiumUnitPrice(type, premiumQtyByType[type] || item.qty || 1);
-      if (unit != null) return unit * Math.max(1, Number(item.qty || 1));
+      const unit = premiumUnitPrice(type, premiumQtyByType[type] || itemQty);
+      if (unit != null) return unit * itemQty;
     }
-    return Number(item.price || 0);
+
+    const listed = Number(item.price || 0);
+    if (listed > 0) return listed * itemQty;
+
+    const volume = Number(item.volume || 0);
+    if (volume > 0) return Math.max(1, Math.round(volume * 2.22 * itemQty * 100) / 100);
+
+    return null;
   };
 
   const cartSummary = useMemo(() => {
@@ -410,13 +422,14 @@ export default function SchedulePremiumPage() {
         orderNumber,
         ...(nextOrder.orderSequence != null ? { orderSequence: nextOrder.orderSequence } : {}),
         items: cart,
-        total: customQuote ? null : finalPrice,
+        total: customOnly ? null : finalPrice,
         customQuote,
+        customOnly,
         discountActive: partnerDiscountActive ? false : Boolean(discountActive),
         partnerDiscountActive,
         Latitude: null,
         Longitude: null,
-        status: customQuote ? "Quote Requested" : "Scheduled",
+        status: customOnly ? "Quote Requested" : "Scheduled",
         bookingSource: "immersive-premium",
         createdAt: Timestamp.now(),
       });
@@ -434,8 +447,9 @@ export default function SchedulePremiumPage() {
           date: form.date,
           formattedDate: formatDate(),
           time: form.time,
-          total: customQuote ? null : finalPrice,
+          total: customOnly ? null : finalPrice,
           customQuote,
+          customOnly,
           discountActive: partnerDiscountActive ? false : Boolean(discountActive),
           partnerDiscountActive,
           partnerSavings: partnerDiscountActive ? partnerSavings : 0,
@@ -865,6 +879,40 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     <div className="mt-1 text-sm font-bold sm:text-base">{formatDate()}</div>
                     <div className="text-xs text-white/50 sm:text-sm">{form.time}</div>
                   </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] p-3 sm:hidden">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="text-[10px] uppercase tracking-wider text-white/30">Your items</div>
+                      <button type="button" onClick={() => setCartDrawerOpen(true)} className="text-[11px] font-bold text-[#e0cf91]">Edit</button>
+                    </div>
+                    <div className="mt-2 divide-y divide-white/10">
+                      {cart.map((item, index) => {
+                        const linePrice = displayLinePrice(item);
+                        return (
+                          <div key={(item.name || "item") + "-review-" + index} className="flex items-start justify-between gap-3 py-2.5">
+                            <div className="min-w-0 text-sm text-white/75">
+                              {Math.max(1, Number(item.qty || 1)) > 1 && (
+                                <b className="mr-1 text-[#e0cf91]">{Math.max(1, Number(item.qty || 1))}x</b>
+                              )}
+                              <span>{item.name || "Item"}</span>
+                            </div>
+                            <div className="shrink-0 text-xs font-semibold text-white/45">
+                              {premiumType(item) === "custom"
+                                ? "Quoted separately"
+                                : linePrice != null
+                                ? "$" + Number(linePrice).toFixed(2)
+                                : "Price included"}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {customQuote && !customOnly && (
+                      <div className="mt-2 rounded-xl border border-[#c8b477]/15 bg-[#c8b477]/[0.05] px-3 py-2 text-[10px] leading-relaxed text-white/40">
+                        Priced items are shown above. Cleanout/custom work is optional and will be confirmed separately on arrival.
+                      </div>
+                    )}
+                  </div>
                   <div className="rounded-2xl border border-[#c8b477]/15 bg-[#c8b477]/[0.035] p-3 sm:p-4">
                     <label className="block">
                       <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#c8b477]/70 sm:text-xs">
@@ -911,9 +959,9 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
               <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/35">Estimated total</div>
-                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{customQuote ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
+                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{customOnly ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
                 </div>
-                <button type="button" onClick={addMoreItems} className="text-xs font-bold text-[#e0cf91]">Edit items</button>
+                <button type="button" onClick={() => setCartDrawerOpen(true)} className="text-xs font-bold text-[#e0cf91]">Edit items</button>
               </div>
               <PricingBridge compact />
             </div>
@@ -926,7 +974,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                 <button type="button" onClick={goNext} className="jb-polished-gold-button flex-1">Continue</button>
               ) : (
                 <button type="button" onClick={submit} disabled={submitting || !cart.length} className="jb-polished-gold-button flex-1 disabled:cursor-not-allowed disabled:opacity-40">
-                  {submitting ? "Locking it in…" : customQuote ? "Request Custom Quote" : "Confirm Pickup"}
+                  {submitting ? "Locking it in…" : customOnly ? "Request Custom Quote" : "Confirm Pickup"}
                 </button>
               )}
             </div>
@@ -947,7 +995,11 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     {item.qty > 1 && <b className="text-[#e0cf91]">{item.qty}x </b>}
                     {item.name}
                   </span>
-                  <span className="shrink-0 text-white/40">{item.customQuote || item.pricingMode === "custom" ? "Custom quote" : item.price == null || Number(item.price) <= 0 ? "Volume priced" : "$" + Number(item.price).toFixed(2)}</span>
+                  <span className="shrink-0 text-white/40">
+                    {item.customQuote || item.pricingMode === "custom"
+                      ? "Quoted separately"
+                      : "$" + Number(item.price || 0).toFixed(2)}
+                  </span>
                 </div>
               )) : <div className="text-sm text-white/40">Your cart is empty. Add items before scheduling.</div>}
             </div>
@@ -955,7 +1007,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
             <div className="mt-5 border-t border-white/10 pt-5">
               {discountActive && <div className="mb-3 inline-flex rounded-full border border-[#c8b477]/25 bg-[#c8b477]/10 px-3 py-1 text-xs font-bold text-[#e0cf91]">10% offer applied</div>}
               <div className="text-xs uppercase tracking-wider text-white/30">Estimated total</div>
-              <div className="mt-1 text-3xl font-black text-[#e0cf91]">{customQuote ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
+              <div className="mt-1 text-3xl font-black text-[#e0cf91]">{customOnly ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
               <div className="mt-2 text-xs text-white/35">Pay after completion.</div>
               <PricingBridge />
             </div>
@@ -993,7 +1045,13 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     <div key={(item.name || "item") + "-" + index} className="flex items-center justify-between gap-4 py-3">
                       <div className="min-w-0">
                         <div className="truncate text-sm font-bold text-white/85">{item.name || "Item"}</div>
-                        <div className="mt-0.5 text-xs text-white/35">{premiumType(item) === "custom" ? "Custom quote" : "$" + displayLinePrice(item).toFixed(2)}</div>
+                        <div className="mt-0.5 text-xs text-white/35">
+                          {premiumType(item) === "custom"
+                            ? "Quoted separately"
+                            : displayLinePrice(item) != null
+                            ? "$" + Number(displayLinePrice(item)).toFixed(2)
+                            : "Price included"}
+                        </div>
                       </div>
                       <button
                         type="button"
@@ -1014,7 +1072,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
               <div className="mb-3 flex items-end justify-between">
                 <div>
                   <div className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/30">Updated estimate</div>
-                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{"$"}{finalPrice.toFixed(2)}</div>
+                  <div className="mt-0.5 text-2xl font-black text-[#e0cf91]">{customOnly ? "Custom quote" : "$" + Number(finalPrice || 0).toFixed(2)}</div>
                 </div>
                 <div className="text-xs text-white/35">{cart.length} selected</div>
               </div>
@@ -1029,7 +1087,11 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                 </button>
                 <button
                   type="button"
-                  onClick={addMoreItems}
+                  onClick={() => {
+                    persistScheduleDraft();
+                    localStorage.setItem("jb_mirror_resume_" + sessionId, "more");
+                    goToPriceMirror(navigate, () => setCartDrawerOpen(false));
+                  }}
                   className="jb-polished-gold-button text-sm"
                 >
                   Add items
