@@ -338,8 +338,8 @@ export default function SchedulePremiumPage() {
 
   const addMoreItems = () => {
     persistScheduleDraft();
-    localStorage.setItem("jb_return_to_schedule", "1");
-    navigate("/itemized");
+    localStorage.setItem("jb_mirror_resume_" + sessionId, "more");
+    goToPriceMirror(navigate);
   };
 
   const removeCartItem = (index) => {
