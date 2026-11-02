@@ -256,37 +256,26 @@ export function calculatePrice(cart = []) {
   }
 
   const premium = premiumPriceSummary(safeCart);
-  if (premium.customQuote) {
-    return {
-      finalPrice: null,
-      totalVolume: safeCart.reduce(
-        (sum, item) => sum + Number(item?.volume || 0),
-        0
-      ),
-      fixedAddonTotal: premium.total,
-      customQuote: true,
-      premiumLines: premium.lines,
-    };
-  }
-
   const normalCart = safeCart.filter((item) => !premiumType(item));
   const base = basePriceFor(normalCart);
 
-  // If the pickup is only premium items, the premium amount is the job subtotal,
-  // subject to the standard pickup minimum. If mixed with regular junk, premium
-  // handling is added to the normal pickup price.
-  const finalPrice = normalCart.length
-    ? base.finalPrice + premium.total
-    : Math.max(minimumPrice, premium.total);
+  const hasPricedItems = normalCart.length > 0 || premium.total > 0;
+  const pricedSubtotal = hasPricedItems
+    ? normalCart.length
+      ? base.finalPrice + premium.total
+      : Math.max(minimumPrice, premium.total)
+    : 0;
 
   return {
-    finalPrice,
+    finalPrice: pricedSubtotal,
+    pricedSubtotal,
     totalVolume: safeCart.reduce(
       (sum, item) => sum + Number(item?.volume || 0),
       0
     ),
     fixedAddonTotal: premium.total,
-    customQuote: false,
+    customQuote: premium.customQuote,
+    customOnly: premium.customQuote && !hasPricedItems,
     premiumLines: premium.lines,
   };
 }
