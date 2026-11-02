@@ -31,6 +31,22 @@ function parseItems(text) {
   return found;
 }
 
+function clarificationFor(text = "") {
+  const lower = String(text).toLowerCase();
+
+  if (
+    /\brug\b/.test(lower) &&
+    !/(6\s*[x×]\s*9|smaller|small|larger|large|runner|\d+\s*(?:ft|feet|')?\s*[x×]\s*\d+)/.test(lower)
+  ) {
+    return {
+      prompt: "About how big is the rug?",
+      subPrompt: "6×9 or smaller, or larger than 6×9?",
+    };
+  }
+
+  return null;
+}
+
 function normalizeQuotedItems(rows = []) {
   return (Array.isArray(rows) ? rows : []).map((item) => {
     const name = String(item?.name || "");
@@ -55,8 +71,8 @@ function normalizeQuotedItems(rows = []) {
         ...item,
         name: "Tire",
         qty,
-        price: unit * qty,
-        volume: 4 * qty,
+        price: unit,
+        volume: 4,
         pricingMode: "fixed",
       };
     }
@@ -72,22 +88,41 @@ function normalizeQuotedItems(rows = []) {
         ...item,
         name: catalogName,
         qty,
-        price: (premiumUnitPrice(fiveGallon ? "paint-5" : "paint-wet", qty) || Number(match?.price || (fiveGallon ? 40 : 20))) * qty,
-        volume: Number(match?.volume || (fiveGallon ? 5 : 2)) * qty,
+        price:
+          premiumUnitPrice(fiveGallon ? "paint-5" : "paint-wet", qty) ||
+          Number(match?.price || (fiveGallon ? 40 : 20)),
+        volume: Number(match?.volume || (fiveGallon ? 5 : 2)),
         pricingMode: "fixed",
       };
     }
 
-    if (Number(item?.price || 0) <= 0) {
+    // The AI endpoint historically returned totals already multiplied by qty.
+    // Normalize back to unit values so the shared pricing engine handles qty once.
+    const rawVolume = Math.max(0, Number(item?.volume || 0));
+    const rawPrice = Math.max(0, Number(item?.price || 0));
+    const unitVolume = rawVolume > 0 ? rawVolume / qty : 0;
+    const unitPrice = rawPrice > 0 ? rawPrice / qty : 0;
+
+    if (unitPrice <= 0) {
+      const estimatedVolume = unitVolume > 0 ? unitVolume : 15;
       return {
         ...item,
+        name,
         qty,
-        price: null,
-        pricingMode: "volume",
+        volume: estimatedVolume,
+        price: Math.max(1, Math.round(estimatedVolume * 2.22 * 100) / 100),
+        pricingMode: "estimated",
       };
     }
 
-    return item;
+    return {
+      ...item,
+      name,
+      qty,
+      volume: unitVolume,
+      price: unitPrice,
+      pricingMode: item?.pricingMode || "catalog",
+    };
   });
 }
 
@@ -136,6 +171,7 @@ export default function MagicPriceMirror() {
   const [thinkingPhrase, setThinkingPhrase] = useState("");
   const [thinkingWordCount, setThinkingWordCount] = useState(0);
   const [thinkingFadeOut, setThinkingFadeOut] = useState(false);
+  const [pendingClarification, setPendingClarification] = useState("");
   const inputRef = useRef(null);
   const sectionRef = useRef(null);
 
@@ -146,7 +182,7 @@ export default function MagicPriceMirror() {
     localStorage.removeItem(resumeKey);
 
     const existingCart = Array.isArray(cart) ? cart : [];
-    const existingPrice = calculatePrice(existingCart).finalPrice;
+    const existingPrice = calculatePrice(existingCart).finalPrice || 0;
 
     setItems(existingCart);
     setPrice(existingPrice);
@@ -188,7 +224,7 @@ export default function MagicPriceMirror() {
     if (!Array.isArray(cart)) return;
     if (stage === "result" || stage === "more") {
       setItems(cart);
-      setPrice(calculatePrice(cart).finalPrice);
+      setPrice(calculatePrice(cart).finalPrice || 0);
     }
   }, [cart, stage]);
 
@@ -386,10 +422,28 @@ export default function MagicPriceMirror() {
 
   const submit = async (e) => {
     e.preventDefault();
-    const clean = value.trim();
+    let clean = value.trim();
     if (!clean) return;
+
+    if ((stage === "items" || stage === "more") && pendingClarification) {
+      clean = pendingClarification + " " + clean;
+      setPendingClarification("");
+    }
+
     if (stage === "items" || stage === "more") {
       const sourceStage = stage;
+      const clarification = clarificationFor(clean);
+
+      if (clarification) {
+        setPendingClarification(clean);
+        transition(
+          clarification.prompt,
+          clarification.subPrompt,
+          sourceStage,
+          180
+        );
+        return;
+      }
       setStage("loading");
       setValue("");
       setTypedPrompt("");
@@ -418,14 +472,14 @@ export default function MagicPriceMirror() {
             const nextItems = sourceStage === "more" ? [...currentCart, ...parsed] : parsed;
             const result = calculatePrice(nextItems);
 
-            if (result.customQuote) {
+            if (result.customOnly) {
               setItems(nextItems);
               setCart(nextItems);
               setPrice(0);
               setThinkingStep(0);
               transition(
                 "Custom quote required.",
-                "Cleanouts vary too much to guarantee from volume alone. Call us and we’ll price the actual job.",
+                "This cleanout is quoted separately when we see it. There is no obligation to proceed.",
                 "result",
                 180
               );
@@ -433,7 +487,7 @@ export default function MagicPriceMirror() {
             }
 
             setItems(nextItems);
-            setPrice(result.finalPrice);
+            setPrice(Number(result.finalPrice || 0));
             setCart(nextItems);
             setThinkingStep(0);
 
@@ -446,7 +500,9 @@ export default function MagicPriceMirror() {
 
               transition(
                 "$" + updatedTotal.toFixed(2),
-                "Anything else before we schedule?||Updated. Your cart and price are ready.",
+                result.customQuote
+                  ? "Anything else before we schedule?||Priced items are ready. Cleanout/custom work will be quoted separately on arrival with no obligation."
+                  : "Anything else before we schedule?||Updated. Your cart and price are ready.",
                 "result",
                 180
               );
@@ -483,14 +539,23 @@ export default function MagicPriceMirror() {
       localStorage.setItem("jb_lead_phone_" + sessionId, normalizedPhone); localStorage.setItem("jb_lead_" + sessionId, "1");
       try { await addDoc(collection(db, "leadCaptures"), { phone: clean, sessionId, source:"landing_magic_mirror", enteredAt:serverTimestamp() }); } catch (err) { console.error("Magic Mirror lead capture:", err); }
       const total = discounted ? Math.round(price * 0.9 * 100) / 100 : price;
-      transition("$" + total.toFixed(2), "Anything else before we schedule?||You’ve got your price. You did the hard part — let us handle the rest. No need to keep searching.", "result");
+      const currentResult = calculatePrice(items);
+      transition(
+        "$" + total.toFixed(2),
+        currentResult.customQuote && !currentResult.customOnly
+          ? "Anything else before we schedule?||Your priced items are locked in. Cleanout/custom work is quoted separately on arrival with no obligation."
+          : "Anything else before we schedule?||You’ve got your price. You did the hard part — let us handle the rest. No need to keep searching.",
+        "result"
+      );
       return;
     }
     if (stage === "result") return;
   };
 
   const resultStage = stage === "result";
-  const customQuoteActive = items.some((item) => item?.customQuote || item?.pricingMode === "custom" || /cleanout/i.test(String(item?.name || "")));
+  const resultPricing = calculatePrice(items);
+  const customQuoteActive = Boolean(resultPricing.customQuote);
+  const customOnlyActive = Boolean(resultPricing.customOnly);
   return (
     <section id="magic-price-mirror" ref={sectionRef} className="relative box-border h-[calc(100svh-56px)] lg:h-[calc(100svh-64px)] w-full min-w-0 max-w-full snap-start snap-always scroll-mt-0 overflow-x-clip overflow-y-hidden bg-[#111110] text-white">
       <div aria-hidden="true" className="absolute inset-0" style={{background:"radial-gradient(circle at 50% 45%, rgba(184,134,55,.09), transparent 25%), linear-gradient(145deg,#171716,#0c0c0b 62%,#050505)"}} />
@@ -605,14 +670,14 @@ export default function MagicPriceMirror() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => customQuoteActive ? (window.location.href = "tel:3465936080") : navigate("/schedule")}
+                    onClick={() => customOnlyActive ? (window.location.href = "tel:3465936080") : navigate("/schedule")}
                     className="jb-gold-choice min-h-[60px] rounded-xl border border-[#c8b477]/45 bg-black/10 px-3 text-[11px] font-semibold uppercase tracking-[.12em] text-[#e0cf91] transition-all duration-300 sm:text-sm sm:tracking-[.16em]"
                   >
-                    {customQuoteActive ? "Call for custom quote" : "See availability"}
+                    {customOnlyActive ? "Call for custom quote" : "See availability"}
                   </button>
                 </div>
                 <p className="mt-3 text-center text-[10px] leading-relaxed tracking-[.04em] text-white/30 sm:text-[11px]">
-{customQuoteActive ? "Cleanouts are quoted individually so we can price the actual job correctly." : "No commitment to view availability · Free cancellation"}
+{customOnlyActive ? "Cleanouts are quoted individually so we can price the actual job correctly." : customQuoteActive ? "Priced items can be scheduled now · Cleanout/custom work is quoted separately with no obligation" : "No commitment to view availability · Free cancellation"}
                 </p>
               </div>
             ) : (
