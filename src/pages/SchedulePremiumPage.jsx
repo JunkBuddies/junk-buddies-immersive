@@ -459,7 +459,12 @@ export default function SchedulePremiumPage() {
           partnerDiscountActive,
           partnerSavings: partnerDiscountActive ? partnerSavings : 0,
           itemCount: cartSummary.reduce((sum, item) => sum + item.qty, 0),
-          items: cartSummary.map((item) => ({ name: item.name, qty: item.qty, price: item.price })),
+          items: cartSummary.map((item) => ({
+            name: item.name,
+            qty: item.qty,
+            price: item.price,
+            customQuote: Boolean(item.customQuote),
+          })),
           street: form.street,
           city: form.city,
           stateName: form.state,
