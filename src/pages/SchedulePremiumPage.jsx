@@ -177,11 +177,16 @@ export default function SchedulePremiumPage() {
             name: item.name || "Item",
             qty: 0,
             price: 0,
+            customQuote:
+              premiumType(item) === "custom" ||
+              Boolean(item.customQuote) ||
+              item.pricingMode === "custom",
           };
         }
 
         groups[key].qty += qty;
-        groups[key].price += Number(item.price || 0);
+        const resolvedLinePrice = displayLinePrice(item);
+        groups[key].price += resolvedLinePrice == null ? 0 : Number(resolvedLinePrice);
         return groups;
       }, {})
     );
@@ -996,7 +1001,7 @@ className="block w-full min-w-0 max-w-full rounded-xl border border-white/10 bg-
                     {item.name}
                   </span>
                   <span className="shrink-0 text-white/40">
-                    {item.customQuote || item.pricingMode === "custom"
+                    {item.customQuote
                       ? "Quoted separately"
                       : "$" + Number(item.price || 0).toFixed(2)}
                   </span>
