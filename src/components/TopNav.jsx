@@ -76,7 +76,7 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
           </button>
 
           <img
-            src="/images/logo-icon.png"
+            src="/images/logo-icon-optimized.webp"
             alt="Junk Buddies Logo"
             className="w-9 h-9 object-contain"
           />
