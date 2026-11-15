@@ -31,7 +31,8 @@ function LandingPage() {
   ];
 
   const [centerIndex, setCenterIndex] = useState(0);
-  const [carouselNeighborsReady, setCarouselNeighborsReady] = useState(false);
+  const [carouselReady, setCarouselReady] = useState(false);
+  const carouselRef = useRef(null);
   const leftIndex = (centerIndex - 1 + slides.length) % slides.length;
   const rightIndex = (centerIndex + 1) % slides.length;
 
@@ -43,23 +44,21 @@ function LandingPage() {
   }, [slides.length]);
 
   useEffect(() => {
-    let timeoutId;
-    let idleId;
+    const node = carouselRef.current;
+    if (!node) return;
 
-    const revealNeighbors = () => setCarouselNeighborsReady(true);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCarouselReady(true);
+          observer.disconnect();
+        }
+      },
+      { root: null, rootMargin: "500px 0px", threshold: 0.01 }
+    );
 
-    if ("requestIdleCallback" in window) {
-      idleId = window.requestIdleCallback(revealNeighbors, { timeout: 1800 });
-    } else {
-      timeoutId = window.setTimeout(revealNeighbors, 1200);
-    }
-
-    return () => {
-      if (idleId && "cancelIdleCallback" in window) {
-        window.cancelIdleCallback(idleId);
-      }
-      if (timeoutId) window.clearTimeout(timeoutId);
-    };
+    observer.observe(node);
+    return () => observer.disconnect();
   }, []);
 
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
@@ -387,7 +386,7 @@ function LandingPage() {
         />
 
 {/* === HERO: VIEWPORT-CENTERED CINEMATIC CAROUSEL === */}
-<section className="relative mt-4 sm:mt-6 mb-4 py-2 sm:py-3" style={{ height: "clamp(156px, 22vw, 324px)" }}>
+<section ref={carouselRef} className="relative mt-4 sm:mt-6 mb-4 py-2 sm:py-3" style={{ height: "clamp(156px, 22vw, 324px)" }}>
   <div
     className="absolute overflow-hidden"
     style={{
@@ -411,7 +410,7 @@ function LandingPage() {
         top: "9%",
       }}
     >
-      {carouselNeighborsReady ? (
+      {carouselReady ? (
         <img
           src={slides[leftIndex].image}
           alt={slides[leftIndex].alt}
@@ -435,13 +434,17 @@ function LandingPage() {
         transform: "translateX(-50%)",
       }}
     >
-      <img
-        src={slides[centerIndex].image}
-        alt={slides[centerIndex].alt}
-        fetchPriority="high"
-        decoding="async"
-        className="w-full h-full object-cover"
-      />
+      {carouselReady ? (
+        <img
+          src={slides[centerIndex].image}
+          alt={slides[centerIndex].alt}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="h-full w-full bg-black/20" aria-hidden="true" />
+      )}
       <div className={`absolute inset-0 transition-colors duration-700 ${topTheme === "day" ? "bg-gradient-to-t from-black/55 via-black/10 to-transparent" : "bg-gradient-to-t from-black via-black/25 to-transparent"}`} />
     </div>
 
@@ -458,7 +461,7 @@ function LandingPage() {
         top: "9%",
       }}
     >
-      {carouselNeighborsReady ? (
+      {carouselReady ? (
         <img
           src={slides[rightIndex].image}
           alt={slides[rightIndex].alt}
