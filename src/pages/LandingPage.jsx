@@ -388,7 +388,7 @@ function LandingPage() {
 
               <div className="absolute inset-0 z-[2] flex items-center justify-center transition-transform duration-500 ease-out hover:-translate-y-1">
                 <img
-                  src="/images/jb-buddies-sculpture.png?v=20260930-2"
+                  src="/images/jb-buddies-sculpture-optimized.webp"
                   alt="Two sculptural Junk Buddies figures"
                   className="block max-h-[88%] max-w-[88%] object-contain drop-shadow-[0_30px_48px_rgba(0,0,0,0.62)]"
                   style={{ width: "auto", height: "auto" }}
@@ -396,7 +396,7 @@ function LandingPage() {
               </div>
               <div className="absolute left-[8%] top-[34%] z-[3] h-[28%] w-[38%] -rotate-[52deg] sm:left-[9%] sm:top-[33%] lg:left-[7%] lg:top-[32%] lg:h-[31%] lg:w-[39%] lg:-rotate-[50deg]">
                 <img
-                  src="/images/jb-gold-shovel.png"
+                  src="/images/jb-gold-shovel-optimized.webp"
                   alt=""
                   className="h-full w-full object-contain drop-shadow-[0_24px_38px_rgba(0,0,0,0.55)]"
                 />
