@@ -19,7 +19,7 @@ export default function TopNavMobile() {
         animate={{ y: 0, opacity: 1 }}
       >
         <Link to="/" className="flex min-w-0 items-center gap-2" aria-label="Junk Buddies home">
-          <img src="/images/logo-icon.png" alt="" className="h-7 w-7 shrink-0 object-contain" />
+          <img src="/images/logo-icon-optimized.webp" alt="" className="h-7 w-7 shrink-0 object-contain" />
           <span className="jb-polished-gold-text truncate text-sm font-bold min-[360px]:text-base">
             Junk Buddies
           </span>
