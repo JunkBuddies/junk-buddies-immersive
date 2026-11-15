@@ -31,6 +31,7 @@ function LandingPage() {
   ];
 
   const [centerIndex, setCenterIndex] = useState(0);
+  const [carouselNeighborsReady, setCarouselNeighborsReady] = useState(false);
   const leftIndex = (centerIndex - 1 + slides.length) % slides.length;
   const rightIndex = (centerIndex + 1) % slides.length;
 
@@ -40,6 +41,26 @@ function LandingPage() {
     }, 6000);
     return () => clearInterval(timer);
   }, [slides.length]);
+
+  useEffect(() => {
+    let timeoutId;
+    let idleId;
+
+    const revealNeighbors = () => setCarouselNeighborsReady(true);
+
+    if ("requestIdleCallback" in window) {
+      idleId = window.requestIdleCallback(revealNeighbors, { timeout: 1800 });
+    } else {
+      timeoutId = window.setTimeout(revealNeighbors, 1200);
+    }
+
+    return () => {
+      if (idleId && "cancelIdleCallback" in window) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   const goNext = () => setCenterIndex((p) => (p + 1) % slides.length);
   const goPrev = () => setCenterIndex((p) => (p - 1 + slides.length) % slides.length);
@@ -390,7 +411,17 @@ function LandingPage() {
         top: "9%",
       }}
     >
-      <img src={slides[leftIndex].image} alt={slides[leftIndex].alt} className="w-full h-full object-cover" />
+      {carouselNeighborsReady ? (
+        <img
+          src={slides[leftIndex].image}
+          alt={slides[leftIndex].alt}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="h-full w-full bg-black/20" aria-hidden="true" />
+      )}
     </button>
 
     {/* Active card — its center is always the physical viewport center */}
@@ -404,7 +435,13 @@ function LandingPage() {
         transform: "translateX(-50%)",
       }}
     >
-      <img src={slides[centerIndex].image} alt={slides[centerIndex].alt} className="w-full h-full object-cover" />
+      <img
+        src={slides[centerIndex].image}
+        alt={slides[centerIndex].alt}
+        fetchPriority="high"
+        decoding="async"
+        className="w-full h-full object-cover"
+      />
       <div className={`absolute inset-0 transition-colors duration-700 ${topTheme === "day" ? "bg-gradient-to-t from-black/55 via-black/10 to-transparent" : "bg-gradient-to-t from-black via-black/25 to-transparent"}`} />
     </div>
 
@@ -421,7 +458,17 @@ function LandingPage() {
         top: "9%",
       }}
     >
-      <img src={slides[rightIndex].image} alt={slides[rightIndex].alt} className="w-full h-full object-cover" />
+      {carouselNeighborsReady ? (
+        <img
+          src={slides[rightIndex].image}
+          alt={slides[rightIndex].alt}
+          loading="lazy"
+          decoding="async"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="h-full w-full bg-black/20" aria-hidden="true" />
+      )}
     </button>
   </div>
 </section>
