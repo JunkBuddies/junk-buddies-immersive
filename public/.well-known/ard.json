@@ -1,0 +1,9 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Junk Buddies LLC",
+    "identifier": "junkbuddies.info",
+    "documentationUrl": "https://junkbuddies.info/llms.txt"
+  },
+  "entries": []
+}
