@@ -72,10 +72,7 @@ function LandingPage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const getImage = (img) => {
-    if (!img.endsWith(".webp")) return img;
-    return isMobile ? img.replace(".webp", "-mobile.webp") : img;
-  };
+  const getImage = (img) => img;
 
   // === SERVICE DATA ===
   const mainServices = [
