@@ -26,6 +26,7 @@ export default function SideNav({ open }) {
         <NavItem to="/" icon={<Home />} label="Home" open={open} />
         <button
           onClick={openPriceMirror}
+          aria-label="Instant Pricing"
           className="flex items-center gap-3 w-full text-gray-200 hover:text-gold px-3 py-2 transition rounded"
           title="Instant Pricing"
         >
@@ -52,6 +53,7 @@ function NavItem({ to, icon, label, open }) {
   return (
     <Link
       to={to}
+      aria-label={label}
       className="flex items-center gap-3 text-gray-200 hover:text-gold w-full px-3 py-2 rounded transition"
     >
       {icon}
