@@ -105,7 +105,6 @@ export default function TopNav({ sidebarOpen, setSidebarOpen }) {
                 setSearchQuery(event.target.value);
                 setSearchOpen(true);
               }}
-              aria-expanded={searchOpen}
               placeholder="Search items, pricing, or cities..."
               className={`block w-full px-5 py-2.5 pr-12 rounded-full bg-zinc-900 border text-white
                          placeholder-gray-400 outline-none cursor-text caret-gold transition
