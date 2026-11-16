@@ -3,59 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import MagicPriceMirror from "../components/MagicPriceMirror";
 import { goToPriceMirror } from "../utils/mirrorNavigation";
 
-function DeferredImage({ src, alt = "", className = "", style, ...rest }) {
-  const holderRef = useRef(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const node = holderRef.current;
-    if (!node || visible) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      {
-        root: null,
-        rootMargin: "240px 0px",
-        threshold: 0.01,
-      }
-    );
-
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, [visible]);
-
-  return (
-    <span ref={holderRef} className="contents">
-      {visible ? (
-        <img
-          src={src}
-          alt={alt}
-          className={className}
-          style={style}
-          loading="lazy"
-          decoding="async"
-          {...rest}
-        />
-      ) : (
-        <span
-          aria-hidden="true"
-          className={className}
-          style={{
-            ...style,
-            display: "block",
-            background: "transparent",
-          }}
-        />
-      )}
-    </span>
-  );
-}
-
 function LandingPage() {
   const navigate = useNavigate();
   const openPriceMirror = () => goToPriceMirror(navigate);
@@ -612,16 +559,16 @@ function LandingPage() {
 
                 {/* First 2 images (stacked) */}
                 <div className="w-1/2 grid grid-cols-1 gap-4">
-                  <DeferredImage
+                  <img decoding="async" loading="lazy"
                     src="/images/proof-hoarder.jpg"
                     alt="Hoarder garage cleanout"
                     className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-                    />
-                  <DeferredImage
+                     />
+                  <img decoding="async" loading="lazy"
                     src="/images/proof-home.jpg"
                     alt="Home cleanout"
                     className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-                    />
+                     />
                 </div>
               </div>
 
@@ -657,41 +604,41 @@ function LandingPage() {
 
             {/* Right Column (DESKTOP ONLY, all 4 images in grid) */}
             <div className="relative z-10 grid grid-cols-2 gap-4 w-full hidden lg:grid">
-              <DeferredImage
+              <img decoding="async" loading="lazy"
                 src="/images/proof-hoarder.jpg"
                 alt="Hoarder garage cleanout"
                 className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-                />
-              <DeferredImage
+                 />
+              <img decoding="async" loading="lazy"
                 src="/images/proof-home.jpg"
                 alt="Home cleanout"
                 className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-                />
-              <DeferredImage
+                 />
+              <img decoding="async" loading="lazy"
                 src="/images/proof-storage-before.png"
                 alt="Storage cleanout before"
                 className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-                />
-              <DeferredImage
+                 />
+              <img decoding="async" loading="lazy"
                 src="/images/proof-storage-after.png"
                 alt="Storage cleanout after"
                 className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-                />
+                 />
             </div>
           </div>
 
           {/* Last 2 images (MOBILE ONLY, under full list) */}
           <div className="grid grid-cols-2 gap-4 mt-6 lg:hidden max-w-7xl mx-auto">
-            <DeferredImage
+            <img decoding="async" loading="lazy"
               src="/images/proof-storage-before.png"
               alt="Storage cleanout before"
               className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-              />
-            <DeferredImage
+               />
+            <img decoding="async" loading="lazy"
               src="/images/proof-storage-after.png"
               alt="Storage cleanout after"
               className="rounded-lg shadow-md border border-gold/30 hover:scale-105 transition-transform"
-              />
+               />
           </div>
 
           {/* Questions Line */}
@@ -748,18 +695,18 @@ function LandingPage() {
             {/* Left Side – Photos */}
             <div className="bg-gray-100 flex flex-col justify-center items-center 
                             p-2 xs:p-3 sm:p-4 w-1/2 space-y-2 sm:space-y-4">
-              <DeferredImage
+              <img decoding="async" loading="lazy"
                 src="/images/donation-placeholder1.png"
                 alt="Donation proof 1"
                 className="w-full sm:max-w-[80%] lg:max-w-[70%] h-auto object-cover 
                            rounded-lg shadow-md border border-gold/30"
-                />
-              <DeferredImage
+                 />
+              <img decoding="async" loading="lazy"
                 src="/images/donation-placeholder2.png"
                 alt="Donation proof 2"
                 className="w-full sm:max-w-[80%] lg:max-w-[70%] h-auto object-cover 
                            rounded-lg shadow-md border border-gold/30"
-                />
+                 />
             </div>
 
             {/* Gold Divider */}
@@ -801,11 +748,11 @@ function LandingPage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6 items-center justify-items-center">
               {/* Goodwill */}
               <div className="relative w-full h-16 sm:h-20 flex items-center justify-center group cursor-pointer">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/goodwill-logo.png"
                   alt="Goodwill"
                   className="max-h-16 sm:max-h-20 object-contain transition duration-300 group-hover:opacity-0"
-                  />
+                   />
                 <p className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-gray-700 font-semibold opacity-0 group-hover:opacity-100 transition duration-300 text-center px-2">
                   Goodwill: creating jobs & supporting communities.
                 </p>
@@ -813,11 +760,11 @@ function LandingPage() {
 
               {/* Salvation Army */}
               <div className="relative w-full h-16 sm:h-20 flex items-center justify-center group cursor-pointer">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/Salvation-Army-logo.webp"
                   alt="Salvation Army"
                   className="max-h-16 sm:max-h-20 object-contain transition duration-300 group-hover:opacity-0"
-                  />
+                   />
                 <p className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-gray-700 font-semibold opacity-0 group-hover:opacity-100 transition duration-300 text-center px-2">
                   Salvation Army: relief, shelter & family aid.
                 </p>
@@ -825,11 +772,11 @@ function LandingPage() {
 
               {/* Habitat for Humanity */}
               <div className="relative w-full h-16 sm:h-20 flex items-center justify-center group cursor-pointer">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/Habitat_for_humanity_logo.png"
                   alt="Habitat for Humanity"
                   className="max-h-16 sm:max-h-20 object-contain transition duration-300 group-hover:opacity-0"
-                  />
+                   />
                 <p className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-gray-700 font-semibold opacity-0 group-hover:opacity-100 transition duration-300 text-center px-2">
                   Habitat: building affordable homes for families.
                 </p>
@@ -837,11 +784,11 @@ function LandingPage() {
 
               {/* Houston Furniture Bank */}
               <div className="relative w-full h-16 sm:h-20 flex items-center justify-center group cursor-pointer">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/Houston-furniture-bank-logo.png"
                   alt="Houston Furniture Bank"
                   className="max-h-16 sm:max-h-20 object-contain transition duration-300 group-hover:opacity-0"
-                  />
+                   />
                 <p className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-gray-700 font-semibold opacity-0 group-hover:opacity-100 transition duration-300 text-center px-2">
                   Houston Furniture Bank: furnishing homes for those in need.
                 </p>
@@ -849,11 +796,11 @@ function LandingPage() {
 
               {/* Books Between Kids */}
               <div className="relative w-full h-16 sm:h-20 flex items-center justify-center group cursor-pointer">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/books-between-kids-logo.png"
                   alt="Books Between Kids"
                   className="max-h-16 sm:max-h-20 object-contain transition duration-300 group-hover:opacity-0"
-                  />
+                   />
                 <p className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-gray-700 font-semibold opacity-0 group-hover:opacity-100 transition duration-300 text-center px-2">
                   Books Between Kids: free books for Houston children.
                 </p>
@@ -861,11 +808,11 @@ function LandingPage() {
 
               {/* Houston Children’s Charity */}
               <div className="relative w-full h-16 sm:h-20 flex items-center justify-center group cursor-pointer">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/Houston-Children’s-Charity-logo.png"
                   alt="Houston Children’s Charity"
                   className="max-h-16 sm:max-h-20 object-contain transition duration-300 group-hover:opacity-0"
-                  />
+                   />
                 <p className="absolute inset-0 flex items-center justify-center text-xs sm:text-sm text-gray-700 font-semibold opacity-0 group-hover:opacity-100 transition duration-300 text-center px-2">
                   Houston Children’s Charity: improving the lives of underprivileged kids.
                 </p>
@@ -883,38 +830,38 @@ function LandingPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {/* Card 1 */}
               <div className="bg-gray-50 rounded-lg shadow-md p-4 hover:shadow-lg transition">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/before-after.jpg"
                   alt="Before & After"
                   className="rounded-md mb-4 object-cover w-full h-40"
-                  />
+                   />
                 <p className="text-sm font-semibold text-center">Before & After Results</p>
               </div>
               {/* Card 2 */}
               <div className="bg-gray-50 rounded-lg shadow-md p-4 hover:shadow-lg transition">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/crew.png"
                   alt="Crew in Uniform"
                   className="rounded-md mb-4 object-cover w-full h-40"
-                  />
+                   />
                 <p className="text-sm font-semibold text-center">Professional Crew in Uniform</p>
               </div>
               {/* Card 3 */}
               <div className="bg-gray-50 rounded-lg shadow-md p-4 hover:shadow-lg transition">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/donation-drop.png"
                   alt="Donation Drop-Off"
                   className="rounded-md mb-4 object-cover w-full h-40"
-                  />
+                   />
                 <p className="text-sm font-semibold text-center">Donation Drop-Offs</p>
               </div>
               {/* Card 4 */}
               <div className="bg-gray-50 rounded-lg shadow-md p-4 hover:shadow-lg transition">
-                <DeferredImage
+                <img decoding="async" loading="lazy"
                   src="/images/truck-fleet.png"
                   alt="Junk Buddies Trucks"
                   className="rounded-md mb-4 object-cover w-full h-40"
-                  />
+                   />
                 <p className="text-sm font-semibold text-center">Clean, Modern Fleet</p>
               </div>
             </div>
@@ -1077,11 +1024,11 @@ function LandingPage() {
             className="relative w-full h-64 sm:h-80 lg:h-96 overflow-hidden"
             data-aos="fade-in"
           >
-            <DeferredImage
+            <img decoding="async" loading="lazy"
               src="/images/houston-skyline.png"
               alt="Houston Skyline"
               className="w-full h-full object-cover"
-              />
+               />
             <div className="absolute inset-0 bg-black/20"></div>
           </div>
 
@@ -1127,12 +1074,12 @@ function LandingPage() {
                              ${topTheme === "day" ? "bg-[#343128]/95" : "bg-zinc-900/90"} border border-gold/30 hover:border-gold rounded-xl
                              overflow-hidden shadow-md hover:scale-105 transition-transform`}
                 >
-                  <DeferredImage
+                  <img decoding="async" loading="lazy"
                     src={getImage(s.image)}
                     alt={s.title}
                     draggable="false"
                     className="w-full h-full object-cover"
-                    />
+                     />
                   <h3 className="text-gold font-semibold text-[2.5vw] sm:text-xs md:text-sm mt-2 text-center">
                     {s.title}
                   </h3>
@@ -1169,11 +1116,11 @@ function LandingPage() {
                                   overflow-hidden shadow-lg snap-center hover:scale-105 transition-transform`}
                               >
                                 {"image" in item ? (
-                                  <DeferredImage
+                                  <img decoding="async" loading="lazy"
                                     src={getImage(item.image)}
                                     alt={item.title || item.q}
                                     className="w-full h-full object-cover"
-                                    />
+                                     />
                                 ) : null}
                               </div>
                               <h3 className="text-gold font-semibold text-xs md:text-base mt-2 px-2 text-center">
